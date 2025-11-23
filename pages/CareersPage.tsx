@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getAssetUrl } from '../utils/assets';
+import ScrollReveal from '../components/common/ScrollReveal';
 import JsonLd from '../components/common/JsonLd';
 import Seo from '../components/common/Seo';
 import { env } from '../config/env';
@@ -250,50 +251,53 @@ const CareersPage: React.FC = () => {
                 {/* Como trabalhamos – cards seguindo a base de Serviços da Home */}
                 <section className="py-16 sm:py-20">
                     <div className="container mx-auto px-4 sm:px-6">
-                        <div className="text-center max-w-3xl mx-auto mb-12">
-                            <p className="text-xs uppercase tracking-[0.4em] text-slate-500 dark:text-white/80">Como trabalhamos</p>
-                            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
-                                Experiência desenhada para alto impacto
-                            </h2>
-                            <p className="text-slate-600 dark:text-slate-300 mt-3">
-                                Processos claros, tecnologia proprietária e cultura que incentiva autonomia com responsabilidade.
-                            </p>
-                        </div>
+                        <ScrollReveal direction="up">
+                            <div className="text-center max-w-3xl mx-auto mb-12">
+                                <p className="text-xs uppercase tracking-[0.4em] text-slate-500 dark:text-white/80">Como trabalhamos</p>
+                                <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
+                                    Experiência desenhada para alto impacto
+                                </h2>
+                                <p className="text-slate-600 dark:text-slate-300 mt-3">
+                                    Processos claros, tecnologia proprietária e cultura que incentiva autonomia com responsabilidade.
+                                </p>
+                            </div>
+                        </ScrollReveal>
 
                         <div className="grid gap-8 md:grid-cols-3">
                             {experienceHighlights.map((highlight, index) => (
-                                <div
-                                    key={highlight.title}
-                                    className={`${index === 0 ? blueCardClasses : neutralCardClasses} flex flex-col`}
-                                >
+                                <ScrollReveal key={highlight.title} delay={index * 100} direction="up" className="h-full">
                                     <div
-                                        className={[
-                                            'w-12 h-12 flex items-center justify-center rounded-xl mb-4',
-                                            index === 0
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-[#E8EDF4] dark:bg-white/10 text-[#1F3A5F] dark:text-white'
-                                        ].join(' ')}
+                                        className={`${index === 0 ? blueCardClasses : neutralCardClasses} flex flex-col h-full`}
                                     >
-                                        {highlight.icon}
+                                        <div
+                                            className={[
+                                                'w-12 h-12 flex items-center justify-center rounded-xl mb-4',
+                                                index === 0
+                                                    ? 'bg-white/20 text-white'
+                                                    : 'bg-[#E8EDF4] dark:bg-white/10 text-[#1F3A5F] dark:text-white'
+                                            ].join(' ')}
+                                        >
+                                            {highlight.icon}
+                                        </div>
+                                        <h3
+                                            className={[
+                                                'text-xl font-semibold mb-2',
+                                                index === 0 ? 'text-white' : 'text-slate-900 dark:text-white'
+                                            ].join(' ')}
+                                        >
+                                            {highlight.title}
+                                        </h3>
+                                        <p
+                                            className={
+                                                index === 0
+                                                    ? 'text-white/90'
+                                                    : 'text-gray-600 dark:text-gray-300'
+                                            }
+                                        >
+                                            {highlight.description}
+                                        </p>
                                     </div>
-                                    <h3
-                                        className={[
-                                            'text-xl font-semibold mb-2',
-                                            index === 0 ? 'text-white' : 'text-slate-900 dark:text-white'
-                                        ].join(' ')}
-                                    >
-                                        {highlight.title}
-                                    </h3>
-                                    <p
-                                        className={
-                                            index === 0
-                                                ? 'text-white/90'
-                                                : 'text-gray-600 dark:text-gray-300'
-                                        }
-                                    >
-                                        {highlight.description}
-                                    </p>
-                                </div>
+                                </ScrollReveal>
                             ))}
                         </div>
                     </div>
@@ -303,105 +307,112 @@ const CareersPage: React.FC = () => {
                 <section className="py-16 sm:py-20">
                     <div className="container mx-auto px-4 sm:px-6 grid gap-10 lg:grid-cols-2">
                         {/* Neutro vidro */}
-                        <div className={neutralLargeCardClasses}>
-                            <p className="text-xs uppercase tracking-[0.35em] text-slate-500 dark:text-white/80">Nossa cultura</p>
-                            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mt-2 mb-6">
-                                Momentos que moldam quem somos
-                            </h2>
-                            <div className="space-y-6">
-                                {cultureTimeline.map(moment => (
-                                    <div key={moment.year} className="flex gap-4">
-                                        <div className="text-sm font-semibold text-[#1F3A5F] dark:text-[#A9C1FF] uppercase tracking-[0.3em] mt-1">
-                                            {moment.year}
+                        <ScrollReveal direction="left">
+                            <div className={neutralLargeCardClasses}>
+                                <p className="text-xs uppercase tracking-[0.35em] text-slate-500 dark:text-white/80">Nossa cultura</p>
+                                <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mt-2 mb-6">
+                                    Momentos que moldam quem somos
+                                </h2>
+                                <div className="space-y-6">
+                                    {cultureTimeline.map(moment => (
+                                        <div key={moment.year} className="flex gap-4">
+                                            <div className="text-sm font-semibold text-[#1F3A5F] dark:text-[#A9C1FF] uppercase tracking-[0.3em] mt-1">
+                                                {moment.year}
+                                            </div>
+                                            <div>
+                                                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{moment.title}</h3>
+                                                <p className="text-slate-600 dark:text-slate-300">{moment.description}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{moment.title}</h3>
-                                            <p className="text-slate-600 dark:text-slate-300">{moment.description}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        </ScrollReveal>
 
                         {/* Azul vidro */}
-                        <div className={`${blueLargeCardClasses} text-white`}>
-                            <p className="text-xs uppercase tracking-[0.35em] text-white/90">Benefícios vivos</p>
-                            <h2 className="text-2xl font-semibold mt-2 mb-6">Cuidamos de quem cuida dos clientes</h2>
-                            <div className="space-y-5">
-                                {perksList.map(perk => (
-                                    <div
-                                        key={perk.title}
-                                        className="rounded-2xl border border-white/30 bg-white/10 backdrop-blur-xl p-5 shadow-lg"
-                                    >
-                                        <p className="text-sm uppercase tracking-[0.35em] text-white/80">{perk.label}</p>
-                                        <h3 className="text-lg font-semibold text-white">{perk.title}</h3>
-                                        <p className="text-white/90">{perk.description}</p>
-                                    </div>
-                                ))}
+                        <ScrollReveal direction="right" delay={200}>
+                            <div className={`${blueLargeCardClasses} text-white`}>
+                                <p className="text-xs uppercase tracking-[0.35em] text-white/90">Benefícios vivos</p>
+                                <h2 className="text-2xl font-semibold mt-2 mb-6">Cuidamos de quem cuida dos clientes</h2>
+                                <div className="space-y-5">
+                                    {perksList.map(perk => (
+                                        <div
+                                            key={perk.title}
+                                            className="rounded-2xl border border-white/30 bg-white/10 backdrop-blur-xl p-5 shadow-lg"
+                                        >
+                                            <p className="text-sm uppercase tracking-[0.35em] text-white/80">{perk.label}</p>
+                                            <h3 className="text-lg font-semibold text-white">{perk.title}</h3>
+                                            <p className="text-white/90">{perk.description}</p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        </ScrollReveal>
                     </div>
                 </section>
 
                 {/* Oportunidades – cards neutros = ServiceCard neutro, primeiro = destaque azul */}
                 <section id="oportunidades" className="py-20">
                     <div className="container mx-auto px-4 sm:px-6">
-                        <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-10">
-                            <div>
-                                <p className="text-xs uppercase tracking-[0.35em] text-slate-500 dark:text-white/80">Oportunidades</p>
-                                <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Papéis em destaque</h2>
-                                <p className="text-slate-600 dark:text-slate-300 mt-2">
-                                    Não encontrou a vaga ideal? Envie mesmo assim: adoramos conhecer histórias diferentes.
-                                </p>
+                        <ScrollReveal direction="up">
+                            <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-10">
+                                <div>
+                                    <p className="text-xs uppercase tracking-[0.35em] text-slate-500 dark:text-white/80">Oportunidades</p>
+                                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Papéis em destaque</h2>
+                                    <p className="text-slate-600 dark:text-slate-300 mt-2">
+                                        Não encontrou a vaga ideal? Envie mesmo assim: adoramos conhecer histórias diferentes.
+                                    </p>
+                                </div>
+                                <a
+                                    href="#talentos"
+                                    className="px-6 py-3 rounded-2xl bg-[#1F3A5F] text-white font-semibold shadow-lg hover:-translate-y-1 transition"
+                                >
+                                    Enviar currículo
+                                </a>
                             </div>
-                            <a
-                                href="#talentos"
-                                className="px-6 py-3 rounded-2xl bg-[#1F3A5F] text-white font-semibold shadow-lg hover:-translate-y-1 transition"
-                            >
-                                Enviar currículo
-                            </a>
-                        </div>
+                        </ScrollReveal>
 
                         <div className="grid gap-6 md:grid-cols-2">
                             {openRoles.map((role, index) => (
-                                <div
-                                    key={role.area}
-                                    className={index === 0 ? blueCardClasses : neutralCardClasses}
-                                >
-                                    <h3
-                                        className={[
-                                            'text-xl font-semibold',
-                                            index === 0 ? 'text-white' : 'text-slate-900 dark:text-slate-100'
-                                        ].join(' ')}
+                                <ScrollReveal key={role.area} delay={index * 100} direction="up">
+                                    <div
+                                        className={index === 0 ? blueCardClasses : neutralCardClasses}
                                     >
-                                        {role.area}
-                                    </h3>
-                                    <p
-                                        className={
-                                            index === 0
-                                                ? 'mt-2 text-white/90'
-                                                : 'mt-2 text-slate-600 dark:text-slate-300'
-                                        }
-                                    >
-                                        {role.description}
-                                    </p>
+                                        <h3
+                                            className={[
+                                                'text-xl font-semibold',
+                                                index === 0 ? 'text-white' : 'text-slate-900 dark:text-slate-100'
+                                            ].join(' ')}
+                                        >
+                                            {role.area}
+                                        </h3>
+                                        <p
+                                            className={
+                                                index === 0
+                                                    ? 'mt-2 text-white/90'
+                                                    : 'mt-2 text-slate-600 dark:text-slate-300'
+                                            }
+                                        >
+                                            {role.description}
+                                        </p>
 
-                                    <div className="flex flex-wrap gap-2 mt-4">
-                                        {role.tags.map(tag => (
-                                            <span
-                                                key={tag}
-                                                className={[
-                                                    'px-3 py-1 rounded-full text-xs font-semibold',
-                                                    index === 0
-                                                        ? 'bg-white/18 text-white border border-white/30'
-                                                        : 'bg-[#E8EDF4] text-[#1F3A5F] dark:bg-slate-800 dark:text-slate-100'
-                                                ].join(' ')}
-                                            >
-                                                {tag}
-                                            </span>
-                                        ))}
+                                        <div className="flex flex-wrap gap-2 mt-4">
+                                            {role.tags.map(tag => (
+                                                <span
+                                                    key={tag}
+                                                    className={[
+                                                        'px-3 py-1 rounded-full text-xs font-semibold',
+                                                        index === 0
+                                                            ? 'bg-white/18 text-white border border-white/30'
+                                                            : 'bg-[#E8EDF4] text-[#1F3A5F] dark:bg-slate-800 dark:text-slate-100'
+                                                    ].join(' ')}
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
+                                </ScrollReveal>
                             ))}
                         </div>
                     </div>
@@ -411,41 +422,45 @@ const CareersPage: React.FC = () => {
                 <section className="py-16 sm:py-20">
                     <div className="container mx-auto px-4 sm:px-6 grid gap-10 lg:grid-cols-2">
                         {/* Neutro vidro */}
-                        <div className={neutralLargeCardClasses}>
-                            <p className="text-xs uppercase tracking-[0.35em] text-slate-500 dark:text-white/80">
-                                Processo seletivo
-                            </p>
-                            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mt-2 mb-6">
-                                Transparente do começo ao fim
-                            </h2>
-                            <div className="space-y-5">
-                                {processJourney.map(step => (
-                                    <div key={step.step} className="flex gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-[#E8EDF4] dark:bg-slate-800 text-[#1F3A5F] dark:text-white font-bold flex items-center justify-center">
-                                            {step.step}
+                        <ScrollReveal direction="left">
+                            <div className={neutralLargeCardClasses}>
+                                <p className="text-xs uppercase tracking-[0.35em] text-slate-500 dark:text-white/80">
+                                    Processo seletivo
+                                </p>
+                                <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mt-2 mb-6">
+                                    Transparente do começo ao fim
+                                </h2>
+                                <div className="space-y-5">
+                                    {processJourney.map(step => (
+                                        <div key={step.step} className="flex gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-[#E8EDF4] dark:bg-slate-800 text-[#1F3A5F] dark:text-white font-bold flex items-center justify-center">
+                                                {step.step}
+                                            </div>
+                                            <div>
+                                                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{step.title}</h3>
+                                                <p className="text-slate-600 dark:text-slate-300">{step.text}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{step.title}</h3>
-                                            <p className="text-slate-600 dark:text-slate-300">{step.text}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        </ScrollReveal>
 
                         {/* Azul vidro */}
-                        <div className={`${blueLargeCardClasses} text-white`}>
-                            <p className="text-xs uppercase tracking-[0.35em] text-white/90">O que valorizamos</p>
-                            <h2 className="text-2xl font-semibold mt-2 mb-6">Soft skills que brilham por aqui</h2>
-                            <ul className="space-y-4 text-white/90">
-                                {softSkills.map(skill => (
-                                    <li key={skill} className="flex gap-3">
-                                        <span className="mt-1 h-2 w-2 rounded-full bg-white/80" />
-                                        {skill}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        <ScrollReveal direction="right" delay={200}>
+                            <div className={`${blueLargeCardClasses} text-white`}>
+                                <p className="text-xs uppercase tracking-[0.35em] text-white/90">O que valorizamos</p>
+                                <h2 className="text-2xl font-semibold mt-2 mb-6">Soft skills que brilham por aqui</h2>
+                                <ul className="space-y-4 text-white/90">
+                                    {softSkills.map(skill => (
+                                        <li key={skill} className="flex gap-3">
+                                            <span className="mt-1 h-2 w-2 rounded-full bg-white/80" />
+                                            {skill}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </ScrollReveal>
                     </div>
                 </section>
 

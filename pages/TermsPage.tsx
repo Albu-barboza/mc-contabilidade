@@ -1,6 +1,7 @@
 
 import React from 'react';
 import Seo from '../components/common/Seo';
+import ScrollReveal from '../components/common/ScrollReveal';
 
 const TermsPage: React.FC = () => {
     const description =
@@ -10,15 +11,15 @@ const TermsPage: React.FC = () => {
         <div className="text-slate-800 dark:text-slate-100">
             <Seo title="Termos de Uso | MC Contabilidade" description={description} />
             <header className="pt-28 pb-16 sm:pt-32 sm:pb-20">
-                <div className="container mx-auto px-4 sm:px-6 text-center space-y-3">
+                <ScrollReveal className="container mx-auto px-4 sm:px-6 text-center space-y-3">
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-slate-50">Termos de Uso</h1>
                     <p className="text-base sm:text-lg text-gray-600 dark:text-slate-200 max-w-3xl mx-auto">
                         Leia sobre direitos, responsabilidades e políticas de uso ao navegar pelos materiais da MC Contabilidade.
                     </p>
-                </div>
+                </ScrollReveal>
             </header>
             <main className="py-16 sm:py-24">
-                <div className="container mx-auto px-4 sm:px-6 max-w-4xl prose lg:prose-lg dark:prose-invert">
+                <ScrollReveal className="container mx-auto px-4 sm:px-6 max-w-4xl prose lg:prose-lg dark:prose-invert">
                     <p><strong>Última atualização:</strong> {new Date().toLocaleDateString('pt-BR')}</p>
 
                     <h2>1. Aceitação dos Termos</h2>
@@ -45,7 +46,7 @@ const TermsPage: React.FC = () => {
 
                     <h2>8. Contato</h2>
                     <p>Se você tiver alguma dúvida sobre estes Termos, entre em contato conosco através do e-mail: contato@mccontabilidade.com.br.</p>
-                </div>
+                </ScrollReveal>
             </main>
         </div>
     );

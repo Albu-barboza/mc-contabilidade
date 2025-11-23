@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import JsonLd from '../components/common/JsonLd';
 import Seo from '../components/common/Seo';
+import ScrollReveal from '../components/common/ScrollReveal';
 
 const faqs = {
     "Geral": [
@@ -85,23 +86,23 @@ const FaqPage: React.FC = () => {
             <JsonLd schema={faqPageSchema} />
             <div className="">
                 <section className="pt-28 pb-16 sm:pt-32 sm:pb-20">
-                    <div className="container mx-auto px-4 sm:px-6 text-center space-y-4">
+                    <ScrollReveal className="container mx-auto px-4 sm:px-6 text-center space-y-4">
                         <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100">Perguntas Frequentes</h1>
                         <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                             Tire suas principais dúvidas sobre nossos serviços e o universo da contabilidade para empreendedores.
                         </p>
-                    </div>
+                    </ScrollReveal>
                 </section>
 
                 <section className="py-16 sm:py-24">
                     <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
-                        {Object.entries(faqs).map(([category, questions]) => (
-                            <div key={category} className="mb-12">
+                        {Object.entries(faqs).map(([category, questions], index) => (
+                            <ScrollReveal key={category} delay={index * 100} className="mb-12">
                                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 pb-2 border-b-2 border-[#3B6EA5] dark:border-[#C6D7FF]">{category}</h2>
-                                {questions.map((faq, index) => (
-                                    <FaqItem key={index} q={faq.q} a={faq.a} />
+                                {questions.map((faq, idx) => (
+                                    <FaqItem key={idx} q={faq.q} a={faq.a} />
                                 ))}
-                            </div>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </section>

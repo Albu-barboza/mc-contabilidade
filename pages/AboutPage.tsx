@@ -1,7 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React from 'react';
 import JsonLd from '../components/common/JsonLd';
 import OptimizedImage from '../components/common/OptimizedImage';
 import Seo from '../components/common/Seo';
+import ScrollReveal from '../components/common/ScrollReveal';
 
 const teamMembers = [
   { name: 'Carlos Ferreira', role: 'Sócio-Fundador, Contador Chefe', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
@@ -9,38 +10,6 @@ const teamMembers = [
   { name: 'Ricardo Almeida', role: 'Especialista em PME', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
   { name: 'Beatriz Lima', role: 'Consultora de Abertura de Empresas', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
 ];
-
-const FadeInOnScroll: React.FC<{ delay?: number; className?: string; children: React.ReactNode }> = ({ delay = 0, className = '', children }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.2 }
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  const delayClass = delay ? `delay-[${delay}ms]` : '';
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} ${delayClass} ${className}`}
-    >
-      {children}
-    </div>
-  );
-};
 
 const AboutPage: React.FC = () => {
   const aboutPageSchema = {
@@ -76,12 +45,6 @@ const AboutPage: React.FC = () => {
     }
   };
 
-  const missionCards = [
-    { icon: '🎯', title: 'Nossa Missão', text: 'Empoderar empreendedores com soluções contábeis inteligentes e transparentes, garantindo conformidade e maximizando a lucratividade.' },
-    { icon: '🚀', title: 'Nossa Visão', text: 'Ser o escritório de contabilidade referência em inovação e atendimento ao cliente para pequenas e médias empresas no Brasil.' },
-    { icon: '🤝', title: 'Nossos Valores', text: 'Ética, proximidade, excelência, inovação e compromisso com o resultado do cliente são os pilares do nosso trabalho.' }
-  ];
-
   const description =
     'Conheça a história, missão e o time da MC Contabilidade. Transparência, tecnologia e proximidade com MEIs e PMEs em todo o Brasil.';
 
@@ -92,20 +55,20 @@ const AboutPage: React.FC = () => {
       <div className="">
         {/* HERO */}
         <section className="pt-28 pb-16 sm:pt-32 sm:pb-20">
-          <FadeInOnScroll className="container mx-auto px-4 sm:px-6 text-center space-y-4">
+          <ScrollReveal className="container mx-auto px-4 sm:px-6 text-center space-y-4">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100">
               Transformando números em <span className="text-gradient">oportunidades</span>.
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Somos mais que contadores. Somos parceiros estratégicos dedicados a simplificar a complexidade financeira e a impulsionar o crescimento do seu negócio.
             </p>
-          </FadeInOnScroll>
+          </ScrollReveal>
         </section>
 
         {/* MISSÃO / VISÃO / VALORES */}
         <section className="py-16 sm:py-24">
           <div className="container mx-auto px-4 sm:px-6">
-            <FadeInOnScroll className="max-w-3xl mx-auto text-center mb-14 space-y-3">
+            <ScrollReveal className="max-w-3xl mx-auto text-center mb-14 space-y-3">
               <p className="text-xs uppercase tracking-[0.35em] text-[#3B6EA5] dark:text-[#C6D7FF]">
                 Essência MC Contabilidade
               </p>
@@ -128,23 +91,23 @@ const AboutPage: React.FC = () => {
                   baseados na confiança e nos resultados.
                 </p>
               </div>
-            </FadeInOnScroll>
+            </ScrollReveal>
 
-            <FadeInOnScroll delay={150} className="rounded-2xl overflow-hidden shadow-2xl">
+            <ScrollReveal delay={150} className="rounded-2xl overflow-hidden shadow-2xl">
               <OptimizedImage
                 src="/images/sobrenos.webp"
                 webpSrc="/images/sobrenos.webp"
                 alt="Escritório da MC Contabilidade"
                 className="w-full h-full object-cover"
               />
-            </FadeInOnScroll>
+            </ScrollReveal>
           </div>
         </section>
 
         {/* EQUIPE */}
         <section className="py-16 sm:py-24">
           <div className="container mx-auto px-4 sm:px-6">
-            <FadeInOnScroll className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+            <ScrollReveal className="text-center max-w-3xl mx-auto mb-16 space-y-3">
               <p className="text-sm uppercase tracking-[0.4em] text-[#3B6EA5] dark:text-[#C6D7FF]">
                 Equipe
               </p>
@@ -154,11 +117,11 @@ const AboutPage: React.FC = () => {
               <p className="text-lg text-gray-600 dark:text-gray-300">
                 Uma equipe de profissionais apaixonados e altamente qualificados, pronta para atender sua empresa.
               </p>
-            </FadeInOnScroll>
+            </ScrollReveal>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {teamMembers.map((member, index) => (
-                <FadeInOnScroll
+                <ScrollReveal
                   key={member.name}
                   delay={index * 120}
                   className="text-center group"
@@ -177,7 +140,7 @@ const AboutPage: React.FC = () => {
                     {member.name}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{member.role}</p>
-                </FadeInOnScroll>
+                </ScrollReveal>
               ))}
             </div>
           </div>

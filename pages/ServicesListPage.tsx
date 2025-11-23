@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Seo from '../components/common/Seo';
+import ScrollReveal from '../components/common/ScrollReveal';
 
 const services = [
     {
@@ -42,14 +43,14 @@ const ServicesListPage: React.FC = () => {
         <div className="">
             <Seo title="Serviços contábeis especializados" description={description} />
             <section className="pt-28 pb-16 sm:pt-32 sm:pb-20">
-                <div className="container mx-auto px-4 sm:px-6 text-center space-y-4">
+                <ScrollReveal className="container mx-auto px-4 sm:px-6 text-center space-y-4">
                     <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100">
                         Nossos <span className="text-gradient">Serviços</span>
                     </h1>
                     <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                         Soluções contábeis completas e personalizadas para cada fase do seu negócio. Explore nossos serviços e descubra como podemos ajudar sua empresa a prosperar.
                     </p>
-                </div>
+                </ScrollReveal>
             </section>
 
             <section className="py-16 sm:py-24">
@@ -57,46 +58,47 @@ const ServicesListPage: React.FC = () => {
                     <h2 className="sr-only">Lista completa de serviços disponíveis</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                         {services.map((service, index) => (
-                            <Link
-                                to={service.link}
-                                key={index}
-                                className={`backdrop-blur-sm p-6 sm:p-8 rounded-2xl border flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group ${index === 0
-                                    ? 'bg-[#1F3A5F]/90 border-white/20 hover:border-white/40'
-                                    : 'bg-white/60 dark:bg-slate-900/70 border-gray-200 dark:border-white/20 hover:border-gray-300 dark:hover:border-white/40'
-                                    }`}
-                            >
-                                <div
-                                    className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl mb-5 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 ${index === 0
-                                        ? 'bg-white/10 text-white'
-                                        : 'bg-[#E8EDF4] dark:bg-white/10 text-[#1F3A5F] dark:text-white'
+                            <ScrollReveal key={index} delay={index * 100} direction="up" className="h-full">
+                                <Link
+                                    to={service.link}
+                                    className={`backdrop-blur-sm p-6 sm:p-8 rounded-2xl border flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group h-full ${index === 0
+                                        ? 'bg-[#1F3A5F]/90 border-white/20 hover:border-white/40'
+                                        : 'bg-white/60 dark:bg-slate-900/70 border-gray-200 dark:border-white/20 hover:border-gray-300 dark:hover:border-white/40'
                                         }`}
                                 >
-                                    {service.icon}
-                                </div>
-                                <h3
-                                    className={`text-xl sm:text-2xl font-bold mb-3 leading-tight ${index === 0 ? 'text-white' : 'text-slate-900 dark:text-white'
-                                        }`}
-                                >
-                                    {service.title}
-                                </h3>
-                                <p
-                                    className={`mb-5 flex-grow text-sm sm:text-base ${index === 0 ? 'text-gray-200' : 'text-gray-600 dark:text-gray-300'
-                                        }`}
-                                >
-                                    {service.description}
-                                </p>
-                                <span
-                                    className={`font-semibold self-start ${index === 0
-                                        ? 'text-white group-hover:text-white/80'
-                                        : 'text-[#1F3A5F] dark:text-[#C6D7FF] group-hover:text-[#2E4F7E] dark:group-hover:text-white'
-                                        }`}
-                                >
-                                    Ver detalhes{' '}
-                                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                                        &rarr;
+                                    <div
+                                        className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl mb-5 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 ${index === 0
+                                            ? 'bg-white/10 text-white'
+                                            : 'bg-[#E8EDF4] dark:bg-white/10 text-[#1F3A5F] dark:text-white'
+                                            }`}
+                                    >
+                                        {service.icon}
+                                    </div>
+                                    <h3
+                                        className={`text-xl sm:text-2xl font-bold mb-3 leading-tight ${index === 0 ? 'text-white' : 'text-slate-900 dark:text-white'
+                                            }`}
+                                    >
+                                        {service.title}
+                                    </h3>
+                                    <p
+                                        className={`mb-5 flex-grow text-sm sm:text-base ${index === 0 ? 'text-gray-200' : 'text-gray-600 dark:text-gray-300'
+                                            }`}
+                                    >
+                                        {service.description}
+                                    </p>
+                                    <span
+                                        className={`font-semibold self-start ${index === 0
+                                            ? 'text-white group-hover:text-white/80'
+                                            : 'text-[#1F3A5F] dark:text-[#C6D7FF] group-hover:text-[#2E4F7E] dark:group-hover:text-white'
+                                            }`}
+                                    >
+                                        Ver detalhes{' '}
+                                        <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                                            &rarr;
+                                        </span>
                                     </span>
-                                </span>
-                            </Link>
+                                </Link>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </div>
