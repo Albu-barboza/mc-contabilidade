@@ -4,5 +4,5 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/mc-contabilidade/', // <<< NOME EXATO DO REPO AQUI
+  base: '/mc-contabilidade/', // <<< MESMO NOME DO REPO
 });
