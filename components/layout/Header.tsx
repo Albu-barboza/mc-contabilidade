@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { getAssetUrl } from '../../utils/assets';
 import ThemeToggle from '../common/ThemeToggle';
 import { useContactForm } from '../../context/ContactFormContext';
 
@@ -94,12 +95,12 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
           : 'text-gray-800 dark:text-white'
           }`}>
           <img
-            src={isCareersPage && !isScrolled ? `${import.meta.env.BASE_URL}images/logo 1 (2).png` : `${import.meta.env.BASE_URL}images/logo.png`}
+            src={isCareersPage && !isScrolled ? getAssetUrl("/images/logo 1 (2).png") : getAssetUrl("/images/logo.png")}
             alt="MC Contabilidade Logo"
             className="h-16 w-auto dark:hidden"
           />
           <img
-            src={`${import.meta.env.BASE_URL}images/logo 1 (2).png`}
+            src={getAssetUrl("/images/logo 1 (2).png")}
             alt="MC Contabilidade Logo"
             className="h-16 w-auto hidden dark:inline-block"
           />
@@ -196,7 +197,7 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
         >
           <div className="flex items-center justify-between px-6 pt-8 pb-6 border-b border-white/10">
             <Link to="/" className="flex items-center gap-2 text-xl font-semibold" onClick={closeMenu}>
-              <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="MC Contabilidade Logo" className="h-12" />
+              <img src={getAssetUrl("/images/logo.png")} alt="MC Contabilidade Logo" className="h-12" />
               <span>MC Contabilidade</span>
             </Link>
             <button

@@ -1,3 +1,5 @@
+import { getAssetUrl } from '../utils/assets';
+
 export interface OptimizedImagePaths {
     src: string;
     webp: string;
@@ -19,8 +21,8 @@ export const testimonials: Testimonial[] = [
         author: "Maria Silva",
         role: "CEO, TechFlow Solutions",
         image: {
-            src: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
-            webp: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
+            src: getAssetUrl("/images/testimonials/icone.webp"),
+            webp: getAssetUrl("/images/testimonials/icone.webp"),
             alt: "Foto de Maria Silva"
         }
     },
@@ -30,8 +32,8 @@ export const testimonials: Testimonial[] = [
         author: "João Oliveira",
         role: "Fundador, EcoMarket",
         image: {
-            src: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
-            webp: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
+            src: getAssetUrl("/images/testimonials/icone.webp"),
+            webp: getAssetUrl("/images/testimonials/icone.webp"),
             alt: "Foto de João Oliveira"
         }
     },
@@ -41,8 +43,8 @@ export const testimonials: Testimonial[] = [
         author: "Ana Costa",
         role: "MEI, Designer Freelancer",
         image: {
-            src: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
-            webp: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
+            src: getAssetUrl("/images/testimonials/icone.webp"),
+            webp: getAssetUrl("/images/testimonials/icone.webp"),
             alt: "Foto de Ana Costa"
         }
     },
@@ -52,8 +54,8 @@ export const testimonials: Testimonial[] = [
         author: "Pedro Martins",
         role: "Diretor, Construtora Aliança",
         image: {
-            src: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
-            webp: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
+            src: getAssetUrl("/images/testimonials/icone.webp"),
+            webp: getAssetUrl("/images/testimonials/icone.webp"),
             alt: "Foto de Pedro Martins"
         }
     },
@@ -63,8 +65,8 @@ export const testimonials: Testimonial[] = [
         author: "Juliana Santos",
         role: "Sócia, Restaurante Sabor & Arte",
         image: {
-            src: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
-            webp: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
+            src: getAssetUrl("/images/testimonials/icone.webp"),
+            webp: getAssetUrl("/images/testimonials/icone.webp"),
             alt: "Foto de Juliana Santos"
         }
     },
@@ -74,8 +76,8 @@ export const testimonials: Testimonial[] = [
         author: "Fernando Gomes",
         role: "CFO, Logística Veloz",
         image: {
-            src: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
-            webp: `${import.meta.env.BASE_URL}images/testimonials/icone.webp`,
+            src: getAssetUrl("/images/testimonials/icone.webp"),
+            webp: getAssetUrl("/images/testimonials/icone.webp"),
             alt: "Foto de Fernando Gomes"
         }
     }

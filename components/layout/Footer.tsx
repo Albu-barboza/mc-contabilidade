@@ -79,7 +79,7 @@ const Footer: React.FC = () => {
                         >
                             <div className="h-16 w-auto">
                                 <OptimizedImage
-                                    src={`${import.meta.env.BASE_URL}images/logo 1 (2).png`}
+                                    src="/images/logo 1 (2).png"
                                     alt="MC Contabilidade Logo"
                                     className="h-full w-auto object-contain"
                                     width={200}

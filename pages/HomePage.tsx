@@ -512,8 +512,8 @@ const HomePage: React.FC = () => {
       <section id="home" className="relative min-h-screen md:min-h-[90vh] flex items-center overflow-hidden pt-28 pb-16 dark:bg-slate-900">
         <div className="absolute inset-0 z-0">
           <OptimizedImage
-            src={`${import.meta.env.BASE_URL}images/background.webp`}
-            webpSrc={`${import.meta.env.BASE_URL}images/background.webp`}
+            src="/images/background.webp"
+            webpSrc="/images/background.webp"
             alt="Reunião de negócios em um escritório moderno"
             className="w-full h-full min-h-[620px] md:min-h-0 object-cover animate-kenBurns"
             lazy={false}

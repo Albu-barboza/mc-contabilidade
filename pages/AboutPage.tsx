@@ -4,10 +4,10 @@ import OptimizedImage from '../components/common/OptimizedImage';
 import Seo from '../components/common/Seo';
 
 const teamMembers = [
-  { name: 'Carlos Ferreira', role: 'Sócio-Fundador, Contador Chefe', image: { src: `${import.meta.env.BASE_URL}images/team/icone.webp`, webp: `${import.meta.env.BASE_URL}images/team/icone.webp` } },
-  { name: 'Mariana Costa', role: 'Gerente Fiscal e Tributário', image: { src: `${import.meta.env.BASE_URL}images/team/icone.webp`, webp: `${import.meta.env.BASE_URL}images/team/icone.webp` } },
-  { name: 'Ricardo Almeida', role: 'Especialista em PME', image: { src: `${import.meta.env.BASE_URL}images/team/icone.webp`, webp: `${import.meta.env.BASE_URL}images/team/icone.webp` } },
-  { name: 'Beatriz Lima', role: 'Consultora de Abertura de Empresas', image: { src: `${import.meta.env.BASE_URL}images/team/icone.webp`, webp: `${import.meta.env.BASE_URL}images/team/icone.webp` } },
+  { name: 'Carlos Ferreira', role: 'Sócio-Fundador, Contador Chefe', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
+  { name: 'Mariana Costa', role: 'Gerente Fiscal e Tributário', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
+  { name: 'Ricardo Almeida', role: 'Especialista em PME', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
+  { name: 'Beatriz Lima', role: 'Consultora de Abertura de Empresas', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
 ];
 
 const FadeInOnScroll: React.FC<{ delay?: number; className?: string; children: React.ReactNode }> = ({ delay = 0, className = '', children }) => {
@@ -132,8 +132,8 @@ const AboutPage: React.FC = () => {
 
             <FadeInOnScroll delay={150} className="rounded-2xl overflow-hidden shadow-2xl">
               <OptimizedImage
-                src={`${import.meta.env.BASE_URL}images/sobrenos.webp`}
-                webpSrc={`${import.meta.env.BASE_URL}images/sobrenos.webp`}
+                src="/images/sobrenos.webp"
+                webpSrc="/images/sobrenos.webp"
                 alt="Escritório da MC Contabilidade"
                 className="w-full h-full object-cover"
               />

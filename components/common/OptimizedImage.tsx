@@ -1,4 +1,5 @@
 import React from 'react';
+import { getAssetUrl } from '../../utils/assets';
 
 interface OptimizedImageProps {
   src: string;
@@ -21,12 +22,15 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   lazy = true,
   fetchPriority = 'auto',
 }) => {
+  const finalSrc = getAssetUrl(src);
+  const finalWebpSrc = webpSrc ? getAssetUrl(webpSrc) : undefined;
+
   return (
     <picture>
-      {webpSrc && <source srcSet={webpSrc} type="image/webp" />}
-      <source srcSet={src} type="image/jpeg" />
+      {finalWebpSrc && <source srcSet={finalWebpSrc} type="image/webp" />}
+      <source srcSet={finalSrc} type="image/jpeg" />
       <img
-        src={src}
+        src={finalSrc}
         alt={alt}
         className={className}
         width={width}
