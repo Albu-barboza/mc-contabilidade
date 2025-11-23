@@ -193,7 +193,7 @@ const CareersPage: React.FC = () => {
                 {/* Hero Section */}
                 <section className="relative overflow-hidden pt-28 pb-16 sm:pt-32 sm:pb-24">
                     <div className="absolute inset-0">
-                        <img src="/images/equipe.webp" alt="Equipe MC Contabilidade" className="w-full h-full object-cover animate-kenBurns" />
+                        <img src={`${import.meta.env.BASE_URL}images/equipe.webp`} alt="Equipe MC Contabilidade" className="w-full h-full object-cover animate-kenBurns" />
                         <div className="absolute inset-0 bg-slate-300/60 dark:bg-slate-900/75" />
                         <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-slate-400/20" />
                         <div className="absolute -right-12 top-10 w-56 h-56 bg-white/15 blur-3xl" />
@@ -451,7 +451,7 @@ const CareersPage: React.FC = () => {
                 {/* Talentos – permanece com o vidro que você já curtiu */}
                 <section id="talentos" className="relative py-20 overflow-hidden">
                     <div className="absolute inset-0">
-                        <img src="/images/analise.webp" alt="Análise de dados" className="w-full h-full object-cover animate-kenBurns" />
+                        <img src={`${import.meta.env.BASE_URL}images/analise.webp`} alt="Análise de dados" className="w-full h-full object-cover animate-kenBurns" />
                         <div className="absolute inset-0 bg-slate-900/50 dark:bg-slate-950/60" />
                     </div>
                     <div className="absolute -right-14 top-6 w-64 h-64 bg-[#A5B4FC]/20 blur-3xl" />

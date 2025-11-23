@@ -4,5 +4,8 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/mc-contabilidade/', // <<< MESMO NOME DO REPO
+  base: '/mc-contabilidade/',
+  build: {
+    outDir: 'docs',
+  },
 });

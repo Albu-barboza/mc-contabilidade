@@ -37,7 +37,7 @@ const ScrollToTop = () => {
 const App: React.FC = () => {
   return (
     <ContactFormProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/mc-contabilidade">
         <ScrollToTop />
         <GoogleAnalytics />
         <div className="text-gray-700 font-sans dark:text-gray-100 relative min-h-screen">

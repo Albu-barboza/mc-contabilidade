@@ -8,7 +8,7 @@ interface SeoProps {
 }
 
 const SITE_NAME = 'MC Contabilidade';
-const DEFAULT_IMAGE = '/images/background.webp';
+const DEFAULT_IMAGE = `${import.meta.env.BASE_URL}images/background.webp`;
 
 const upsertMetaTag = (attribute: 'name' | 'property', value: string, content: string) => {
   if (typeof document === 'undefined') return;

@@ -23,8 +23,8 @@ const Hero: React.FC<HeroProps> = ({ contactEndpoint, onOpenContact }) => {
       {/* BG */}
       <div className="absolute inset-0 z-0">
         <OptimizedImage
-          src="/images/background.webp"
-          webpSrc="/images/background.webp"
+          src={`${import.meta.env.BASE_URL}images/background.webp`}
+          webpSrc={`${import.meta.env.BASE_URL}images/background.webp`}
           alt="Reunião de negócios em um escritório moderno"
           className="w-full h-full min-h-[620px] md:min-h-0 object-cover animate-kenBurns"
           lazy={false}
@@ -199,11 +199,10 @@ const HeroQuickForm: React.FC<{ endpoint?: string; onOpenContact: (trigger?: HTM
               value={values.nome}
               onChange={handleInputChange}
               onBlur={() => handleBlur('nome')}
-              className={`mt-1 w-full rounded-xl border px-4 py-3.5 text-base text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 pr-10 dark:bg-slate-950 ${
-                errors.nome && touched.nome
+              className={`mt-1 w-full rounded-xl border px-4 py-3.5 text-base text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 pr-10 dark:bg-slate-950 ${errors.nome && touched.nome
                   ? 'border-red-400 ring-red-200 dark:border-red-400'
                   : 'border-gray-200 focus:ring-[#3B6EA5] dark:border-white/20'
-              } ${!errors.nome && touched.nome ? 'border-green-400 ring-green-100' : ''}`}
+                } ${!errors.nome && touched.nome ? 'border-green-400 ring-green-100' : ''}`}
               placeholder="Como devemos te chamar?"
             />
             {touched.nome && (errors.nome ? <ErrorIcon /> : <SuccessIcon />)}
@@ -223,11 +222,10 @@ const HeroQuickForm: React.FC<{ endpoint?: string; onOpenContact: (trigger?: HTM
               value={values.telefone}
               onChange={handleInputChange}
               onBlur={() => handleBlur('telefone')}
-              className={`mt-1 w-full rounded-xl border px-4 py-3.5 text-base text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 pr-10 dark:bg-slate-950 ${
-                errors.telefone && touched.telefone
+              className={`mt-1 w-full rounded-xl border px-4 py-3.5 text-base text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 pr-10 dark:bg-slate-950 ${errors.telefone && touched.telefone
                   ? 'border-red-400 ring-red-200 dark:border-red-400'
                   : 'border-gray-200 focus:ring-[#3B6EA5] dark:border-white/20'
-              } ${!errors.telefone && touched.telefone ? 'border-green-400 ring-green-100' : ''}`}
+                } ${!errors.telefone && touched.telefone ? 'border-green-400 ring-green-100' : ''}`}
               placeholder="(73) 9 0000-0000"
             />
             {touched.telefone && (errors.telefone ? <ErrorIcon /> : <SuccessIcon />)}

@@ -94,12 +94,12 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
           : 'text-gray-800 dark:text-white'
           }`}>
           <img
-            src={isCareersPage && !isScrolled ? "/images/logo 1 (2).png" : "/images/logo.png"}
+            src={isCareersPage && !isScrolled ? `${import.meta.env.BASE_URL}images/logo 1 (2).png` : `${import.meta.env.BASE_URL}images/logo.png`}
             alt="MC Contabilidade Logo"
             className="h-16 w-auto dark:hidden"
           />
           <img
-            src="/images/logo 1 (2).png"
+            src={`${import.meta.env.BASE_URL}images/logo 1 (2).png`}
             alt="MC Contabilidade Logo"
             className="h-16 w-auto hidden dark:inline-block"
           />
@@ -196,7 +196,7 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
         >
           <div className="flex items-center justify-between px-6 pt-8 pb-6 border-b border-white/10">
             <Link to="/" className="flex items-center gap-2 text-xl font-semibold" onClick={closeMenu}>
-              <img src="/images/logo.png" alt="MC Contabilidade Logo" className="h-12" />
+              <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="MC Contabilidade Logo" className="h-12" />
               <span>MC Contabilidade</span>
             </Link>
             <button
