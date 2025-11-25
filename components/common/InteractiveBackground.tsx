@@ -18,7 +18,7 @@ const InteractiveBackground: React.FC = () => {
         const symbols = ['$', '%', '∑', '↑', '●', '●', '●'];
         const particleCount = 60; // Slightly fewer for performance with glow
         const connectionDistance = 160;
-        const mouseInfluenceRadius = 250;
+        const mouseInfluenceRadius = 150;
 
         let isDarkMode = document.documentElement.classList.contains('dark');
 
@@ -162,7 +162,7 @@ const InteractiveBackground: React.FC = () => {
 
             // Mouse "Flashlight" effect - subtle radial gradient at mouse position
             if (mouse.x > 0) {
-                const gradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 300);
+                const gradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 120);
                 gradient.addColorStop(0, isDarkMode ? 'rgba(56, 189, 248, 0.15)' : 'rgba(31, 58, 95, 0.08)');
                 gradient.addColorStop(1, 'rgba(0,0,0,0)');
                 ctx.fillStyle = gradient;

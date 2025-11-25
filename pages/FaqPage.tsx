@@ -42,7 +42,7 @@ const FaqItem = ({ q, a }: { q: string; a: string }) => {
             >
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{q}</h3>
                 <svg
-                    className={`w-6 h-6 text-[#3B6EA5] dark:text-[#C6D7FF] transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`}
+                    className={`w-6 h-6 text-secondary dark:text-[#C6D7FF] transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -56,7 +56,7 @@ const FaqItem = ({ q, a }: { q: string; a: string }) => {
                 id={answerId}
                 className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 mt-4' : 'max-h-0'}`}
             >
-                <p className="text-gray-600 dark:text-gray-300 pr-0 sm:pr-8">{a}</p>
+                <p className="text-gray-700 dark:text-gray-300 pr-0 sm:pr-8">{a}</p>
             </div>
         </div>
     );
@@ -98,7 +98,7 @@ const FaqPage: React.FC = () => {
                     <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
                         {Object.entries(faqs).map(([category, questions], index) => (
                             <ScrollReveal key={category} delay={index * 100} className="mb-12">
-                                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 pb-2 border-b-2 border-[#3B6EA5] dark:border-[#C6D7FF]">{category}</h2>
+                                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 pb-2 border-b-2 border-secondary dark:border-[#C6D7FF]">{category}</h2>
                                 {questions.map((faq, idx) => (
                                     <FaqItem key={idx} q={faq.q} a={faq.a} />
                                 ))}

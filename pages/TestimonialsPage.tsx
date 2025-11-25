@@ -3,6 +3,7 @@ import TestimonialCard from '../components/common/TestimonialCard';
 import { testimonials } from '../data/testimonials';
 import Seo from '../components/common/Seo';
 import { useContactForm } from '../context/ContactFormContext';
+import Button from '../components/common/Button';
 
 const TestimonialsPage: React.FC = () => {
   const { openForm } = useContactForm();
@@ -48,12 +49,14 @@ const TestimonialsPage: React.FC = () => {
             <p className="text-base sm:text-lg text-gray-600 dark:text-slate-200">
               Nossa equipe está pronta para te ajudar a crescer com segurança e eficiência. Fale conosco e solicite uma proposta sem compromisso.
             </p>
-            <button
+            <Button
               onClick={openForm}
-              className="inline-flex w-full sm:w-auto items-center justify-center px-10 py-4 bg-gradient-to-r from-[#1F3A5F] to-[#2E4F7E] text-white rounded-2xl font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              variant="primary"
+              size="lg"
+              className="w-full sm:w-auto px-10 py-4 text-lg"
             >
               Fale com um Especialista
-            </button>
+            </Button>
           </div>
         </section>
       </div>

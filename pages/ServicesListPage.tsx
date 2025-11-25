@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Seo from '../components/common/Seo';
 import ScrollReveal from '../components/common/ScrollReveal';
+import Card from '../components/common/Card';
 
 const services = [
     {
@@ -59,45 +60,59 @@ const ServicesListPage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                         {services.map((service, index) => (
                             <ScrollReveal key={index} delay={index * 100} direction="up" className="h-full">
-                                <Link
-                                    to={service.link}
-                                    className={`backdrop-blur-sm p-6 sm:p-8 rounded-2xl border flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group h-full ${index === 0
-                                        ? 'bg-[#1F3A5F]/90 border-white/20 hover:border-white/40'
-                                        : 'bg-white/60 dark:bg-slate-900/70 border-gray-200 dark:border-white/20 hover:border-gray-300 dark:hover:border-white/40'
-                                        }`}
-                                >
-                                    <div
-                                        className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl mb-5 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 ${index === 0
-                                            ? 'bg-white/10 text-white'
-                                            : 'bg-[#E8EDF4] dark:bg-white/10 text-[#1F3A5F] dark:text-white'
-                                            }`}
-                                    >
-                                        {service.icon}
+                                {index === 0 ? (
+                                    <div className="h-full">
+                                        <Card
+                                            variant="default"
+                                            className="h-full flex flex-col bg-primary/90 text-white border-white/20 hover:border-white/40"
+                                            hoverEffect={true}
+                                        >
+                                            <Link to={service.link} className="flex flex-col h-full">
+                                                <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl mb-5 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-white/10 text-white">
+                                                    {service.icon}
+                                                </div>
+                                                <h3 className="text-xl sm:text-2xl font-bold mb-3 leading-tight text-white">
+                                                    {service.title}
+                                                </h3>
+                                                <p className="mb-5 flex-grow text-sm sm:text-base text-gray-200">
+                                                    {service.description}
+                                                </p>
+                                                <span className="font-semibold self-start text-white group-hover:text-white/80">
+                                                    Ver detalhes{' '}
+                                                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                                                        &rarr;
+                                                    </span>
+                                                </span>
+                                            </Link>
+                                        </Card>
                                     </div>
-                                    <h3
-                                        className={`text-xl sm:text-2xl font-bold mb-3 leading-tight ${index === 0 ? 'text-white' : 'text-slate-900 dark:text-white'
-                                            }`}
-                                    >
-                                        {service.title}
-                                    </h3>
-                                    <p
-                                        className={`mb-5 flex-grow text-sm sm:text-base ${index === 0 ? 'text-gray-200' : 'text-gray-600 dark:text-gray-300'
-                                            }`}
-                                    >
-                                        {service.description}
-                                    </p>
-                                    <span
-                                        className={`font-semibold self-start ${index === 0
-                                            ? 'text-white group-hover:text-white/80'
-                                            : 'text-[#1F3A5F] dark:text-[#C6D7FF] group-hover:text-[#2E4F7E] dark:group-hover:text-white'
-                                            }`}
-                                    >
-                                        Ver detalhes{' '}
-                                        <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-                                            &rarr;
-                                        </span>
-                                    </span>
-                                </Link>
+                                ) : (
+                                    <div className="h-full">
+                                        <Card
+                                            variant="glass"
+                                            className="h-full flex flex-col"
+                                            hoverEffect={true}
+                                        >
+                                            <Link to={service.link} className="flex flex-col h-full">
+                                                <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl mb-5 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-accent dark:bg-white/10 text-primary dark:text-white">
+                                                    {service.icon}
+                                                </div>
+                                                <h3 className="text-xl sm:text-2xl font-bold mb-3 leading-tight text-slate-900 dark:text-white">
+                                                    {service.title}
+                                                </h3>
+                                                <p className="mb-5 flex-grow text-sm sm:text-base text-gray-600 dark:text-gray-300">
+                                                    {service.description}
+                                                </p>
+                                                <span className="font-semibold self-start text-primary dark:text-[#C6D7FF] group-hover:text-secondary dark:group-hover:text-white">
+                                                    Ver detalhes{' '}
+                                                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                                                        &rarr;
+                                                    </span>
+                                                </span>
+                                            </Link>
+                                        </Card>
+                                    </div>
+                                )}
                             </ScrollReveal>
                         ))}
                     </div>

@@ -3,6 +3,7 @@ import JsonLd from '../components/common/JsonLd';
 import OptimizedImage from '../components/common/OptimizedImage';
 import Seo from '../components/common/Seo';
 import ScrollReveal from '../components/common/ScrollReveal';
+import Card from '../components/common/Card';
 
 const teamMembers = [
   { name: 'Carlos Ferreira', role: 'Sócio-Fundador, Contador Chefe', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
@@ -69,10 +70,10 @@ const AboutPage: React.FC = () => {
         <section className="py-16 sm:py-24">
           <div className="container mx-auto px-4 sm:px-6">
             <ScrollReveal className="max-w-3xl mx-auto text-center mb-14 space-y-3">
-              <p className="text-xs uppercase tracking-[0.35em] text-[#3B6EA5] dark:text-[#C6D7FF]">
+              <p className="text-xs uppercase tracking-[0.35em] text-secondary dark:text-[#C6D7FF]">
                 Essência MC Contabilidade
               </p>
-              <p className="text-sm uppercase tracking-[0.4em] text-[#3B6EA5] dark:text-[#C6D7FF] mb-3">
+              <p className="text-sm uppercase tracking-[0.4em] text-secondary dark:text-[#C6D7FF] mb-3">
                 Nossa história
               </p>
               <h2 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 mb-6">
@@ -108,7 +109,7 @@ const AboutPage: React.FC = () => {
         <section className="py-16 sm:py-24">
           <div className="container mx-auto px-4 sm:px-6">
             <ScrollReveal className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-              <p className="text-sm uppercase tracking-[0.4em] text-[#3B6EA5] dark:text-[#C6D7FF]">
+              <p className="text-sm uppercase tracking-[0.4em] text-secondary dark:text-[#C6D7FF]">
                 Equipe
               </p>
               <h2 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">
@@ -124,22 +125,24 @@ const AboutPage: React.FC = () => {
                 <ScrollReveal
                   key={member.name}
                   delay={index * 120}
-                  className="text-center group"
+                  className="h-full"
                 >
-                  <div className="relative w-full h-72 rounded-2xl overflow-hidden mb-4 shadow-lg">
-                    <OptimizedImage
-                      src={member.image.src}
-                      webpSrc={member.image.webp}
-                      alt={`Foto de ${member.name}`}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      width={400}
-                      height={400}
-                    />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">
-                    {member.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{member.role}</p>
+                  <Card variant="glass" className="h-full text-center group" hoverEffect={true}>
+                    <div className="relative w-full h-72 rounded-2xl overflow-hidden mb-4 shadow-lg">
+                      <OptimizedImage
+                        src={member.image.src}
+                        webpSrc={member.image.webp}
+                        alt={`Foto de ${member.name}`}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        width={400}
+                        height={400}
+                      />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">
+                      {member.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{member.role}</p>
+                  </Card>
                 </ScrollReveal>
               ))}
             </div>

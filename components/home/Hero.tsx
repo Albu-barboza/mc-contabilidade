@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
 import OptimizedImage from '../common/OptimizedImage';
-import { heroBenefits, proofBadges, statHighlights, type HeroBenefit, type StatHighlightItem } from '../../data/home';
-import useContactForm from '../../hooks/useContactForm';
+import { heroBenefits, proofBadges, statHighlights } from '../../data/home';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
+import HeroQuickForm from './HeroQuickForm';
+import StatHighlight from '../common/StatHighlight';
+import Button from '../common/Button';
 
 interface HeroProps {
   contactEndpoint?: string;
@@ -80,19 +82,14 @@ const Hero: React.FC<HeroProps> = ({ contactEndpoint, onOpenContact }) => {
               className="scroll-reveal mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3"
               style={{ transitionDelay: '220ms' }}
             >
-              <button
-                type="button"
-                onClick={(event) => onOpenContact(event.currentTarget)}
-                className="inline-flex w-full sm:w-auto items-center justify-center rounded-2xl bg-gradient-to-r from-[#1F3A5F] to-[#2E4F7E] px-6 py-3 text-base font-semibold text-white shadow-lg shadow-[#1F3A5F]/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F3A5F]/70"
-              >
-                Falar com um especialista
-              </button>
-              <a
+              <Button
+                as="a"
                 href="#servicos"
-                className="inline-flex w-full sm:w-auto items-center justify-center rounded-2xl border border-[#1F3A5F]/50 px-6 py-3 text-base font-semibold text-[#1F3A5F] dark:text-slate-100 bg-white/70 dark:bg-slate-900/60 backdrop-blur hover:bg-white"
+                variant="outline"
+                className="w-full sm:w-auto bg-white/70 dark:bg-slate-900/60 backdrop-blur hover:bg-white"
               >
                 Ver serviços
-              </a>
+              </Button>
             </div>
 
             {/* Benefícios – subindo um pouco */}
@@ -133,7 +130,7 @@ const Hero: React.FC<HeroProps> = ({ contactEndpoint, onOpenContact }) => {
   );
 };
 
-const HeroBenefitCard: React.FC<{ benefit: HeroBenefit; index: number }> = ({ benefit, index }) => {
+const HeroBenefitCard: React.FC<{ benefit: { title: string; description: string; icon: string }; index: number }> = ({ benefit, index }) => {
   const benefitRef = useScrollReveal<HTMLDivElement>({ threshold: 0.25 });
   const delay = `${index * 80}ms`;
 
@@ -155,210 +152,5 @@ const HeroBenefitCard: React.FC<{ benefit: HeroBenefit; index: number }> = ({ be
     </div>
   );
 };
-
-const HeroQuickForm: React.FC<{ endpoint?: string; onOpenContact: (trigger?: HTMLElement | null) => void }> = ({
-  endpoint,
-  onOpenContact
-}) => {
-  const { values, errors, touched, status, submitError, handleInputChange, handleBlur, handleSubmit } = useContactForm({
-    endpoint,
-    requiredFields: ['nome', 'telefone'],
-    analyticsLabel: 'Hero Quick Form',
-    payloadTransformer: (formValues) => ({
-      nome: formValues.nome,
-      telefone: formValues.telefone,
-      origem: 'hero_quick_form'
-    })
-  });
-
-  return (
-    <div className="w-full bg-white/35 dark:bg-slate-900/60 backdrop-blur-2xl rounded-2xl shadow-2xl px-5 py-6 sm:px-8 sm:py-8 border border-white/50 dark:border-white/10 translate-y-4 lg:translate-y-8 lg:translate-x-8">
-      <p className="text-xs uppercase tracking-[0.4em] text-gray-600 dark:text-slate-200 mb-2 text-center lg:text-left">
-        Fale com a equipe
-      </p>
-      <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-50 mb-2 text-center lg:text-left">
-        Receba um contato em até 24h
-      </h3>
-      <p className="text-sm text-gray-700 dark:text-slate-200 mb-2 text-center lg:text-left">
-        Deixe seu nome e WhatsApp e retornamos por mensagem ou ligação.
-      </p>
-      <p className="text-sm text-gray-600 dark:text-slate-300 mb-6 text-center lg:text-left">
-        Atendimento humano, sem robô, para tirar dúvidas e entender sua necessidade com calma.
-      </p>
-
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label htmlFor="heroNome" className="text-sm font-semibold text-gray-700 dark:text-slate-200">
-            Nome completo
-          </label>
-          <div className="relative">
-            <input
-              id="heroNome"
-              name="nome"
-              type="text"
-              value={values.nome}
-              onChange={handleInputChange}
-              onBlur={() => handleBlur('nome')}
-              className={`mt-1 w-full rounded-xl border px-4 py-3.5 text-base text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 pr-10 dark:bg-slate-950 ${errors.nome && touched.nome
-                ? 'border-red-400 ring-red-200 dark:border-red-400'
-                : 'border-gray-200 focus:ring-[#3B6EA5] dark:border-white/20'
-                } ${!errors.nome && touched.nome ? 'border-green-400 ring-green-100' : ''}`}
-              placeholder="Como devemos te chamar?"
-            />
-            {touched.nome && (errors.nome ? <ErrorIcon /> : <SuccessIcon />)}
-          </div>
-          {errors.nome && touched.nome && <p className="text-xs text-red-500 mt-1">{errors.nome}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="heroTelefone" className="text-sm font-semibold text-gray-700 dark:text-slate-200">
-            WhatsApp
-          </label>
-          <div className="relative">
-            <input
-              id="heroTelefone"
-              name="telefone"
-              type="tel"
-              value={values.telefone}
-              onChange={handleInputChange}
-              onBlur={() => handleBlur('telefone')}
-              className={`mt-1 w-full rounded-xl border px-4 py-3.5 text-base text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 pr-10 dark:bg-slate-950 ${errors.telefone && touched.telefone
-                ? 'border-red-400 ring-red-200 dark:border-red-400'
-                : 'border-gray-200 focus:ring-[#3B6EA5] dark:border-white/20'
-                } ${!errors.telefone && touched.telefone ? 'border-green-400 ring-green-100' : ''}`}
-              placeholder="(73) 9 0000-0000"
-            />
-            {touched.telefone && (errors.telefone ? <ErrorIcon /> : <SuccessIcon />)}
-          </div>
-          {errors.telefone && touched.telefone && <p className="text-xs text-red-500 mt-1">{errors.telefone}</p>}
-        </div>
-
-        {submitError && (
-          <p className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2" role="alert">
-            {submitError}
-          </p>
-        )}
-
-        {status === 'success' && (
-          <div className="rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3" role="status">
-            Recebemos seu contato! Logo nossa equipe retorna pelo WhatsApp informado.
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={status === 'sending'}
-          className="w-full rounded-xl bg-gradient-to-r from-[#1F3A5F] to-[#2E4F7E] py-3.5 text-base text-white font-semibold transition-all duration-300 hover:-translate-y-1 disabled:opacity-70 flex items-center justify-center gap-2"
-        >
-          {status === 'sending' ? (
-            <>
-              <span className="inline-block h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-              Enviando...
-            </>
-          ) : (
-            'Quero ser atendido'
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={(event) => onOpenContact(event.currentTarget)}
-          className="block w-full text-center text-sm text-[#1F3A5F] dark:text-slate-100 font-semibold hover:underline"
-        >
-          Ver formulário completo
-        </button>
-
-        <p className="text-xs text-gray-500 dark:text-slate-300 text-center">
-          Usamos seus dados apenas para retornar o contato. Sem spam.
-        </p>
-      </form>
-    </div>
-  );
-};
-
-const StatHighlight: React.FC<{ stat: StatHighlightItem; delayMs?: number }> = ({ stat, delayMs = 0 }) => {
-  const [count, setCount] = useState(0);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const statRef = useScrollReveal<HTMLDivElement>({ threshold: 0.4 });
-
-  useEffect(() => {
-    const element = statRef.current;
-    if (!element) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          setHasAnimated(true);
-        }
-      },
-      { threshold: 0.4 }
-    );
-
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [hasAnimated, statRef]);
-
-  useEffect(() => {
-    if (!hasAnimated) return;
-    let start: number | null = null;
-    const duration = 1500;
-
-    const animate = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.round(stat.value * eased));
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    const frame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frame);
-  }, [hasAnimated, stat.value]);
-
-  return (
-    <div ref={statRef} className="scroll-reveal text-center" style={{ transitionDelay: `${delayMs}ms` }}>
-      <p className="text-2xl sm:text-3xl font-bold text-[#1F3A5F] dark:text-slate-100 leading-tight">
-        {stat.prefix || ''}
-        {count.toLocaleString('pt-BR')}
-        {stat.suffix || ''}
-      </p>
-      <p className="text-xs sm:text-sm text-gray-700 dark:text-slate-300">{stat.label}</p>
-    </div>
-  );
-};
-
-const SuccessIcon = () => (
-  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-    <svg
-      className="h-5 w-5 text-green-500"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-    </svg>
-  </div>
-);
-
-const ErrorIcon = () => (
-  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-    <svg
-      className="h-5 w-5 text-red-500"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  </div>
-);
 
 export default Hero;

@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { getAssetUrl } from '../../utils/assets';
 import ThemeToggle from '../common/ThemeToggle';
 import { useContactForm } from '../../context/ContactFormContext';
+import Button from '../common/Button';
 
 const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ onMobileMenuToggle }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,6 +11,8 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
   const scrollPositionRef = useRef(0);
   const { openForm } = useContactForm();
   const location = useLocation();
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   // Detect if we're on the Careers page
   const isCareersPage = location.pathname === '/carreiras';
@@ -36,6 +39,12 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
       html.style.overscrollBehavior = 'contain';
+
+      // Focus management for accessibility
+      setTimeout(() => {
+        const firstFocusable = mobileMenuRef.current?.querySelector('a, button') as HTMLElement;
+        firstFocusable?.focus();
+      }, 100);
     } else {
       const scrollY = scrollPositionRef.current;
       document.body.style.position = '';
@@ -46,6 +55,11 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
       document.body.style.overflow = '';
       html.style.overscrollBehavior = '';
       window.scrollTo(0, scrollY);
+
+      // Return focus to menu button when closing
+      if (document.activeElement === mobileMenuRef.current || mobileMenuRef.current?.contains(document.activeElement)) {
+        menuButtonRef.current?.focus();
+      }
     }
   }, [isMenuOpen]);
 
@@ -61,6 +75,17 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
     };
   }, []);
 
+  // Close menu on escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isMenuOpen && e.key === 'Escape') {
+        setIsMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMenuOpen]);
+
   const navItems = [
     { path: '/', name: 'Início' },
     { path: '/sobre', name: 'Sobre Nós' },
@@ -74,11 +99,11 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
   // Dynamic nav colors based on page and scroll state
   const navLinkClasses = isCareersPage && !isScrolled
     ? 'text-sm font-medium relative py-2 transition-colors text-white/90 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-white after:w-0 hover:text-white hover:after:w-full'
-    : 'text-sm font-medium relative py-2 transition-colors after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-[#1F3A5F] after:w-0 hover:text-[#1F3A5F] dark:hover:text-[#C6D7FF] hover:after:w-full';
+    : 'text-sm font-medium relative py-2 transition-colors after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-primary after:w-0 hover:text-primary dark:hover:text-[#C6D7FF] hover:after:w-full';
 
   const activeLinkClasses = isCareersPage && !isScrolled
     ? 'text-white after:w-full'
-    : 'text-[#1F3A5F] dark:text-[#C6D7FF] after:w-full';
+    : 'text-primary dark:text-[#C6D7FF] after:w-full';
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -89,7 +114,7 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
         : 'h-24 bg-transparent shadow-none'
         }`}
     >
-      <nav className="container mx-auto px-4 sm:px-6 h-full flex justify-between items-center">
+      <nav className="container mx-auto px-4 sm:px-6 h-full flex justify-between items-center" aria-label="Navegação principal">
         <Link to="/" className={`flex items-center gap-1 text-xl font-bold transition-colors ${isCareersPage && !isScrolled
           ? 'text-white'
           : 'text-gray-800 dark:text-white'
@@ -123,12 +148,14 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
             </li>
           ))}
           <li>
-            <button
+            <Button
               onClick={openForm}
-              className="px-5 py-3 bg-gradient-to-r from-[#1F3A5F] to-[#2E4F7E] text-white rounded-lg font-semibold shadow-md shadow-[#1F3A5F]/25 hover:shadow-lg transition"
+              variant="primary"
+              size="md"
+              className="shadow-md shadow-primary/25 hover:shadow-lg"
             >
               Fale Conosco
-            </button>
+            </Button>
           </li>
           <li>
             <ThemeToggle />
@@ -137,6 +164,7 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
 
         {/* BOTÃO HAMBÚRGUER – MOBILE */}
         <button
+          ref={menuButtonRef}
           type="button"
           className={`
             lg:hidden group relative z-[65] inline-flex items-center justify-center
@@ -148,7 +176,7 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
             transition-all duration-300
             hover:-translate-y-0.5 hover:shadow-xl
             focus-visible:outline-none
-            focus-visible:ring-2 focus-visible:ring-[#1F3A5F]
+            focus-visible:ring-2 focus-visible:ring-primary
             focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900
           `}
           aria-label={mobileMenuToggleLabel}
@@ -189,6 +217,7 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
 
       {isMenuOpen && (
         <div
+          ref={mobileMenuRef}
           id={mobileMenuId}
           className="lg:hidden fixed inset-0 z-[70] bg-slate-950/95 text-white flex flex-col animate-fadeIn"
           role="dialog"
@@ -234,15 +263,16 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
               </ul>
             </div>
 
-            <button
+            <Button
               onClick={() => {
                 openForm();
                 closeMenu();
               }}
-              className="block w-full rounded-2xl bg-gradient-to-r from-[#1F3A5F] to-[#2E4F7E] text-white font-semibold py-3 shadow-lg shadow-[#1F3A5F]/30 hover:shadow-xl transition"
+              variant="primary"
+              className="w-full shadow-lg shadow-primary/30 hover:shadow-xl"
             >
               Fale Conosco
-            </button>
+            </Button>
 
             <div className="pt-4 flex justify-center">
               <ThemeToggle />
