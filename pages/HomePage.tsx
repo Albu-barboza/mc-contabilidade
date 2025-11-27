@@ -1,4 +1,4 @@
-﻿import React, { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import JsonLd from '../components/common/JsonLd';
 import Seo from '../components/common/Seo';
@@ -9,6 +9,7 @@ import ScrollReveal from '../components/common/ScrollReveal';
 import { env, getWhatsappLink } from '../config/env';
 import Hero from '../components/home/Hero';
 import ServiceCard, { ServiceCardContent } from '../components/common/ServiceCard';
+import Section from '../components/common/Section';
 
 const serviceCards: ServiceCardContent[] = [
   {
@@ -130,73 +131,64 @@ const HomePage: React.FC = () => {
       <Hero contactEndpoint={contactEndpoint} onOpenContact={openForm} />
 
       {/* SERVIÇOS */}
-      <section id="servicos" className="py-24">
-        <div className="container mx-auto px-6">
+      <Section
+        id="servicos"
+        title="Soluções sob medida para cada fase do seu negócio"
+        eyebrow="Serviços"
+        description="Da abertura ao planejamento financeiro, estamos disponíveis para tirar dúvidas e orientar o próximo passo."
+        headerWrapper={(header) => (
           <ScrollReveal direction="up">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="inline-block px-4 py-1.5 bg-white dark:bg-white/10 text-[#1F3A5F] dark:text-[#C6D7FF] text-sm font-semibold rounded-full mb-4">
-                Serviços
-              </span>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">
-                Soluções sob medida para cada fase do seu negócio
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300">
-                Da abertura ao planejamento financeiro, estamos disponíveis para tirar dúvidas e orientar o próximo passo.
-              </p>
-            </div>
+            {header}
           </ScrollReveal>
-          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:snap-none">
-            {serviceCards.map((card, index) => (
-              <ScrollReveal key={card.title} delay={index * 100} direction="up">
-                <div className="min-w-[280px] snap-start md:min-w-0">
-                  <ServiceCard {...card} />
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
+        )}
+      >
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:snap-none">
+          {serviceCards.map((card, index) => (
+            <ScrollReveal key={card.title} delay={index * 100} direction="up">
+              <div className="min-w-[280px] snap-start md:min-w-0">
+                <ServiceCard {...card} />
+              </div>
+            </ScrollReveal>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* DEPOIMENTOS */}
-      <section id="depoimentos" className="py-24">
-        <div className="container mx-auto px-6">
+      <Section
+        id="depoimentos"
+        title="O que Nossos Clientes Dizem"
+        eyebrow="Depoimentos"
+        description="Pessoas reais, atendidas no dia a dia, contando como foi o contato conosco."
+        eyebrowClassName="bg-[#E8EDF4] dark:bg-white/10 text-[#1F3A5F] dark:text-[#C6D7FF]"
+        headerWrapper={(header) => (
           <ScrollReveal direction="up">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="inline-block px-4 py-1.5 bg-[#E8EDF4] dark:bg-white/10 text-[#1F3A5F] dark:text-[#C6D7FF] text-sm font-semibold rounded-full mb-4">
-                Depoimentos
-              </span>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">
-                O que Nossos Clientes Dizem
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300">
-                Pessoas reais, atendidas no dia a dia, contando como foi o contato conosco.
-              </p>
-            </div>
+            {header}
           </ScrollReveal>
-          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:snap-none">
-            {displayedTestimonials.map((testimonial, index) => (
-              <div key={index} className="min-w-[300px] snap-start md:min-w-0">
-                <TestimonialCard
-                  rating={testimonial.rating}
-                  text={testimonial.text}
-                  author={testimonial.author}
-                  role={testimonial.role}
-                  image={testimonial.image}
-                  delayIndex={index}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-            <Link
-              to="/depoimentos"
-              className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-[#1F3A5F] rounded-xl hover:bg-[#2E4F7E] transition-colors duration-300"
-            >
-              Ver todos os depoimentos
-            </Link>
-          </div>
+        )}
+      >
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:snap-none">
+          {displayedTestimonials.map((testimonial, index) => (
+            <div key={index} className="min-w-[300px] snap-start md:min-w-0">
+              <TestimonialCard
+                rating={testimonial.rating}
+                text={testimonial.text}
+                author={testimonial.author}
+                role={testimonial.role}
+                image={testimonial.image}
+                delayIndex={index}
+              />
+            </div>
+          ))}
         </div>
-      </section>
+        <div className="mt-12 text-center">
+          <Link
+            to="/depoimentos"
+            className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-[#1F3A5F] rounded-xl hover:bg-[#2E4F7E] transition-colors duration-300"
+          >
+            Ver todos os depoimentos
+          </Link>
+        </div>
+      </Section>
 
       {/* CTA FINAL */}
       <section className="py-20 border-t border-gray-200 dark:border-white/10">
@@ -235,4 +227,3 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
-

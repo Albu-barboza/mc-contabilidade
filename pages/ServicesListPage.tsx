@@ -64,7 +64,7 @@ const ServicesListPage: React.FC = () => {
                                     <div className="h-full">
                                         <Card
                                             variant="default"
-                                            className="h-full flex flex-col bg-primary/90 text-white border-white/20 hover:border-white/40"
+                                            className="h-full flex flex-col !bg-primary/90 !text-white !border-white/20 hover:!border-white/40"
                                             hoverEffect={true}
                                         >
                                             <Link to={service.link} className="flex flex-col h-full">

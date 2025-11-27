@@ -15,7 +15,7 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   // Detect if we're on the Careers page
-  const isCareersPage = location.pathname === '/carreiras';
+  const isCareersPage = location.pathname.startsWith('/trabalhe-conosco');
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -86,7 +86,9 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isMenuOpen]);
 
-  const navItems = [
+  type NavItem = { path: string; name: string };
+
+  const navItems: NavItem[] = [
     { path: '/', name: 'Início' },
     { path: '/sobre', name: 'Sobre Nós' },
     { path: '/servicos', name: 'Serviços' },
@@ -181,7 +183,7 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
           `}
           aria-label={mobileMenuToggleLabel}
           aria-expanded={isMenuOpen}
-          aria-haspopup="true"
+          aria-haspopup="menu"
           aria-controls={mobileMenuId}
           onClick={() => setIsMenuOpen((prev) => !prev)}
         >
@@ -222,7 +224,7 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
           className="lg:hidden fixed inset-0 z-[70] bg-slate-950/95 text-white flex flex-col animate-fadeIn"
           role="dialog"
           aria-modal="true"
-          aria-label="Menu principal de navegação"
+          aria-labelledby="mobile-menu-title"
         >
           <div className="flex items-center justify-between px-6 pt-8 pb-6 border-b border-white/10">
             <Link to="/" className="flex items-center gap-2 text-xl font-semibold" onClick={closeMenu}>
@@ -241,26 +243,28 @@ const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ 
 
           <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col items-stretch text-center gap-8 overscroll-contain">
             <div className="space-y-2">
-              <p className="text-xs uppercase tracking-[0.4em] text-white/60">Navegue</p>
-              <ul className="space-y-3 text-lg font-semibold">
-                {navItems.map((item) => (
-                  <li key={item.path}>
-                    <NavLink
-                      to={item.path}
-                      className={({ isActive }) =>
-                        `${isActive
-                          ? 'text-white bg-white/5'
-                          : 'text-white/75 hover:text-white hover:bg-white/5'
-                        } block rounded-2xl py-3 text-base tracking-wide transition-colors`
-                      }
-                      onClick={closeMenu}
-                      end={item.path === '/'}
-                    >
-                      {item.name}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
+              <p id="mobile-menu-title" className="text-xs uppercase tracking-[0.4em] text-white/60">Navegue</p>
+              <nav aria-label="Navegação principal">
+                <ul className="space-y-3 text-lg font-semibold">
+                  {navItems.map((item) => (
+                    <li key={item.path}>
+                      <NavLink
+                        to={item.path}
+                        className={({ isActive }) =>
+                          `${isActive
+                            ? 'text-white bg-white/5'
+                            : 'text-white/75 hover:text-white hover:bg-white/5'
+                          } block rounded-2xl py-3 text-base tracking-wide transition-colors`
+                        }
+                        onClick={closeMenu}
+                        end={item.path === '/'}
+                      >
+                        {item.name}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             </div>
 
             <Button
