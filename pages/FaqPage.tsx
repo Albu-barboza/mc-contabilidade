@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import JsonLd from '../components/common/JsonLd';
 import Seo from '../components/common/Seo';
 import ScrollReveal from '../components/common/ScrollReveal';
+import Section from '../components/common/Section';
 
 const faqs = {
     "Geral": [
@@ -94,18 +95,21 @@ const FaqPage: React.FC = () => {
                     </ScrollReveal>
                 </section>
 
-                <section className="py-16 sm:py-24">
-                    <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
-                        {Object.entries(faqs).map(([category, questions], index) => (
-                            <ScrollReveal key={category} delay={index * 100} className="mb-12">
-                                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 pb-2 border-b-2 border-secondary dark:border-[#C6D7FF]">{category}</h2>
-                                {questions.map((faq, idx) => (
-                                    <FaqItem key={idx} q={faq.q} a={faq.a} />
-                                ))}
-                            </ScrollReveal>
-                        ))}
-                    </div>
-                </section>
+                <Section
+                    title="Perguntas frequentes"
+                    sectionClassName="!py-16 sm:!py-24"
+                    containerClassName="!px-4 sm:!px-6 max-w-4xl"
+                    headerWrapper={() => null}
+                >
+                    {Object.entries(faqs).map(([category, questions], index) => (
+                        <ScrollReveal key={category} delay={index * 100} className="mb-12">
+                            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 pb-2 border-b-2 border-secondary dark:border-[#C6D7FF]">{category}</h2>
+                            {questions.map((faq, idx) => (
+                                <FaqItem key={idx} q={faq.q} a={faq.a} />
+                            ))}
+                        </ScrollReveal>
+                    ))}
+                </Section>
             </div>
         </>
     );

@@ -4,6 +4,7 @@ import OptimizedImage from '../components/common/OptimizedImage';
 import Seo from '../components/common/Seo';
 import ScrollReveal from '../components/common/ScrollReveal';
 import Card from '../components/common/Card';
+import Section from '../components/common/Section';
 
 const teamMembers = [
   { name: 'Carlos Ferreira', role: 'Sócio-Fundador, Contador Chefe', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
@@ -67,8 +68,11 @@ const AboutPage: React.FC = () => {
         </section>
 
         {/* MISSÃO / VISÃO / VALORES */}
-        <section className="py-16 sm:py-24">
-          <div className="container mx-auto px-4 sm:px-6">
+        <Section
+          title="15 anos de dedicação"
+          sectionClassName="!py-16 sm:!py-24"
+          containerClassName="!px-4 sm:!px-6"
+          headerWrapper={() => (
             <ScrollReveal className="max-w-3xl mx-auto text-center mb-14 space-y-3">
               <p className="text-xs uppercase tracking-[0.35em] text-secondary dark:text-[#C6D7FF]">
                 Essência MC Contabilidade
@@ -93,21 +97,24 @@ const AboutPage: React.FC = () => {
                 </p>
               </div>
             </ScrollReveal>
-
-            <ScrollReveal delay={150} className="rounded-2xl overflow-hidden shadow-2xl">
-              <OptimizedImage
-                src="/images/sobrenos.webp"
-                webpSrc="/images/sobrenos.webp"
-                alt="Escritório da MC Contabilidade"
-                className="w-full h-full object-cover"
-              />
-            </ScrollReveal>
-          </div>
-        </section>
+          )}
+        >
+          <ScrollReveal delay={150} className="rounded-2xl overflow-hidden shadow-2xl">
+            <OptimizedImage
+              src="/images/sobrenos.webp"
+              webpSrc="/images/sobrenos.webp"
+              alt="Escritório da MC Contabilidade"
+              className="w-full h-full object-cover"
+            />
+          </ScrollReveal>
+        </Section>
 
         {/* EQUIPE */}
-        <section className="py-16 sm:py-24">
-          <div className="container mx-auto px-4 sm:px-6">
+        <Section
+          title="Conheça nossos especialistas"
+          sectionClassName="!py-16 sm:!py-24"
+          containerClassName="!px-4 sm:!px-6"
+          headerWrapper={() => (
             <ScrollReveal className="text-center max-w-3xl mx-auto mb-16 space-y-3">
               <p className="text-sm uppercase tracking-[0.4em] text-secondary dark:text-[#C6D7FF]">
                 Equipe
@@ -119,35 +126,35 @@ const AboutPage: React.FC = () => {
                 Uma equipe de profissionais apaixonados e altamente qualificados, pronta para atender sua empresa.
               </p>
             </ScrollReveal>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {teamMembers.map((member, index) => (
-                <ScrollReveal
-                  key={member.name}
-                  delay={index * 120}
-                  className="h-full"
-                >
-                  <Card variant="glass" className="h-full text-center group" hoverEffect={true}>
-                    <div className="relative w-full h-72 rounded-2xl overflow-hidden mb-4 shadow-lg">
-                      <OptimizedImage
-                        src={member.image.src}
-                        webpSrc={member.image.webp}
-                        alt={`Foto de ${member.name}`}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        width={400}
-                        height={400}
-                      />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">
-                      {member.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{member.role}</p>
-                  </Card>
-                </ScrollReveal>
-              ))}
-            </div>
+          )}
+        >
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {teamMembers.map((member, index) => (
+              <ScrollReveal
+                key={member.name}
+                delay={index * 120}
+                className="h-full"
+              >
+                <Card variant="glass" className="h-full text-center group" hoverEffect={true}>
+                  <div className="relative w-full h-72 rounded-2xl overflow-hidden mb-4 shadow-lg">
+                    <OptimizedImage
+                      src={member.image.src}
+                      webpSrc={member.image.webp}
+                      alt={`Foto de ${member.name}`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      width={400}
+                      height={400}
+                    />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">
+                    {member.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{member.role}</p>
+                </Card>
+              </ScrollReveal>
+            ))}
           </div>
-        </section>
+        </Section>
       </div>
     </>
   );

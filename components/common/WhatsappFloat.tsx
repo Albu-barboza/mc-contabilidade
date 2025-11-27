@@ -20,7 +20,7 @@ const WhatsappFloat: React.FC<WhatsappFloatProps> = ({ isMobileNavOpen = false, 
       className="group fixed bottom-8 left-8 z-50 hidden lg:flex items-center"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Abrir conversa no WhatsApp"
+      aria-label="Abrir conversa no WhatsApp com MC Contabilidade em nova aba"
     >
       <div className="w-16 h-16 bg-gradient-to-br from-[#25D366] to-[#128C7E] text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform group-hover:scale-110 animate-pulse">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">

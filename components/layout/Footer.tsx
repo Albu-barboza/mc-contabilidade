@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import OptimizedImage from '../common/OptimizedImage';
 import Button from '../common/Button';
@@ -67,11 +67,11 @@ const Footer: React.FC = () => {
     };
 
     return (
-        <footer className="bg-gradient-to-b from-[#162B47] to-[#0F1F35] text-slate-100 pt-20">
+        <footer role="contentinfo" className="bg-gradient-to-b from-[#162B47] to-[#0F1F35] text-slate-100 pt-20">
             <div className="container mx-auto px-6">
                 {/* TOPO DO FOOTER */}
                 <div className="grid gap-10 lg:grid-cols-12 mb-16 text-center lg:text-left">
-                    {/* COLUNA 1 – LOGO + TEXTO + WHATSAPP */}
+                    {/* COLUNA 1 - LOGO + TEXTO + WHATSAPP */}
                     <div className="lg:col-span-5 flex flex-col items-center lg:items-start gap-5">
                         <Link
                             to="/"
@@ -106,12 +106,12 @@ const Footer: React.FC = () => {
                             </div>
                             <Button
                                 as="a"
-                                href={`https://wa.me/${footerWhatsappNumber}?text=Olá! Gostaria de uma consultoria gratuita`}
+                                href={`https://wa.me/${footerWhatsappNumber}?text=Ol%C3%A1!%20Gostaria%20de%20uma%20consultoria%20gratuita`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 variant="primary"
                                 className="w-full justify-center"
-                                aria-label="Falar com especialista no WhatsApp"
+                                aria-label="Abrir conversa no WhatsApp da MC Contabilidade em nova aba"
                             >
                                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
@@ -124,8 +124,8 @@ const Footer: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* COLUNA 2 – SERVIÇOS */}
-                    <div className="lg:col-span-2 flex flex-col items-center lg:items-start gap-4">
+                    {/* COLUNA 2 - SERVIÇOS */}
+                    <nav className="lg:col-span-2 flex flex-col items-center lg:items-start gap-4" aria-label="Serviços">
                         <h3 className="text-lg font-semibold text-white">
                             Serviços
                         </h3>
@@ -156,10 +156,10 @@ const Footer: React.FC = () => {
                                 </Link>
                             </li>
                         </ul>
-                    </div>
+                    </nav>
 
-                    {/* COLUNA 3 – EMPRESA */}
-                    <div className="lg:col-span-2 flex flex-col items-center lg:items-start gap-4">
+                    {/* COLUNA 3 - EMPRESA */}
+                    <nav className="lg:col-span-2 flex flex-col items-center lg:items-start gap-4" aria-label="Empresa">
                         <h3 className="text-lg font-semibold text-white">
                             Empresa
                         </h3>
@@ -197,9 +197,9 @@ const Footer: React.FC = () => {
                                 </Link>
                             </li>
                         </ul>
-                    </div>
+                    </nav>
 
-                    {/* COLUNA 4 – CONTATO */}
+                    {/* COLUNA 4 - CONTATO */}
                     <div className="lg:col-span-3 flex flex-col items-center lg:items-start gap-4">
                         <h3 className="text-lg font-semibold text-white">
                             Contato
@@ -269,13 +269,13 @@ const Footer: React.FC = () => {
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 0 0118 0z"
                                     ></path>
                                 </svg>
-                                <span>Segunda a Sexta · 8h às 18h</span>
+                                <span>Segunda a Sexta • 8h às 18h</span>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                {/* Newsletter Section – versão minimalista */}
+                {/* Newsletter Section - versão minimalista */}
                 <div className="mb-12 border-t border-white/10 pt-8 mt-4">
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div className="flex-1 text-center md:text-left space-y-1">
@@ -293,15 +293,17 @@ const Footer: React.FC = () => {
                         <form
                             onSubmit={handleNewsletterSubmit}
                             className="flex flex-col sm:flex-row gap-3 w-full md:w-auto flex-1 max-w-lg md:justify-end"
+                            aria-label="Assinatura de newsletter"
                         >
+                            <label htmlFor="newsletter-email" className="sr-only">E-mail para receber a newsletter</label>
                             <input
+                                id="newsletter-email"
                                 type="email"
                                 value={newsletterEmail}
                                 onChange={(e) => setNewsletterEmail(e.target.value)}
                                 className="flex-grow px-4 py-3 rounded-lg border border-white/20 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:border-white focus:ring-1 focus:ring-white/60 text-sm"
                                 placeholder="Seu melhor e-mail corporativo"
                                 required
-                                aria-label="Email para newsletter"
                             />
                             <Button
                                 type="submit"
@@ -314,8 +316,12 @@ const Footer: React.FC = () => {
                         </form>
                     </div>
 
-                    <p className="text-[11px] text-slate-400 mt-3 text-center md:text-left">
-                        Sem spam. Você pode se descadastrar a qualquer momento.
+                    <p className="text-[11px] text-slate-400 mt-3 text-center md:text-left" aria-live="polite">
+                        {newsletterStatus === 'success'
+                            ? 'Inscrição realizada com sucesso.'
+                            : newsletterStatus === 'error'
+                                ? 'Ocorreu um erro. Tente novamente.'
+                                : 'Sem spam. Você pode se descadastrar a qualquer momento.'}
                     </p>
                 </div>
 

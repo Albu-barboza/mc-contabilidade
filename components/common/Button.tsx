@@ -15,6 +15,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     href?: string;
     target?: string;
     rel?: string;
+    type?: 'button' | 'submit' | 'reset';
+    ariaLabel?: string;
+    ariaBusy?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -29,6 +32,9 @@ const Button: React.FC<ButtonProps> = ({
     to,
     href,
     disabled,
+    type = 'button',
+    ariaLabel,
+    ariaBusy,
     ...props
 }) => {
     const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed';
@@ -62,9 +68,19 @@ const Button: React.FC<ButtonProps> = ({
         </>
     );
 
+    const commonA11yProps = {
+        'aria-label': ariaLabel,
+        'aria-busy': isLoading || ariaBusy ? true : undefined
+    };
+
     if (as === 'a' && href) {
         return (
-            <a href={href} className={classes} {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>
+            <a
+                href={href}
+                className={classes}
+                {...commonA11yProps}
+                {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
+            >
                 {content}
             </a>
         );
@@ -72,14 +88,26 @@ const Button: React.FC<ButtonProps> = ({
 
     if (as === Link && to) {
         return (
-            <Link to={to} className={classes} {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>
+            <Link
+                to={to}
+                className={classes}
+                {...commonA11yProps}
+                {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
+            >
                 {content}
             </Link>
         );
     }
 
     return (
-        <button className={classes} disabled={isLoading || disabled} {...props}>
+        <button
+            type={type}
+            className={classes}
+            disabled={isLoading || disabled}
+            aria-label={ariaLabel}
+            aria-busy={isLoading || ariaBusy ? true : undefined}
+            {...props}
+        >
             {content}
         </button>
     );
