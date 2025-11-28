@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import FaqPage from './pages/FaqPage';
@@ -32,7 +32,7 @@ const ScrollToTop = () => {
 const App: React.FC = () => {
   return (
     <ContactFormProvider>
-      <BrowserRouter basename="/mc-contabilidade">
+      <Router>
         <ScrollToTop />
         <GoogleAnalytics />
         <MainLayout>
@@ -52,7 +52,7 @@ const App: React.FC = () => {
             <Route path="/politica-de-privacidade" element={<PrivacyPolicyPage />} />
           </Routes>
         </MainLayout>
-      </BrowserRouter>
+      </Router>
     </ContactFormProvider>
   );
 };
