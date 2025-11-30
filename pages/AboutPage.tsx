@@ -7,10 +7,10 @@ import Card from '../components/common/Card';
 import Section from '../components/common/Section';
 
 const teamMembers = [
-  { name: 'Carlos Ferreira', role: 'Sócio-Fundador, Contador Chefe', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
-  { name: 'Mariana Costa', role: 'Gerente Fiscal e Tributário', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
-  { name: 'Ricardo Almeida', role: 'Especialista em PME', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
-  { name: 'Beatriz Lima', role: 'Consultora de Abertura de Empresas', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
+  { name: 'Pessoa 1', role: 'Contabilidade', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
+  { name: 'Pessoa 2', role: 'Fiscal e Tributario', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
+  { name: 'Pessoa 3', role: 'Especialista PME', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
+  { name: 'Pessoa 4', role: 'Abertura de Empresas', image: { src: '/images/team/icone.webp', webp: '/images/team/icone.webp' } },
 ];
 
 const AboutPage: React.FC = () => {
@@ -18,37 +18,17 @@ const AboutPage: React.FC = () => {
     "@context": "https://schema.org",
     "@type": "AboutPage",
     "name": "Sobre a MC Contabilidade",
-    "description": "Conheça a história, missão, visão e valores da MC Contabilidade. Somos um escritório de contabilidade em São Paulo dedicado a impulsionar o sucesso de MEIs e PMEs.",
+    "description": "Informacoes institucionais em revisao. Conteudo sera atualizado com dados confirmados.",
     "mainEntity": {
       "@type": "AccountingService",
       "name": "MC Contabilidade",
-      "telephone": "+55-11-98765-4321",
-      "email": "contato@mccontabilidade.com.br",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Av. Paulista, 1000 - Sala 1205",
-        "addressLocality": "São Paulo",
-        "addressRegion": "SP"
-      },
-      "openingHoursSpecification": [
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday"
-          ],
-          "opens": "08:00",
-          "closes": "18:00"
-        }
-      ]
+      "areaServed": "BR",
+      "address": "Atendimento 100% online (em atualizacao)"
     }
   };
 
   const description =
-    'Conheça a história, missão e o time da MC Contabilidade. Transparência, tecnologia e proximidade com MEIs e PMEs em todo o Brasil.';
+    'Conheca a historia, valores e time da MC Contabilidade. Todas as informacoes estao em revisao para o proximo ciclo de atualizacoes.';
 
   return (
     <>
@@ -59,41 +39,36 @@ const AboutPage: React.FC = () => {
         <section className="pt-28 pb-16 sm:pt-32 sm:pb-20">
           <ScrollReveal className="container mx-auto px-4 sm:px-6 text-center space-y-4">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100">
-              Transformando números em <span className="text-gradient">oportunidades</span>.
+              Transformando numeros em <span className="text-gradient">oportunidades</span>.
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Somos mais que contadores. Somos parceiros estratégicos dedicados a simplificar a complexidade financeira e a impulsionar o crescimento do seu negócio.
+              Somos parceiros dedicados a simplificar a rotina contabile e fiscal de quem empreende. Esta pagina esta em atualizacao para refletir nosso proximo ciclo de servicos.
             </p>
           </ScrollReveal>
         </section>
 
-        {/* MISSÃO / VISÃO / VALORES */}
+        {/* MISSAO / VISAO / VALORES */}
         <Section
-          title="15 anos de dedicação"
+          title="Historia em atualizacao"
           sectionClassName="!py-16 sm:!py-24"
           containerClassName="!px-4 sm:!px-6"
           headerWrapper={() => (
             <ScrollReveal className="max-w-3xl mx-auto text-center mb-14 space-y-3">
               <p className="text-xs uppercase tracking-[0.35em] text-secondary dark:text-[#C6D7FF]">
-                Essência MC Contabilidade
+                Essencia MC Contabilidade
               </p>
               <p className="text-sm uppercase tracking-[0.4em] text-secondary dark:text-[#C6D7FF] mb-3">
-                Nossa história
+                Nossa historia
               </p>
               <h2 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 mb-6">
-                15 anos de dedicação
+                Jornada em revisao
               </h2>
               <div className="space-y-4 text-gray-600 dark:text-gray-300">
                 <p>
-                  A MC Contabilidade nasceu em 2009 do sonho de Carlos Ferreira em oferecer um serviço
-                  contábil diferente: mais próximo, consultivo e focado no sucesso do cliente.
-                  O que começou em uma pequena sala na Av. Paulista hoje é um escritório consolidado,
-                  com mais de 500 empresas atendidas.
+                  Estamos revisando nossa cronologia e dados institucionais para garantir informacoes atualizadas e transparentes.
                 </p>
                 <p>
-                  Nossa jornada é marcada pela constante busca por inovação, pela adoção de tecnologias
-                  que simplificam processos e pela construção de relacionamentos de longo prazo
-                  baseados na confiança e nos resultados.
+                  Enquanto isso, seguimos focados em atendimento humano e processos claros para MEI e PME, em operacao 100% online.
                 </p>
               </div>
             </ScrollReveal>
@@ -103,7 +78,7 @@ const AboutPage: React.FC = () => {
             <OptimizedImage
               src="/images/sobrenos.webp"
               webpSrc="/images/sobrenos.webp"
-              alt="Escritório da MC Contabilidade"
+              alt="Escritorio da MC Contabilidade"
               className="w-full h-full object-cover"
             />
           </ScrollReveal>
@@ -111,7 +86,7 @@ const AboutPage: React.FC = () => {
 
         {/* EQUIPE */}
         <Section
-          title="Conheça nossos especialistas"
+          title="Conheca nossos especialistas"
           sectionClassName="!py-16 sm:!py-24"
           containerClassName="!px-4 sm:!px-6"
           headerWrapper={() => (
@@ -120,10 +95,10 @@ const AboutPage: React.FC = () => {
                 Equipe
               </p>
               <h2 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">
-                Conheça nossos especialistas
+                Pessoas cuidando de pessoas
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-300">
-                Uma equipe de profissionais apaixonados e altamente qualificados, pronta para atender sua empresa.
+                Time dedicado a orientar com clareza. Informacoes de trajetoria e certificacoes em atualizacao.
               </p>
             </ScrollReveal>
           )}

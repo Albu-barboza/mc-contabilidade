@@ -21,14 +21,14 @@ const getEnv = (key: string, fallback?: string): string => {
 };
 
 export const env: EnvConfig = {
-    contactEmail: getEnv('VITE_CONTACT_EMAIL', 'contato@mccontabilidade.com.br'),
+    contactEmail: getEnv('VITE_CONTACT_EMAIL', 'contato@empresa.com'),
     whatsappNumber: getEnv('VITE_WHATSAPP_NUMBER_FLOAT'),
     formspreeContactUrl: getEnv('VITE_FORMSPREE_CONTACT_URL'),
     formspreeCareersUrl: getEnv('VITE_FORMSPREE_CAREERS_URL'),
     gaMeasurementId: getEnv('VITE_GA_MEASUREMENT_ID'),
 };
 
-export const getWhatsappLink = (message: string = 'Olá! Vim do site da MC Contabilidade.'): string => {
+export const getWhatsappLink = (message: string = 'Ola! Gostaria de falar com a equipe (em atualizacao).'): string => {
     const raw = env.whatsappNumber;
     if (!raw) return '#';
 

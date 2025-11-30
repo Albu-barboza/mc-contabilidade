@@ -32,7 +32,7 @@ const contactIcons: Record<ContactItemKind, ReactNode> = {
   ),
   hours: (
     <svg className="w-5 h-5 text-[#6B7A8F]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 0 0118 0z" />
     </svg>
   )
 };
@@ -72,41 +72,43 @@ const ContactOverlay: React.FC<ContactOverlayProps> = ({ isOpen, onClose, contac
         <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-400 via-sky-400 to-indigo-400" />
 
         <button
-          type="button"
-          onClick={onClose}
-          aria-label="Fechar formulário de contato"
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/85 hover:text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center transition-colors duration-200"
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar formulario de contato"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/85 hover:text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center transition-colors duration-200"
         >
-          ✕
+            <svg className="w-5 h-5" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 6l12 12M18 6L6 18" />
+            </svg>
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-[1.05fr,0.95fr] gap-6 md:gap-0 h-full">
           <div className="min-w-0 flex flex-col gap-6 p-6 sm:p-8 lg:p-10 border-b md:border-b-0 md:border-r border-white/10 overflow-y-auto">
             <div className="space-y-3">
-              <p className="text-[11px] uppercase tracking-[0.35em] text-white/85">Formulário de contato</p>
+              <p className="text-[11px] uppercase tracking-[0.35em] text-white/85">Formulario de contato</p>
               <h2 className="text-3xl md:text-4xl font-bold leading-tight" id={dialogTitleId}>
                 Vamos conversar?
               </h2>
               <p className="text-sm md:text-base text-gray-100/90">
-                Preencha os campos ao lado e retornamos o contato por e-mail, telefone ou WhatsApp, como for melhor para você.
+                Preencha os campos ao lado e retornamos o contato por e-mail, telefone ou WhatsApp, como for melhor para voce.
               </p>
             </div>
 
             <div className="grid sm:grid-cols-3 gap-3 text-xs md:text-[13px]">
               <div className="rounded-2xl bg-white/10 border border-white/20 p-3 flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-[0.3em] text-emerald-200">Resposta em até 24h úteis</span>
-                <p className="font-semibold">Contato rápido e direto</p>
-                <p className="text-white/80">Nossa equipe vê sua mensagem e retorna pessoalmente.</p>
+                <span className="text-[10px] uppercase tracking-[0.3em] text-emerald-200">Retorno: em atualizacao</span>
+                <p className="font-semibold">Contato transparente</p>
+                <p className="text-white/80">Nossa equipe ve sua mensagem e retorna pessoalmente.</p>
               </div>
               <div className="rounded-2xl bg-white/5 border border-white/15 p-3 flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-[0.3em] text-sky-200">Canal único</span>
+                <span className="text-[10px] uppercase tracking-[0.3em] text-sky-200">Canal unico</span>
                 <p className="font-semibold">Um ponto de contato</p>
-                <p className="text-white/80">Centralize dúvidas de documentos, impostos, prazos e mais.</p>
+                <p className="text-white/80">Centralize duvidas de documentos, impostos, prazos e mais.</p>
               </div>
               <div className="rounded-2xl bg-white/5 border border-white/15 p-3 flex flex-col gap-1">
                 <span className="text-[10px] uppercase tracking-[0.3em] text-indigo-200">Sem compromisso</span>
                 <p className="font-semibold">Conversa tranquila</p>
-                <p className="text-white/80">Você entende melhor como trabalhamos e decide com calma.</p>
+                <p className="text-white/80">Voce entende melhor como trabalhamos e decide com calma.</p>
               </div>
             </div>
 
@@ -134,7 +136,7 @@ const ContactOverlay: React.FC<ContactOverlayProps> = ({ isOpen, onClose, contac
               {trustInfo.map((badge) => (
                 <span key={badge.title} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" />
-                  {badge.title} · {badge.description}
+                  {badge.title} - {badge.description}
                 </span>
               ))}
             </div>
@@ -146,7 +148,7 @@ const ContactOverlay: React.FC<ContactOverlayProps> = ({ isOpen, onClose, contac
                 <p className="text-[11px] uppercase tracking-[0.3em] text-slate-500 dark:text-slate-300">Entre em contato</p>
                 <h3 className="text-lg md:text-xl font-semibold text-[#1F3A5F] dark:text-slate-100">Conte rapidamente como podemos te ajudar</h3>
               </div>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">Usamos seus dados apenas para retornar o contato. Não compartilhamos com terceiros.</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">Usamos seus dados apenas para retornar o contato. Nao compartilhamos com terceiros.</p>
 
               {status === 'sending' && (
                 <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -171,13 +173,13 @@ const ContactOverlay: React.FC<ContactOverlayProps> = ({ isOpen, onClose, contac
                       </svg>
                     </div>
                     <h3 className="font-bold text-2xl text-green-700 dark:text-green-100 mb-2">Mensagem enviada!</h3>
-                    <p className="text-green-600 dark:text-green-200 text-sm">Recebemos seu contato e em breve retornamos pelos canais informados.</p>
+                    <p className="text-green-600 dark:text-green-200 text-sm">Recebemos seu contato e retornamos conforme disponibilidade.</p>
                   </div>
                 ) : (
                   <>
                     {submitError && (
                       <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500 text-red-700 dark:text-red-200 px-4 py-3 rounded-xl" role="alert">
-                        <p className="font-bold text-sm">Atenção</p>
+                        <p className="font-bold text-sm">Atencao</p>
                         <p className="text-xs mt-1">{submitError}</p>
                       </div>
                     )}
@@ -237,13 +239,13 @@ const ContactOverlay: React.FC<ContactOverlayProps> = ({ isOpen, onClose, contac
                                 : 'border-slate-200 dark:border-slate-700/70 focus:ring-[#3B6EA5]/35 dark:focus:ring-[#7AB0FF]/30'
                             } ${!errors.servico && touched.servico ? 'border-green-400 focus:ring-green-200 dark:focus:ring-green-400/30' : ''}`}
                           >
-                            <option value="">Selecione uma opção</option>
-                            <option value="Dúvidas sobre serviços">Dúvidas sobre serviços</option>
-                            <option value="Quero uma orientação rápida">Quero uma orientação rápida</option>
-                            <option value="Orçamento">Orçamento</option>
+                            <option value="">Selecione uma opcao</option>
+                            <option value="Duvidas sobre servicos">Duvidas sobre servicos</option>
+                            <option value="Quero uma orientacao">Quero uma orientacao</option>
+                            <option value="Orcamento">Orcamento</option>
                             <option value="Outros assuntos">Outros assuntos</option>
                           </select>
-                          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-slate-500">⌄</span>
+                          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-slate-500">&#9662;</span>
                         </div>
                         {errors.servico && touched.servico && <p className="text-red-500 dark:text-red-200 text-xs mt-1">{errors.servico}</p>}
                       </div>
@@ -264,7 +266,7 @@ const ContactOverlay: React.FC<ContactOverlayProps> = ({ isOpen, onClose, contac
                         onBlur={() => handleBlur('mensagem')}
                         rows={4}
                         className="w-full px-4 py-3 bg-white dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 rounded-2xl border border-slate-200 dark:border-slate-700/70 focus:outline-none focus:ring-2 focus:ring-[#3B6EA5]/35 dark:focus:ring-[#7AB0FF]/30 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm transition-all duration-200"
-                        placeholder="Conte em poucas linhas o motivo do contato, dúvidas ou contexto."
+                        placeholder="Conte em poucas linhas o motivo do contato, duvidas ou contexto."
                       />
                     </div>
 
@@ -329,7 +331,7 @@ const InputField: React.FC<InputFieldProps> = ({ id, label, name, value, error, 
             : 'border-slate-200 dark:border-slate-700/70 focus:ring-[#3B6EA5]/35 dark:focus:ring-[#7AB0FF]/30'
         } ${!error && touched ? 'border-green-400 focus:ring-green-200 dark:focus:ring-green-400/30' : ''}`}
         placeholder={
-          name === 'nome' ? 'Seu nome e sobrenome' : name === 'telefone' ? '(73) 9 0000-0000' : name === 'email' ? 'seu.email@exemplo.com' : undefined
+          name === 'nome' ? 'Seu nome e sobrenome' : name === 'telefone' ? '(00) 00000-0000' : name === 'email' ? 'seu.email@exemplo.com' : undefined
         }
       />
       {touched && (error ? <ErrorIcon /> : <SuccessIcon />)}

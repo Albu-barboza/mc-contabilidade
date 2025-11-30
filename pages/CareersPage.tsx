@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { getAssetUrl } from '../utils/assets';
 import ScrollReveal from '../components/common/ScrollReveal';
 import JsonLd from '../components/common/JsonLd';
@@ -90,7 +90,7 @@ const openRoles = [
     {
         area: 'Consultoria Fiscal e Tributária',
         description: 'Especialistas em planejamento tributário, revisão fiscal e projetos de eficiência.',
-        tags: ['Híbrido · SP', 'Pleno/Sênior', 'Squad Indústria']
+        tags: ['Híbrido - SP', 'Pleno/Sênior', 'Squad Indústria']
     },
     {
         area: 'Contábil & Controladoria',
@@ -191,10 +191,10 @@ const CareersPage: React.FC = () => {
                 }}
             />
 
-            <main className="text-slate-800 dark:text-slate-100">
+            <main className="text-slate-800 dark:text-slate-100" style={{ fontVariantLigatures: "none", fontFeatureSettings: "\"liga\" 0, \"clig\" 0" }}>
                 {/* Hero Section */}
                 <section className="relative overflow-hidden pt-28 pb-16 sm:pt-32 sm:pb-24">
-                    <div className="absolute inset-0">
+                    <div className="absolute inset-0 overflow-hidden">
                         <img src={getAssetUrl("/images/equipe.webp")} alt="Equipe MC Contabilidade" className="w-full h-full object-cover animate-kenBurns" />
                         <div className="absolute inset-0 bg-slate-300/60 dark:bg-slate-900/75" />
                         <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-slate-400/20" />
@@ -466,7 +466,7 @@ const CareersPage: React.FC = () => {
 
                 {/* Talentos – permanece com o vidro que você já curtiu */}
                 <section id="talentos" className="relative py-20 overflow-hidden">
-                    <div className="absolute inset-0">
+                    <div className="absolute inset-0 overflow-hidden">
                         <img src={getAssetUrl("/images/analise.webp")} alt="Análise de dados" className="w-full h-full object-cover animate-kenBurns" />
                         <div className="absolute inset-0 bg-slate-900/50 dark:bg-slate-950/60" />
                     </div>
@@ -569,3 +569,6 @@ const CareersPage: React.FC = () => {
 };
 
 export default CareersPage;
+
+
+

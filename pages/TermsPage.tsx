@@ -1,11 +1,10 @@
-
 import React from 'react';
 import Seo from '../components/common/Seo';
 import ScrollReveal from '../components/common/ScrollReveal';
 
 const TermsPage: React.FC = () => {
     const description =
-        'Termos e condições de uso do site da MC Contabilidade. Leia sobre direitos, responsabilidades e políticas de uso.';
+        'Termos e condicoes de uso do site da MC Contabilidade. Conteudo em revisao e sujeito a ajustes.';
 
     return (
         <div className="text-slate-800 dark:text-slate-100">
@@ -14,38 +13,38 @@ const TermsPage: React.FC = () => {
                 <ScrollReveal className="container mx-auto px-4 sm:px-6 text-center space-y-3">
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-slate-50">Termos de Uso</h1>
                     <p className="text-base sm:text-lg text-gray-600 dark:text-slate-200 max-w-3xl mx-auto">
-                        Leia sobre direitos, responsabilidades e políticas de uso ao navegar pelos materiais da MC Contabilidade.
+                        Leia sobre direitos, responsabilidades e politicas de uso. Informacoes em atualizacao.
                     </p>
                 </ScrollReveal>
             </header>
             <main className="py-16 sm:py-24">
                 <ScrollReveal className="container mx-auto px-4 sm:px-6 max-w-4xl prose lg:prose-lg dark:prose-invert">
-                    <p><strong>Última atualização:</strong> {new Date().toLocaleDateString('pt-BR')}</p>
+                    <p><strong>Ultima atualizacao:</strong> {new Date().toLocaleDateString('pt-BR')}</p>
 
-                    <h2>1. Aceitação dos Termos</h2>
-                    <p>Ao acessar e usar este site, você aceita e concorda em ficar vinculado pelos termos e disposições deste acordo. Além disso, ao usar estes serviços específicos, você estará sujeito a quaisquer diretrizes ou regras aplicáveis postadas.</p>
+                    <h2>1. Aceitacao dos Termos</h2>
+                    <p>Ao acessar e usar este site, voce aceita e concorda em seguir estes termos. Caso algum ponto esteja em desacordo, interrompa o uso.</p>
 
                     <h2>2. Uso do Site</h2>
-                    <p>Este site e seu conteúdo são destinados apenas para fins informativos. Você concorda em não usar o site para fins ilegais ou proibidos por estes termos.</p>
-                    <p>Você não pode usar o site de qualquer maneira que possa danificar, desativar, sobrecarregar ou prejudicar o site, ou interferir no uso de qualquer outra parte e gozo do site.</p>
+                    <p>Este site e seu conteudo sao destinados apenas para fins informativos. Voce concorda em nao usar o site para fins ilegais ou proibidos por estes termos.</p>
+                    <p>Evite qualquer uso que possa danificar, desativar, sobrecarregar ou prejudicar o site, ou interferir no uso de qualquer outra pessoa.</p>
 
                     <h2>3. Propriedade Intelectual</h2>
-                    <p>O site e seu conteúdo original, recursos e funcionalidades são de propriedade da MC Contabilidade e são protegidos por direitos autorais internacionais, marcas registradas, patentes, segredos comerciais e outras leis de propriedade intelectual ou de direitos de propriedade.</p>
+                    <p>O site e seu conteudo original, recursos e funcionalidades sao de propriedade da MC Contabilidade e protegidos por leis aplicaveis.</p>
 
-                    <h2>4. Isenção de Responsabilidade</h2>
-                    <p>As informações contidas neste site são apenas para fins de informação geral. A MC Contabilidade não assume nenhuma responsabilidade por erros ou omissões no conteúdo do serviço. O conteúdo não constitui aconselhamento profissional e não deve ser considerado como tal.</p>
+                    <h2>4. Isencao de Responsabilidade</h2>
+                    <p>As informacoes contidas neste site sao apenas para fins informativos. A MC Contabilidade nao assume responsabilidade por erros ou omissoes. O conteudo nao constitui aconselhamento profissional.</p>
 
-                    <h2>5. Limitação de Responsabilidade</h2>
-                    <p>Em nenhuma circunstância a MC Contabilidade será responsável por quaisquer danos especiais, diretos, indiretos, consequenciais ou incidentais ou quaisquer danos, seja em uma ação de contrato, negligência ou outro ato ilícito, decorrentes de ou em conexão com o uso do Serviço ou o conteúdo do Serviço.</p>
+                    <h2>5. Limitacao de Responsabilidade</h2>
+                    <p>A MC Contabilidade nao sera responsavel por quaisquer danos especiais, diretos, indiretos ou consequenciais decorrentes do uso do servico ou do conteudo do servico.</p>
 
                     <h2>6. Links para Outros Sites</h2>
-                    <p>Nosso serviço pode conter links para sites de terceiros que não são de propriedade ou controlados pela MC Contabilidade. Não temos controle e não assumimos responsabilidade pelo conteúdo, políticas de privacidade ou práticas de quaisquer sites de terceiros.</p>
+                    <p>Podemos exibir links para sites de terceiros. Nao temos controle e nao assumimos responsabilidade pelo conteudo ou politicas desses sites.</p>
 
-                    <h2>7. Alterações aos Termos</h2>
-                    <p>Reservamo-nos o direito, a nosso exclusivo critério, de modificar ou substituir estes Termos a qualquer momento. Se uma revisão for material, tentaremos fornecer um aviso de pelo menos 30 dias antes de quaisquer novos termos entrarem em vigor.</p>
+                    <h2>7. Alteracoes aos Termos</h2>
+                    <p>Podemos modificar estes Termos a qualquer momento. Quando houver mudancas relevantes, ajustaremos a data de atualizacao.</p>
 
                     <h2>8. Contato</h2>
-                    <p>Se você tiver alguma dúvida sobre estes Termos, entre em contato conosco através do e-mail: contato@mccontabilidade.com.br.</p>
+                    <p>Duvidas? Escreva para <strong>E-mail: em atualizacao</strong>.</p>
                 </ScrollReveal>
             </main>
         </div>

@@ -13,6 +13,16 @@ const Footer: React.FC = () => {
     const companyCnpj = import.meta.env.VITE_COMPANY_CNPJ;
     const companyCrc = import.meta.env.VITE_COMPANY_CRC;
 
+    const contactEmailDisplay = contactEmail ? `${contactEmail} (em atualizacao)` : 'E-mail: em atualizacao';
+    const contactEmailHref = contactEmail ? `mailto:${contactEmail}` : undefined;
+    const whatsappLink = footerWhatsappNumber
+        ? `https://wa.me/${footerWhatsappNumber}?text=Ola!%20Gostaria%20de%20falar%20com%20a%20equipe%20(em%20atualizacao)`
+        : undefined;
+    const companyIdText =
+        companyCnpj || companyCrc
+            ? `CNPJ: ${companyCnpj || 'em atualizacao'} - ${companyCrc || 'em atualizacao'}`
+            : 'CNPJ/CRC: em atualizacao';
+
     const handleNewsletterSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newsletterEmail.includes('@')) {
@@ -76,7 +86,7 @@ const Footer: React.FC = () => {
                         <Link
                             to="/"
                             className="flex items-center gap-2 text-xl font-semibold text-white"
-                            aria-label="Página inicial - MC Contabilidade"
+                            aria-label="Pagina inicial - MC Contabilidade"
                         >
                             <div className="h-16 w-auto">
                                 <OptimizedImage
@@ -91,27 +101,26 @@ const Footer: React.FC = () => {
                         </Link>
 
                         <p className="text-slate-300 text-sm leading-relaxed max-w-sm">
-                            Há 15 anos transformando números em estratégia. Especialistas em MEI, PME e consultoria
-                            tributária em São Paulo.
+                            Conteudo em atualizacao. Atendimento humano para MEI e PME, com rotina 100% online.
                         </p>
 
                         <div className="w-full max-w-sm p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
                             <div className="flex items-center justify-between">
                                 <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
-                                    Canal prioritário
+                                    Canal prioritario
                                 </p>
                                 <span className="text-xs font-semibold text-white/80">
-                                    Tempo médio: 3 min
+                                    Tempo medio: em atualizacao
                                 </span>
                             </div>
                             <Button
                                 as="a"
-                                href={`https://wa.me/${footerWhatsappNumber}?text=Ol%C3%A1!%20Gostaria%20de%20uma%20consultoria%20gratuita`}
+                                href={whatsappLink || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 variant="primary"
                                 className="w-full justify-center"
-                                aria-label="Abrir conversa no WhatsApp da MC Contabilidade em nova aba"
+                                aria-label="Abrir conversa no WhatsApp (em atualizacao)"
                             >
                                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
@@ -119,15 +128,15 @@ const Footer: React.FC = () => {
                                 Falar no WhatsApp
                             </Button>
                             <p className="text-xs text-slate-400 text-center">
-                                Atendimento humano, sem bots.
+                                Canal em revisao. Se preferir, use o formulario.
                             </p>
                         </div>
                     </div>
 
-                    {/* COLUNA 2 - SERVIÇOS */}
-                    <nav className="lg:col-span-2 flex flex-col items-center lg:items-start gap-4" aria-label="Serviços">
+                    {/* COLUNA 2 - SERVICOS */}
+                    <nav className="lg:col-span-2 flex flex-col items-center lg:items-start gap-4" aria-label="Servicos">
                         <h3 className="text-lg font-semibold text-white">
-                            Serviços
+                            Servicos
                         </h3>
                         <ul className="space-y-2 text-sm text-slate-300">
                             <li>
@@ -147,7 +156,7 @@ const Footer: React.FC = () => {
                             </li>
                             <li>
                                 <Link to="/servicos/consultoria-tributaria" className="hover:text-white transition-colors focus:outline-none focus:underline">
-                                    Consultoria Tributária
+                                    Consultoria Tributaria
                                 </Link>
                             </li>
                             <li>
@@ -169,7 +178,7 @@ const Footer: React.FC = () => {
                                     to="/sobre"
                                     className="text-slate-400 hover:text-[#5B8EC5] transition-colors focus:outline-none focus:underline"
                                 >
-                                    Sobre Nós
+                                    Sobre Nos
                                 </Link>
                             </li>
                             <li>
@@ -227,9 +236,9 @@ const Footer: React.FC = () => {
                                     ></path>
                                 </svg>
                                 <span>
-                                    Av. Paulista, 1000 - Sala 1205
+                                    Ibicui/BA (em atualizacao)
                                     <br />
-                                    Bela Vista, São Paulo/SP
+                                    Atendimento 100% online
                                 </span>
                             </li>
                             <li className="flex flex-col sm:flex-row gap-3 items-center sm:items-start text-center sm:text-left">
@@ -247,12 +256,16 @@ const Footer: React.FC = () => {
                                         d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                                     ></path>
                                 </svg>
-                                <a
-                                    href={contactEmail ? `mailto:${contactEmail}` : undefined}
-                                    className="hover:text-white focus:outline-none focus:underline"
-                                >
-                                    {contactEmail}
-                                </a>
+                                {contactEmailHref ? (
+                                    <a
+                                        href={contactEmailHref}
+                                        className="hover:text-white focus:outline-none focus:underline"
+                                    >
+                                        {contactEmailDisplay}
+                                    </a>
+                                ) : (
+                                    <span>{contactEmailDisplay}</span>
+                                )}
                             </li>
                             <li className="flex flex-col sm:flex-row gap-3 items-center sm:items-start text-center sm:text-left">
                                 <svg
@@ -269,24 +282,24 @@ const Footer: React.FC = () => {
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 0 0118 0z"
                                     ></path>
                                 </svg>
-                                <span>Segunda a Sexta • 8h às 18h</span>
+                                <span>Horario de atendimento: em atualizacao</span>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                {/* Newsletter Section - versão minimalista */}
+                {/* Newsletter Section - versao minimalista */}
                 <div className="mb-12 border-t border-white/10 pt-8 mt-4">
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div className="flex-1 text-center md:text-left space-y-1">
                             <p className="text-xs font-medium uppercase tracking-[0.25em] text-white/60">
-                                Conteúdo para gestores
+                                Conteudo para gestores
                             </p>
                             <h3 className="text-lg font-semibold text-white">
-                                Receba orientações práticas de contabilidade e tributos
+                                Receba orientacoes praticas de contabilidade e tributos
                             </h3>
                             <p className="text-xs text-slate-300 max-w-md mx-auto md:mx-0">
-                                Um e-mail por mês, com insights objetivos para ajudar na gestão financeira da sua empresa.
+                                Um e-mail por mes, com insights objetivos para ajudar na gestao financeira da sua empresa.
                             </p>
                         </div>
 
@@ -318,10 +331,10 @@ const Footer: React.FC = () => {
 
                     <p className="text-[11px] text-slate-400 mt-3 text-center md:text-left" aria-live="polite">
                         {newsletterStatus === 'success'
-                            ? 'Inscrição realizada com sucesso.'
+                            ? 'Inscricao realizada com sucesso.'
                             : newsletterStatus === 'error'
                                 ? 'Ocorreu um erro. Tente novamente.'
-                                : 'Sem spam. Você pode se descadastrar a qualquer momento.'}
+                                : 'Sem spam. Voce pode se descadastrar a qualquer momento.'}
                     </p>
                 </div>
 
@@ -329,16 +342,16 @@ const Footer: React.FC = () => {
                 <div className="border-t border-gray-700/50 py-8">
                     <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
                         <p className="text-sm text-slate-500 mb-4 md:mb-0">
-                            &copy; {new Date().getFullYear()} MC Contabilidade - CNPJ: {companyCnpj} - {companyCrc}
+                            &copy; {new Date().getFullYear()} MC Contabilidade - {companyIdText}
                             <br />
-                            Todos os direitos reservados.
+                            Informacoes institucionais em revisao.
                         </p>
                         <div className="text-sm text-slate-500 space-x-4">
                             <Link
                                 to="/politica-de-privacidade"
                                 className="hover:text-white transition-colors focus:outline-none focus:underline"
                             >
-                                Política de Privacidade
+                                Politica de Privacidade
                             </Link>
                             <span className="select-none">|</span>
                             <Link to="/termos-de-uso" className="hover:text-white transition-colors focus:outline-none focus:underline">

@@ -7,8 +7,8 @@ interface WhatsappFloatProps {
 
 const WhatsappFloat: React.FC<WhatsappFloatProps> = ({ isMobileNavOpen = false, isContactOverlayOpen = false }) => {
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER_FLOAT;
-  const whatsappMessage = encodeURIComponent('Olá! Vim do site da MC Contabilidade e gostaria de mais informações');
-  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+  const whatsappMessage = encodeURIComponent('Ola! Vim do site e gostaria de falar com a equipe (em atualizacao)');
+  const whatsappLink = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${whatsappMessage}` : '#';
 
   if (isMobileNavOpen || isContactOverlayOpen) {
     return null;
@@ -20,7 +20,7 @@ const WhatsappFloat: React.FC<WhatsappFloatProps> = ({ isMobileNavOpen = false, 
       className="group fixed bottom-8 left-8 z-50 hidden lg:flex items-center"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Abrir conversa no WhatsApp com MC Contabilidade em nova aba"
+      aria-label="Abrir conversa no WhatsApp (em atualizacao)"
     >
       <div className="w-16 h-16 bg-gradient-to-br from-[#25D366] to-[#128C7E] text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform group-hover:scale-110 animate-pulse">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">

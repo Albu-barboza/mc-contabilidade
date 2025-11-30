@@ -14,42 +14,42 @@ export const serviceCards: ServiceCardContent[] = [
   {
     icon: 'company',
     title: 'Abertura de Empresa',
-    description: 'Processo completo de abertura de CNPJ, escolha do regime tributário ideal e registro nos órgãos competentes.',
-    features: ['Consultoria para enquadramento', 'Documentação completa', 'Processo ágil e digital'],
+    description: 'Orientacao e envio de documentos para registro do CNPJ e enquadramento inicial.',
+    features: ['Orientacao sobre enquadramento', 'Checklist de documentacao', 'Acompanhamento online'],
     link: '/servicos/abertura-empresa',
-    badge: 'CNPJ pronto em 7 dias'
+    badge: 'Prazos em atualizacao'
   },
   {
     icon: 'mei',
     title: 'Contabilidade MEI',
-    description: 'Gestão simplificada para microempreendedores com suporte completo e preço acessível.',
-    features: ['Declaração anual (DASN-SIMEI)', 'Emissão de guias DAS', 'Suporte especializado'],
+    description: 'Rotina essencial para microempreendedores com suporte humano e direto.',
+    features: ['Declaracao anual (DASN-SIMEI)', 'Emissao de guias quando configurada', 'Suporte consultivo'],
     link: '/servicos/mei',
-    badge: 'a partir de R$ 99/mês'
+    badge: 'Valores em atualizacao'
   },
   {
     icon: 'pme',
     title: 'Contabilidade PME',
-    description: 'Solução completa para pequenas e médias empresas crescerem com segurança.',
-    features: ['Escrituração contábil e fiscal', 'Folha completa e eSocial', 'Relatórios gerenciais mensais'],
+    description: 'Operacao contabile e fiscal para pequenas e medias empresas com olhar consultivo.',
+    features: ['Escrituracao contabile e fiscal', 'Folha completa e eSocial', 'Relatorios gerenciais combinados'],
     link: '/servicos/pme',
     featured: true,
-    badge: 'Plano consultivo'
+    badge: 'Planos em revisao'
   },
   {
     icon: 'consultoria',
-    title: 'Consultoria Tributária',
-    description: 'Planejamento tributário estratégico para reduzir custos legalmente e melhorar sua margem.',
-    features: ['Análise de regime tributário', 'Recuperação de impostos', 'Compliance fiscal contínuo'],
+    title: 'Consultoria Tributaria',
+    description: 'Analise e orientacao tributaria com foco em conformidade e clareza.',
+    features: ['Analise de regime tributario', 'Revisao de obrigacoes', 'Acompanhamento continuo'],
     link: '/servicos/consultoria-tributaria',
-    badge: 'Economia média de 28%'
+    badge: 'Planejamento em revisao'
   },
   {
     icon: 'finance',
     title: 'Planejamento Financeiro',
-    description: 'Análises, projeções e indicadores para um crescimento sustentável.',
-    features: ['Fluxo de caixa e DRE', 'Projeções financeiras', 'KPIs personalizados'],
+    description: 'Controles e indicadores para apoiar decisoes de forma transparente.',
+    features: ['Fluxo de caixa e DRE', 'Projecoes financeiras', 'KPIs combinados com o negocio'],
     link: '/servicos/planejamento-financeiro',
-    badge: 'Visibilidade < 30 dias'
+    badge: 'Visao financeira em revisao'
   }
 ];

@@ -40,9 +40,9 @@ const contactEmailValue = configuredContactEmail || 'contato@mccontabilidade.com
 const contactEmailHref = configuredContactEmail ? `mailto:${configuredContactEmail}` : undefined;
 
 export const statHighlights: StatHighlightItem[] = [
-  { value: 500, prefix: '+', label: 'Empresas atendidas' },
+  { value: 150, prefix: '+', label: 'Empresas atendidas' },
   { value: 15, suffix: ' anos', label: 'de experiência' },
-  { value: 35, suffix: '%', label: 'economia média em tributos' },
+  { value: 15, suffix: '%', label: 'economia média em tributos' },
   { value: 24, suffix: 'h', label: 'para retorno ao contato' }
 ];
 

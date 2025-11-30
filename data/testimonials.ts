@@ -14,71 +14,73 @@ export interface Testimonial {
     image: OptimizedImagePaths;
 }
 
+const baseTestimonial = 'Depoimento ilustrativo (em atualizacao). Relato ficticio usado enquanto coletamos cases reais.';
+
 export const testimonials: Testimonial[] = [
     {
         rating: 5,
-        text: "A Contabilidade Premium transformou a gestão financeira da minha empresa. Conseguimos reduzir 35% da carga tributária de forma totalmente legal. O atendimento é impecável.",
-        author: "Maria Silva",
-        role: "CEO, TechFlow Solutions",
+        text: baseTestimonial,
+        author: 'Cliente 1',
+        role: 'MEI em acompanhamento',
         image: {
-            src: getAssetUrl("/images/testimonials/icone.webp"),
-            webp: getAssetUrl("/images/testimonials/icone.webp"),
-            alt: "Foto de Maria Silva"
+            src: getAssetUrl('/images/testimonials/icone.webp'),
+            webp: getAssetUrl('/images/testimonials/icone.webp'),
+            alt: 'Icone de cliente'
         }
     },
     {
         rating: 5,
-        text: "Profissionalismo de ponta a ponta. Abriram minha empresa em tempo recorde e me ajudaram a escolher o melhor regime tributário. Hoje tenho total tranquilidade para focar no meu negócio.",
-        author: "João Oliveira",
-        role: "Fundador, EcoMarket",
+        text: baseTestimonial,
+        author: 'Cliente 2',
+        role: 'PME em implantacao',
         image: {
-            src: getAssetUrl("/images/testimonials/icone.webp"),
-            webp: getAssetUrl("/images/testimonials/icone.webp"),
-            alt: "Foto de João Oliveira"
+            src: getAssetUrl('/images/testimonials/icone.webp'),
+            webp: getAssetUrl('/images/testimonials/icone.webp'),
+            alt: 'Icone de cliente'
         }
     },
     {
         rating: 5,
-        text: "Como MEI, eu precisava de suporte sem burocracia. A equipe é extremamente atenciosa e sempre responde rapidamente. Os relatórios mensais me ajudam a entender melhor meu negócio.",
-        author: "Ana Costa",
-        role: "MEI, Designer Freelancer",
+        text: baseTestimonial,
+        author: 'Cliente 3',
+        role: 'Empreendedor digital',
         image: {
-            src: getAssetUrl("/images/testimonials/icone.webp"),
-            webp: getAssetUrl("/images/testimonials/icone.webp"),
-            alt: "Foto de Ana Costa"
+            src: getAssetUrl('/images/testimonials/icone.webp'),
+            webp: getAssetUrl('/images/testimonials/icone.webp'),
+            alt: 'Icone de cliente'
         }
     },
     {
         rating: 5,
-        text: "O serviço de planejamento financeiro nos deu uma clareza incrível sobre nossas finanças. Tomamos decisões muito mais assertivas agora. Recomendo fortemente!",
-        author: "Pedro Martins",
-        role: "Diretor, Construtora Aliança",
+        text: baseTestimonial,
+        author: 'Cliente 4',
+        role: 'Consultoria em andamento',
         image: {
-            src: getAssetUrl("/images/testimonials/icone.webp"),
-            webp: getAssetUrl("/images/testimonials/icone.webp"),
-            alt: "Foto de Pedro Martins"
+            src: getAssetUrl('/images/testimonials/icone.webp'),
+            webp: getAssetUrl('/images/testimonials/icone.webp'),
+            alt: 'Icone de cliente'
         }
     },
     {
         rating: 5,
-        text: "Realizaram uma recuperação de impostos que eu nem sabia que tinha direito. O valor ajudou muito nosso fluxo de caixa. Equipe muito competente e honesta.",
-        author: "Juliana Santos",
-        role: "Sócia, Restaurante Sabor & Arte",
+        text: baseTestimonial,
+        author: 'Cliente 5',
+        role: 'Planejamento financeiro',
         image: {
-            src: getAssetUrl("/images/testimonials/icone.webp"),
-            webp: getAssetUrl("/images/testimonials/icone.webp"),
-            alt: "Foto de Juliana Santos"
+            src: getAssetUrl('/images/testimonials/icone.webp'),
+            webp: getAssetUrl('/images/testimonials/icone.webp'),
+            alt: 'Icone de cliente'
         }
     },
     {
         rating: 5,
-        text: "Atendimento excepcional e profundo conhecimento técnico. A consultoria tributária deles é um divisor de águas para qualquer PME que busca crescer de forma sustentável.",
-        author: "Fernando Gomes",
-        role: "CFO, Logística Veloz",
+        text: baseTestimonial,
+        author: 'Cliente 6',
+        role: 'Caso em revisao',
         image: {
-            src: getAssetUrl("/images/testimonials/icone.webp"),
-            webp: getAssetUrl("/images/testimonials/icone.webp"),
-            alt: "Foto de Fernando Gomes"
+            src: getAssetUrl('/images/testimonials/icone.webp'),
+            webp: getAssetUrl('/images/testimonials/icone.webp'),
+            alt: 'Icone de cliente'
         }
     }
 ];

@@ -107,19 +107,19 @@ const ServicesSection: React.FC = () => {
             ref={sectionBadgeRef}
             className="scroll-reveal delay-[40ms] inline-block px-4 py-1.5 bg-white dark:bg-white/10 text-[#1F3A5F] dark:text-slate-100 text-sm font-semibold rounded-full mb-4"
           >
-            Serviços
+            Servicos
           </span>
           <h2
             ref={sectionHeadingRef}
             className="scroll-reveal delay-[120ms] text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-slate-50 leading-tight"
           >
-            Soluções sob medida para cada fase do seu negócio
+            Solucoes sob medida para cada fase do seu negocio
           </h2>
           <p
             ref={sectionCopyRef}
             className="scroll-reveal delay-[200ms] text-base sm:text-lg text-gray-600 dark:text-slate-200"
           >
-            Da abertura ao planejamento financeiro, estamos disponíveis para tirar dúvidas e orientar o próximo passo.
+            Da abertura ao planejamento financeiro, estamos disponiveis para tirar duvidas e orientar o proximo passo.
           </p>
         </div>
         <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-1 px-1 md:m-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:snap-none">
@@ -161,7 +161,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         className={`${baseClasses} ${delayClass} relative bg-gradient-to-br from-[#1F3A5F] to-[#2E4F7E] text-white border-transparent shadow-2xl lg:scale-105 hover:-translate-y-3`}
       >
         <div className="absolute top-4 right-4 px-3 py-1 bg-white/20 text-xs font-bold rounded-full uppercase tracking-wider">
-          Mais Procurado
+          Em destaque
         </div>
         <div className="w-16 h-16 flex items-center justify-center bg-white/20 rounded-xl mb-5 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
           {icon}
@@ -198,29 +198,29 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       ref={cardRef}
       className={`${baseClasses} ${delayClass} bg-white dark:bg-slate-900/70 border-gray-200 dark:border-slate-800/70 hover:shadow-2xl hover:border-[#1F3A5F] dark:hover:border-slate-100 hover:-translate-y-3`}
     >
-      <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center bg-[#E8EDF4] dark:bg-white/10 rounded-xl text-[#1F3A5F] dark:text-slate-100 mb-5 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:bg-[#1F3A5F] group-hover:text-white">
+      <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center bg-[#E8EDF4] dark:bg-white/10 rounded-xl mb-5 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 text-primary dark:text-white">
         {icon}
       </div>
       {badge ? (
-        <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-[#1F3A5F] dark:text-slate-100 bg-[#E8EDF4] dark:bg-white/10 rounded-full mb-3">
+        <span className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#3B6EA5] dark:text-[#C6D7FF] mb-3">
           {badge}
         </span>
       ) : null}
-      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-slate-50 mb-3 leading-tight">{title}</h3>
+      <h3 className="text-xl sm:text-2xl font-bold mb-3 leading-tight text-slate-900 dark:text-slate-50">{title}</h3>
       <p className="text-gray-600 dark:text-slate-200 mb-5 flex-grow text-sm sm:text-base">{description}</p>
-      <ul className="space-y-2 mb-6 text-sm text-gray-600 dark:text-slate-300">
+      <ul className="space-y-2 mb-6 text-sm text-gray-700 dark:text-slate-300">
         {features.map((feature) => (
           <li key={feature} className="flex items-center">
-            <svg className="w-4 h-4 mr-2 text-[#6B7A8F] dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <svg className="w-4 h-4 mr-2 text-[#1F3A5F]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
             {feature}
           </li>
         ))}
       </ul>
-      <Link to={link} className="font-semibold text-[#1F3A5F] dark:text-slate-100 self-start group-hover:text-[#3B6EA5] dark:group-hover:text-white">
+      <Link to={link} className="font-semibold text-[#1F3A5F] dark:text-[#C6D7FF] self-start group/link">
         Saiba mais{' '}
-        <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+        <span className="inline-block transition-transform duration-300 group-hover/link:translate-x-1">
           &rarr;
         </span>
       </Link>
