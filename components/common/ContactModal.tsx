@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useContactForm } from '../../context/ContactFormContext';
 import { env, getWhatsappLink, previaEnvio } from '../../config/env';
 import SeloEnviado from './SeloEnviado';
+import AberturaM from './AberturaM';
 import { AUTORIZACAO_FORMSPREE, AVISO_DADOS_SENSIVEIS, ERRO_AUTORIZACAO } from '../../config/privacidade';
 
 type Campo = 'nome' | 'email' | 'telefone' | 'servico' | 'mensagem' | 'autorizo';
@@ -212,239 +213,243 @@ const ContactModal: React.FC = () => {
         if (e.target === e.currentTarget) fechar();
       }}
     >
-      <div
-        ref={janelaRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="contato-titulo"
-        aria-describedby="contato-descricao"
-        onKeyDown={aoTeclar}
-        className="modal-painel relative max-h-[92vh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-t-3xl border border-[color:var(--linha)] bg-noite sm:rounded-3xl"
-      >
-        <button
-          type="button"
-          onClick={fechar}
-          className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full text-fraco transition-colors duration-200 hover:bg-white/5 hover:text-marfim"
-          aria-label="Fechar"
+      {/* o M dourado se abre por cima do painel; o painel nasce do meio (index.css) */}
+      <div className="relative w-full max-w-4xl">
+        <AberturaM />
+        <div
+          ref={janelaRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="contato-titulo"
+          aria-describedby="contato-descricao"
+          onKeyDown={aoTeclar}
+          className="modal-painel relative max-h-[92vh] w-full overflow-y-auto overscroll-contain rounded-t-3xl border border-[color:var(--linha)] bg-noite sm:rounded-3xl"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-        </button>
+          <button
+            type="button"
+            onClick={fechar}
+            className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full text-fraco transition-colors duration-200 hover:bg-white/5 hover:text-marfim"
+            aria-label="Fechar"
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+          </button>
 
-        <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="modal-cascata bg-marinho px-6 pb-8 pt-10 sm:px-10 lg:py-12">
-            <h2 id="contato-titulo" ref={tituloRef} tabIndex={-1} className="font-display text-4xl font-medium text-marfim focus:outline-none sm:text-5xl">
-              Vamos conversar?
-            </h2>
-            <span aria-hidden="true" className="modal-fio mt-6 block h-px w-14 bg-latao" />
-            <p id="contato-descricao" className="mt-5 max-w-sm leading-relaxed text-texto">
-              Conte o momento da sua empresa. A equipe retorna em até 24h.
-            </p>
-            <dl className="mt-8 space-y-5 text-sm">
-              <div>
-                <dt className="font-semibold text-latao-claro">Atendimento</dt>
-                <dd className="mt-1 text-marfim">100% online</dd>
-              </div>
-              {email && (
+          <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="modal-cascata bg-marinho px-6 pb-8 pt-10 sm:px-10 lg:py-12">
+              <h2 id="contato-titulo" ref={tituloRef} tabIndex={-1} className="font-display text-4xl font-medium text-marfim focus:outline-none sm:text-5xl">
+                Vamos conversar?
+              </h2>
+              <span aria-hidden="true" className="modal-fio mt-6 block h-px w-14 bg-latao" />
+              <p id="contato-descricao" className="mt-5 max-w-sm leading-relaxed text-texto">
+                Conte o momento da sua empresa. A equipe retorna em até 24h.
+              </p>
+              <dl className="mt-8 space-y-5 text-sm">
                 <div>
-                  <dt className="font-semibold text-latao-claro">E-mail</dt>
-                  <dd className="mt-1">
-                    <a href={`mailto:${email}`} className="text-marfim underline-offset-4 hover:underline">
-                      {email}
-                    </a>
-                  </dd>
+                  <dt className="font-semibold text-latao-claro">Atendimento</dt>
+                  <dd className="mt-1 text-marfim">100% online</dd>
                 </div>
-              )}
-              {temWhatsapp && (
-                <div>
-                  <dt className="font-semibold text-latao-claro">WhatsApp</dt>
-                  <dd className="mt-1">
-                    <a
-                      href={getWhatsappLink('Olá! Vim pelo site da MC Contabilidade e gostaria de conversar.')}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-marfim underline-offset-4 hover:underline"
-                    >
-                      Conversar no WhatsApp
-                    </a>
-                  </dd>
-                </div>
-              )}
-            </dl>
-          </div>
-
-          <div className="px-6 pb-10 pt-8 sm:px-10 lg:py-12">
-            {status === 'enviado' ? (
-              <div className="flex min-h-[320px] flex-col items-start justify-center" role="status">
-                <SeloEnviado className="h-16" />
-                <p className="selo-texto mt-8 font-display text-4xl font-medium text-marfim">Mensagem enviada.</p>
-                <p className="selo-texto mt-3 max-w-sm leading-relaxed text-texto">
-                  Obrigado pelo contato. A equipe retorna em até 24h.
-                  {previaEnvio && !destinoValido && <span className="mt-2 block text-sm text-latao-claro">Prévia: nada foi enviado de verdade.</span>}
-                </p>
-                <button
-                  ref={fecharRef}
-                  type="button"
-                  onClick={fechar}
-                  className="selo-texto pressionar mt-8 rounded-full border border-marfim/40 px-6 py-3 text-sm font-bold text-marfim transition-colors duration-200 hover:border-marfim"
-                >
-                  Fechar
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={enviar} noValidate className="modal-cascata space-y-5">
-                {!destinoValido && (
-                  <p className="rounded-xl border border-latao/30 bg-latao/10 px-4 py-3 text-sm text-latao-claro">
-                    {previaEnvio
-                      ? 'Prévia: pode enviar para ver a confirmação. Nada sai daqui de verdade.'
-                      : 'Prévia: o envio deste formulário será ligado quando o e-mail de recebimento for configurado.'}
-                  </p>
+                {email && (
+                  <div>
+                    <dt className="font-semibold text-latao-claro">E-mail</dt>
+                    <dd className="mt-1">
+                      <a href={`mailto:${email}`} className="text-marfim underline-offset-4 hover:underline">
+                        {email}
+                      </a>
+                    </dd>
+                  </div>
                 )}
-                {/* nome e telefone lado a lado; e-mail e assunto na largura toda (textos longos não cortam) */}
-                <div className="grid gap-5 sm:grid-cols-2">
+                {temWhatsapp && (
                   <div>
-                    <label htmlFor="contato-nome" className={rotulo}>
-                      Nome completo
-                    </label>
-                    <input
-                      id="contato-nome"
-                      name="nome"
-                      type="text"
-                      autoComplete="name"
-                      maxLength={120}
-                      value={dados.nome}
-                      onChange={mudar}
-                      onBlur={() => sair('nome')}
-                      placeholder="Maria Souza…"
-                      className={campoClasse('nome')}
-                      {...aria('nome')}
-                    />
-                    {ajuda('nome')}
+                    <dt className="font-semibold text-latao-claro">WhatsApp</dt>
+                    <dd className="mt-1">
+                      <a
+                        href={getWhatsappLink('Olá! Vim pelo site da MC Contabilidade e gostaria de conversar.')}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-marfim underline-offset-4 hover:underline"
+                      >
+                        Conversar no WhatsApp
+                      </a>
+                    </dd>
                   </div>
-                  <div>
-                    <label htmlFor="contato-telefone" className={rotulo}>
-                      Telefone ou WhatsApp
-                    </label>
-                    <input
-                      id="contato-telefone"
-                      name="telefone"
-                      type="tel"
-                      inputMode="tel"
-                      autoComplete="tel-national"
-                      maxLength={16}
-                      value={dados.telefone}
-                      onChange={mudar}
-                      onBlur={() => sair('telefone')}
-                      placeholder="(00) 00000-0000…"
-                      className={campoClasse('telefone')}
-                      {...aria('telefone')}
-                    />
-                    {ajuda('telefone')}
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="contato-email" className={rotulo}>
-                    E-mail
-                  </label>
-                  <input
-                    id="contato-email"
-                    name="email"
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    spellCheck={false}
-                    maxLength={160}
-                    value={dados.email}
-                    onChange={mudar}
-                    onBlur={() => sair('email')}
-                    placeholder="nome@empresa.com.br…"
-                    className={campoClasse('email')}
-                    {...aria('email')}
-                  />
-                  {ajuda('email')}
-                </div>
-                <div>
-                  <label htmlFor="contato-servico" className={rotulo}>
-                    Assunto
-                  </label>
-                  <select
-                    id="contato-servico"
-                    name="servico"
-                    value={dados.servico}
-                    onChange={mudar}
-                    onBlur={() => sair('servico')}
-                    className={campoClasse('servico', 'bg-noite')}
-                    {...aria('servico')}
-                  >
-                    <option value="">Escolha um assunto</option>
-                    {ASSUNTOS.map((a) => (
-                      <option key={a.valor} value={a.valor}>
-                        {a.texto}
-                      </option>
-                    ))}
-                  </select>
-                  {ajuda('servico')}
-                </div>
-                <div>
-                  <label htmlFor="contato-mensagem" className={rotulo}>
-                    Mensagem <span className="font-normal text-fraco">(opcional)</span>
-                  </label>
-                  <textarea
-                    id="contato-mensagem"
-                    name="mensagem"
-                    rows={3}
-                    maxLength={2000}
-                    value={dados.mensagem}
-                    onChange={mudar}
-                    placeholder="Ex.: tenho um MEI e quero virar ME no ano que vem…"
-                    aria-describedby="contato-mensagem-dica"
-                    className={`${campoClasse('mensagem')} resize-none`}
-                  />
-                  <p id="contato-mensagem-dica" className="mt-2 text-xs leading-relaxed text-fraco">
-                    {AVISO_DADOS_SENSIVEIS}
+                )}
+              </dl>
+            </div>
+
+            <div className="px-6 pb-10 pt-8 sm:px-10 lg:py-12">
+              {status === 'enviado' ? (
+                <div className="flex min-h-[320px] flex-col items-start justify-center" role="status">
+                  <SeloEnviado className="h-16" />
+                  <p className="selo-texto mt-8 font-display text-4xl font-medium text-marfim">Mensagem enviada.</p>
+                  <p className="selo-texto mt-3 max-w-sm leading-relaxed text-texto">
+                    Obrigado pelo contato. A equipe retorna em até 24h.
+                    {previaEnvio && !destinoValido && <span className="mt-2 block text-sm text-latao-claro">Prévia: nada foi enviado de verdade.</span>}
                   </p>
+                  <button
+                    ref={fecharRef}
+                    type="button"
+                    onClick={fechar}
+                    className="selo-texto pressionar mt-8 rounded-full border border-marfim/40 px-6 py-3 text-sm font-bold text-marfim transition-colors duration-200 hover:border-marfim"
+                  >
+                    Fechar
+                  </button>
                 </div>
-                <div>
-                  <label htmlFor="contato-autorizo" className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-texto">
+              ) : (
+                <form onSubmit={enviar} noValidate className="modal-cascata space-y-5">
+                  {!destinoValido && (
+                    <p className="rounded-xl border border-latao/30 bg-latao/10 px-4 py-3 text-sm text-latao-claro">
+                      {previaEnvio
+                        ? 'Prévia: pode enviar para ver a confirmação. Nada sai daqui de verdade.'
+                        : 'Prévia: o envio deste formulário será ligado quando o e-mail de recebimento for configurado.'}
+                    </p>
+                  )}
+                  {/* nome e telefone lado a lado; e-mail e assunto na largura toda (textos longos não cortam) */}
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="contato-nome" className={rotulo}>
+                        Nome completo
+                      </label>
+                      <input
+                        id="contato-nome"
+                        name="nome"
+                        type="text"
+                        autoComplete="name"
+                        maxLength={120}
+                        value={dados.nome}
+                        onChange={mudar}
+                        onBlur={() => sair('nome')}
+                        placeholder="Maria Souza…"
+                        className={campoClasse('nome')}
+                        {...aria('nome')}
+                      />
+                      {ajuda('nome')}
+                    </div>
+                    <div>
+                      <label htmlFor="contato-telefone" className={rotulo}>
+                        Telefone ou WhatsApp
+                      </label>
+                      <input
+                        id="contato-telefone"
+                        name="telefone"
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel-national"
+                        maxLength={16}
+                        value={dados.telefone}
+                        onChange={mudar}
+                        onBlur={() => sair('telefone')}
+                        placeholder="(00) 00000-0000…"
+                        className={campoClasse('telefone')}
+                        {...aria('telefone')}
+                      />
+                      {ajuda('telefone')}
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="contato-email" className={rotulo}>
+                      E-mail
+                    </label>
                     <input
-                      id="contato-autorizo"
-                      name="autorizo"
-                      type="checkbox"
-                      checked={dados.autorizo === 'sim'}
+                      id="contato-email"
+                      name="email"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      spellCheck={false}
+                      maxLength={160}
+                      value={dados.email}
                       onChange={mudar}
-                      className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[#C9A45E]"
-                      {...aria('autorizo')}
+                      onBlur={() => sair('email')}
+                      placeholder="nome@empresa.com.br…"
+                      className={campoClasse('email')}
+                      {...aria('email')}
                     />
-                    <span>{AUTORIZACAO_FORMSPREE}</span>
-                  </label>
-                  {ajuda('autorizo')}
-                </div>
-                {/* armadilha para robôs: invisível para pessoas */}
-                <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
-                  <label htmlFor="contato-site">Site</label>
-                  <input id="contato-site" name="_gotcha" type="text" tabIndex={-1} autoComplete="off" value={armadilha} onChange={(e) => setArmadilha(e.target.value)} />
-                </div>
-                <div aria-live="polite">
-                  {falha && <p className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">{falha}</p>}
-                </div>
-                <button
-                  type="submit"
-                  disabled={status === 'enviando'}
-                  className="pressionar flex w-full items-center justify-center gap-3 rounded-full bg-latao py-4 text-base font-bold text-noite hover:bg-latao-claro disabled:opacity-70"
-                >
-                  {status === 'enviando' && <span className="h-4 w-4 animate-spin rounded-full border-2 border-noite/30 border-t-noite" aria-hidden="true" />}
-                  {status === 'enviando' ? 'Enviando…' : 'Enviar mensagem'}
-                </button>
-                <p className="text-center text-xs leading-relaxed text-fraco">
-                  Usamos seus dados só para responder este contato. Veja a{' '}
-                  <a href="#/politica-de-privacidade" onClick={fechar} className="text-marfim underline-offset-4 hover:underline">
-                    política de privacidade
-                  </a>
-                  .
-                </p>
-              </form>
-            )}
+                    {ajuda('email')}
+                  </div>
+                  <div>
+                    <label htmlFor="contato-servico" className={rotulo}>
+                      Assunto
+                    </label>
+                    <select
+                      id="contato-servico"
+                      name="servico"
+                      value={dados.servico}
+                      onChange={mudar}
+                      onBlur={() => sair('servico')}
+                      className={campoClasse('servico', 'bg-noite')}
+                      {...aria('servico')}
+                    >
+                      <option value="">Escolha um assunto</option>
+                      {ASSUNTOS.map((a) => (
+                        <option key={a.valor} value={a.valor}>
+                          {a.texto}
+                        </option>
+                      ))}
+                    </select>
+                    {ajuda('servico')}
+                  </div>
+                  <div>
+                    <label htmlFor="contato-mensagem" className={rotulo}>
+                      Mensagem <span className="font-normal text-fraco">(opcional)</span>
+                    </label>
+                    <textarea
+                      id="contato-mensagem"
+                      name="mensagem"
+                      rows={3}
+                      maxLength={2000}
+                      value={dados.mensagem}
+                      onChange={mudar}
+                      placeholder="Ex.: tenho um MEI e quero virar ME no ano que vem…"
+                      aria-describedby="contato-mensagem-dica"
+                      className={`${campoClasse('mensagem')} resize-none`}
+                    />
+                    <p id="contato-mensagem-dica" className="mt-2 text-xs leading-relaxed text-fraco">
+                      {AVISO_DADOS_SENSIVEIS}
+                    </p>
+                  </div>
+                  <div>
+                    <label htmlFor="contato-autorizo" className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-texto">
+                      <input
+                        id="contato-autorizo"
+                        name="autorizo"
+                        type="checkbox"
+                        checked={dados.autorizo === 'sim'}
+                        onChange={mudar}
+                        className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[#C9A45E]"
+                        {...aria('autorizo')}
+                      />
+                      <span>{AUTORIZACAO_FORMSPREE}</span>
+                    </label>
+                    {ajuda('autorizo')}
+                  </div>
+                  {/* armadilha para robôs: invisível para pessoas */}
+                  <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+                    <label htmlFor="contato-site">Site</label>
+                    <input id="contato-site" name="_gotcha" type="text" tabIndex={-1} autoComplete="off" value={armadilha} onChange={(e) => setArmadilha(e.target.value)} />
+                  </div>
+                  <div aria-live="polite">
+                    {falha && <p className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">{falha}</p>}
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={status === 'enviando'}
+                    className="pressionar flex w-full items-center justify-center gap-3 rounded-full bg-latao py-4 text-base font-bold text-noite hover:bg-latao-claro disabled:opacity-70"
+                  >
+                    {status === 'enviando' && <span className="h-4 w-4 animate-spin rounded-full border-2 border-noite/30 border-t-noite" aria-hidden="true" />}
+                    {status === 'enviando' ? 'Enviando…' : 'Enviar mensagem'}
+                  </button>
+                  <p className="text-center text-xs leading-relaxed text-fraco">
+                    Usamos seus dados só para responder este contato. Veja a{' '}
+                    <a href="#/politica-de-privacidade" onClick={fechar} className="text-marfim underline-offset-4 hover:underline">
+                      política de privacidade
+                    </a>
+                    .
+                  </p>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </div>

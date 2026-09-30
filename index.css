@@ -136,26 +136,45 @@
   }
   .texto-corrido a { color: var(--marfim); text-decoration: underline; text-decoration-color: rgba(201, 164, 94, 0.6); }
 
-  /* janela de contato: o fundo escurece e o painel chega de perto, rápido (sai sem animação) */
+  /* janela de contato (AberturaM.tsx): o fundo escurece, o M dourado aparece no centro e se abre em duas
+     metades; o painel nasce do meio, entre elas, como uma porta (sai sem animação). Pouco mais de meio
+     segundo até o formulário estar inteiro. */
   .modal-fundo { animation: modal-fundo 200ms var(--ease-out); }
-  .modal-painel { animation: modal-painel 280ms var(--ease-out); }
   @keyframes modal-fundo { from { opacity: 0; } }
   @keyframes modal-painel { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
+  .modal-painel {
+    --raio-painel: 24px 24px 0 0; /* no celular a janela sobe do rodapé: só os cantos de cima são redondos */
+    animation: painel-abrir 380ms var(--ease-in-out) 150ms backwards;
+  }
+  @media (min-width: 640px) { .modal-painel { --raio-painel: 24px; } }
+  @keyframes painel-abrir {
+    from { clip-path: inset(0 50% 0 50% round var(--raio-painel)); }
+    to { clip-path: inset(0 0 0 0 round var(--raio-painel)); }
+  }
+  .modal-abertura { animation: abertura-sumir 140ms ease-out 480ms both; }
+  .abertura-m { animation: abertura-chegar 190ms var(--ease-out) both; }
+  .abertura-esq { animation: abertura-esq 380ms var(--ease-in-out) 150ms both; }
+  .abertura-dir { animation: abertura-dir 380ms var(--ease-in-out) 150ms both; }
+  @keyframes abertura-chegar { from { opacity: 0; transform: scale(0.9); } }
+  @keyframes abertura-esq { 55% { opacity: 1; } to { opacity: 0; transform: translateX(calc(-1 * min(38vw, 360px))); } }
+  @keyframes abertura-dir { 55% { opacity: 1; } to { opacity: 0; transform: translateX(min(38vw, 360px)); } }
+  @keyframes abertura-sumir { to { opacity: 0; visibility: hidden; } }
+
+  /* os itens do formulário chegam depois que a porta abriu, em cascata curta, e o fio de latão se
+     desenha sob o título (o mesmo fio dos capítulos da vitrine) */
+  .modal-cascata > * { animation: modal-item 260ms var(--ease-out) both; animation-delay: 300ms; }
+  .modal-cascata > :nth-child(2) { animation-delay: 330ms; }
+  .modal-cascata > :nth-child(3) { animation-delay: 360ms; }
+  .modal-cascata > :nth-child(4) { animation-delay: 390ms; }
+  .modal-cascata > :nth-child(5) { animation-delay: 420ms; }
+  .modal-cascata > :nth-child(n + 6) { animation-delay: 450ms; }
+  @keyframes modal-item { from { opacity: 0; transform: translateY(8px); } }
+  .modal-fio { transform-origin: left center; animation: modal-fio 520ms var(--ease-out) 400ms both; }
+  @keyframes modal-fio { from { transform: scaleX(0); } }
   @media (prefers-reduced-motion: reduce) {
     .modal-painel { animation: modal-fundo 200ms ease-out; }
+    .modal-abertura { display: none; }
   }
-
-  /* janela de contato: os itens chegam um pouco depois do painel, em cascata curta, e o fio de latão
-     se desenha sob o título (o mesmo fio dos capítulos da vitrine) */
-  .modal-cascata > * { animation: modal-item 260ms var(--ease-out) both; animation-delay: 60ms; }
-  .modal-cascata > :nth-child(2) { animation-delay: 95ms; }
-  .modal-cascata > :nth-child(3) { animation-delay: 130ms; }
-  .modal-cascata > :nth-child(4) { animation-delay: 165ms; }
-  .modal-cascata > :nth-child(5) { animation-delay: 200ms; }
-  .modal-cascata > :nth-child(n + 6) { animation-delay: 235ms; }
-  @keyframes modal-item { from { opacity: 0; transform: translateY(8px); } }
-  .modal-fio { transform-origin: left center; animation: modal-fio 520ms var(--ease-out) 160ms both; }
-  @keyframes modal-fio { from { transform: scaleX(0); } }
 
   /* selo de envio (SeloEnviado.tsx): o fio desenha o MC, o ouro sobe de baixo para cima,
      o fio se recolhe e o texto se resolve do desfoque, como as legendas da vitrine */
