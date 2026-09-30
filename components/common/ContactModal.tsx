@@ -237,7 +237,7 @@ const ContactModal: React.FC = () => {
           </button>
 
           <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="modal-cascata bg-marinho px-6 pb-8 pt-10 sm:px-10 lg:py-12">
+            <div className="bg-marinho px-6 pb-8 pt-10 sm:px-10 lg:py-12">
               <h2 id="contato-titulo" ref={tituloRef} tabIndex={-1} className="font-display text-4xl font-medium text-marfim focus:outline-none sm:text-5xl">
                 Vamos conversar?
               </h2>
@@ -297,7 +297,7 @@ const ContactModal: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={enviar} noValidate className="modal-cascata space-y-5">
+                <form onSubmit={enviar} noValidate className="space-y-5">
                   {!destinoValido && (
                     <p className="rounded-xl border border-latao/30 bg-latao/10 px-4 py-3 text-sm text-latao-claro">
                       {previaEnvio
