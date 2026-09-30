@@ -1,6 +1,10 @@
 // Os objetos-símbolo da MC Contabilidade, um para cada serviço, montados com formas do Three.js.
 // Cada função devolve um grupo centrado na origem, com ~2,4 unidades no lado maior.
+// As sequências (o arame que vira ouro, as pastas que entram uma a uma, as engrenagens que se montam,
+// o gráfico que cresce e a pasta que ganha o dourado) são linhas do tempo do GSAP, pausadas: quem
+// manda no andamento é a rolagem (página inicial) ou o relógio da chegada (mostruário das páginas).
 import * as THREE from 'three';
+import gsap from 'gsap';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { rng, LOGO, LOMBADAS } from './texturas.js';
@@ -9,10 +13,6 @@ const TAU = Math.PI * 2;
 export const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
 const V2 = (x, y) => new THREE.Vector2(x, y);
 const limitar = (x) => Math.min(1, Math.max(0, x));
-const suave = (x) => {
-  const t = limitar(x);
-  return t * t * (3 - 2 * t);
-};
 
 // ---------- utilidades ----------
 export function malha(geo, mat) {
@@ -121,20 +121,110 @@ function contornoC() {
   return pts;
 }
 
-// Geometria do logotipo com altura 1 (centrada na origem, virada para +z).
-export function geoMonograma({ prof = 0.12, bisel = 0.012 } = {}) {
-  const paraShape = (pts) => new THREE.Shape(pts.map(([x, y]) => V2((x - 540) / LOGO.altura, -(y - 540) / LOGO.altura)));
+// Os três contornos do logotipo (perna do M, o "visto" com a outra perna, e o C), em altura 1.
+export function contornosMonograma() {
   const w = LOGO.traco;
-  const formas = [paraShape(contornoTraco(LOGO.a, w)), paraShape(contornoTraco(LOGO.b, w)), paraShape(contornoC())];
-  return juntar(formas.map((s) => extrudar(s, prof, bisel, 32)));
+  const mapa = ([x, y]) => V2((x - 540) / LOGO.altura, -(y - 540) / LOGO.altura);
+  return [contornoTraco(LOGO.a, w), contornoTraco(LOGO.b, w), contornoC()].map((pts) => pts.map(mapa));
 }
 
+// Geometria do logotipo com altura 1 (centrada na origem, virada para +z).
+export function geoMonograma({ prof = 0.12, bisel = 0.012 } = {}) {
+  return juntar(contornosMonograma().map((pts) => extrudar(new THREE.Shape(pts), prof, bisel, 32)));
+}
+
+// Um fio fino de latão seguindo um contorno fechado. setDrawRange mostra só o trecho já "desenhado".
+function arameContorno(pts, z, raio, mat) {
+  const caminho = new THREE.CurvePath();
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i], b = pts[(i + 1) % pts.length];
+    if (a.distanceTo(b) > 1e-5) caminho.add(new THREE.LineCurve3(V3(a.x, a.y, z), V3(b.x, b.y, z)));
+  }
+  const segs = Math.max(48, Math.round(caminho.getLength() * 70));
+  const LADOS = 6;
+  const fio = malha(new THREE.TubeGeometry(caminho, segs, raio, LADOS, true), mat);
+  fio.userData = { d: 0, segs, porSeg: LADOS * 6 };
+  return fio;
+}
+
+// Abertura: o MC se desenha em arame e depois se enche de ouro, de baixo para cima, como metal
+// entrando no molde (o jeito do exemplo grátis "Three.js scroll" do Motion, feito aqui com GSAP).
 export function monograma(M) {
   const g = new THREE.Group();
-  const m = malha(geoMonograma({ prof: 0.2, bisel: 0.022 }), M.latao);
-  m.scale.setScalar(1.9);
-  g.add(m);
-  return { grupo: g };
+  const peca = new THREE.Group();
+  peca.scale.setScalar(1.9);
+  g.add(peca);
+  const PROF = 0.2, BISEL = 0.022;
+
+  // o ouro: a peça maciça, cortada por um plano que sobe (só aparece o que está abaixo dele)
+  const ouro = M.latao.clone();
+  const corteLocal = new THREE.Plane(V3(0, -1, 0), -0.58);
+  const corte = corteLocal.clone();
+  ouro.clippingPlanes = [corte];
+  const solido = malha(geoMonograma({ prof: PROF, bisel: BISEL }), ouro);
+  // o plano acompanha a peça quando ela gira (os planos de corte do Three.js ficam no espaço do mundo)
+  solido.onBeforeRender = () => corte.copy(corteLocal).applyMatrix4(solido.matrixWorld);
+  peca.add(solido);
+
+  // o arame: o contorno da frente e o de trás
+  const arameMat = M.lataoClaro.clone();
+  arameMat.transparent = true;
+  const z = PROF / 2 + BISEL;
+  const contornos = contornosMonograma();
+  const frente = contornos.map((pts) => arameContorno(pts, z, 0.006, arameMat));
+  const tras = contornos.map((pts) => arameContorno(pts, -z, 0.006, arameMat));
+  const fios = [...frente, ...tras];
+  fios.forEach((f) => peca.add(f));
+  // nos cantos vivos, um fio curto liga a frente às costas: o desenho vira um objeto em arame, não
+  // dois contornos soltos (no C, só as pontas; o resto dele é curva)
+  const [cA, cB, cC] = contornos;
+  const cantos = [...cA, ...cB, cC[0], cC[65], cC[66], cC[cC.length - 1]];
+  const ligacoes = new THREE.Group();
+  ligacoes.position.z = z;
+  ligacoes.add(
+    malha(
+      juntar(
+        cantos.map((c) => {
+          const cil = new THREE.CylinderGeometry(0.006, 0.006, 2 * z, 6, 1);
+          cil.rotateX(Math.PI / 2);
+          cil.translate(c.x, c.y, -z);
+          return cil;
+        })
+      ),
+      arameMat
+    )
+  );
+  ligacoes.scale.z = 0.001;
+  peca.add(ligacoes);
+
+  const tlArame = gsap.timeline({ paused: true, defaults: { duration: 1, ease: 'power2.inOut' } });
+  frente.forEach((f, i) => tlArame.fromTo(f.userData, { d: 0 }, { d: 1 }, i * 0.12));
+  tlArame.fromTo(ligacoes.scale, { z: 0.001 }, { z: 1, duration: 0.45, ease: 'power2.out' }, 0.62);
+  tras.forEach((f, i) => tlArame.fromTo(f.userData, { d: 0 }, { d: 1 }, 0.3 + i * 0.12));
+  const tlOuro = gsap.timeline({ paused: true });
+  tlOuro
+    .fromTo(corteLocal, { constant: -0.58 }, { constant: 0.58, duration: 1, ease: 'power2.inOut' }, 0)
+    .fromTo(arameMat, { opacity: 1 }, { opacity: 0, duration: 0.3, ease: 'power1.out' }, 0.72);
+
+  let antes = '';
+  // desenho: 0→1 o arame se desenha; enchimento: 0→1 o ouro sobe e o arame se recolhe
+  const revelar = (desenho, enchimento) => {
+    const chave = `${desenho.toFixed(4)}|${enchimento.toFixed(4)}`;
+    if (chave === antes) return;
+    antes = chave;
+    tlArame.progress(limitar(desenho));
+    tlOuro.progress(limitar(enchimento));
+    const mostrarArame = arameMat.opacity > 0.01;
+    for (const f of fios) {
+      const segs = Math.round(f.userData.d * f.userData.segs);
+      f.visible = mostrarArame && segs > 0;
+      f.geometry.setDrawRange(0, segs * f.userData.porSeg);
+    }
+    ligacoes.visible = mostrarArame && ligacoes.scale.z > 0.01;
+    solido.visible = corteLocal.constant > -0.55;
+  };
+  revelar(0, 0);
+  return { grupo: g, revelar };
 }
 
 // ---------- I · a chave (a cabeça da chave é o próprio monograma) ----------
@@ -247,44 +337,40 @@ function geoPasta(k, w, h, d) {
   return geo;
 }
 
+// Do monte à fileira, uma pasta depois da outra, da esquerda para a direita; os aparadores de latão
+// fecham a fileira no fim (o jeito do exemplo grátis "Three.js sequence" do Motion, com GSAP).
 export function pastas(M) {
   const g = new THREE.Group();
   const r = rng(11);
   const n = LOMBADAS.length;
   const w = 0.25, h = 1.04, d = 0.96, folga = 0.012;
-  const itens = [];
+  const largura = n * (w + folga);
+  const tl = gsap.timeline({ paused: true, defaults: { duration: 0.55, ease: 'power3.out' } });
   for (let i = 0; i < n; i++) {
     const m = malha(geoPasta(i, w, h, d), M.pastas);
-    const fim = V3((i - (n - 1) / 2) * (w + folga), 0, 0);
-    const ini = V3((r() - 0.5) * 3.6, (r() - 0.5) * 2.4, (r() - 0.5) * 1.8 - 0.4);
-    const qi = new THREE.Quaternion().setFromEuler(new THREE.Euler((r() - 0.5) * 2.2, (r() - 0.5) * 3, (r() - 0.5) * 2.2));
-    const qf = new THREE.Quaternion();
-    itens.push({ m, ini, fim, qi, qf, atraso: i * 0.05 });
     g.add(m);
+    const ini = { x: (r() - 0.5) * 3.6, y: (r() - 0.5) * 2.4 + 0.3, z: (r() - 0.5) * 1.8 - 0.4 };
+    const giro = { x: (r() - 0.5) * 2.2, y: (r() - 0.5) * 3, z: (r() - 0.5) * 2.2 };
+    const quando = i * 0.1;
+    tl.fromTo(m.position, ini, { x: (i - (n - 1) / 2) * (w + folga), y: 0, z: 0 }, quando)
+      .fromTo(m.rotation, giro, { x: 0, y: 0, z: 0, ease: 'power2.out' }, quando)
+      .fromTo(m.scale, { x: 0.84, y: 0.84, z: 0.84 }, { x: 1, y: 1, z: 1 }, quando);
   }
-  // aparadores de latão, que chegam quando tudo já está no lugar
-  const largura = n * (w + folga);
-  const aparadores = [-1, 1].map((lado) => {
+  const aparadores = [-1, 1].map((lado, i) => {
     const a = new THREE.Group();
     a.add(caixa(0.05, 0.9, 0.7, M.lataoEscovado, 0, -0.07, 0, 0.012));
     a.add(caixa(0.36, 0.04, 0.7, M.lataoEscovado, -lado * 0.16, -0.5, 0, 0.012));
-    a.position.x = lado * (largura / 2 + 0.05);
+    a.userData.v = 0;
     g.add(a);
+    const x = lado * (largura / 2 + 0.05);
+    tl.fromTo(a.position, { x: x + lado * 0.7, y: -0.35 }, { x, y: 0, duration: 0.4 }, i ? '<0.06' : '>-0.12')
+      .fromTo(a.scale, { x: 0.7, y: 0.7, z: 0.7 }, { x: 1, y: 1, z: 1, duration: 0.4 }, '<')
+      .fromTo(a.userData, { v: 0 }, { v: 1, duration: 0.12, ease: 'none' }, '<');
     return a;
   });
   const organizar = (k) => {
-    for (const it of itens) {
-      const t = suave((k - it.atraso) / 0.62);
-      it.m.position.lerpVectors(it.ini, it.fim, t);
-      it.m.quaternion.slerpQuaternions(it.qi, it.qf, t);
-    }
-    const a = suave((k - 0.72) / 0.2);
-    aparadores.forEach((ap, i) => {
-      ap.visible = a > 0.01;
-      ap.position.y = (1 - a) * -0.6;
-      ap.scale.setScalar(Math.max(0.001, a));
-      ap.position.x = (i ? 1 : -1) * (largura / 2 + 0.05 + (1 - a) * 0.6);
-    });
+    tl.progress(limitar(k));
+    for (const a of aparadores) a.visible = a.userData.v > 0.02;
   };
   organizar(0);
   return { grupo: g, organizar };
@@ -397,6 +483,7 @@ export function mecanismo(M) {
   placa.rotation.x = Math.PI / 2;
   placa.position.set(0.02, 0.06, -0.045);
   g.add(placa);
+  const pontes = [];
   const ponte = (a, b, larg, z) => {
     const dir = new THREE.Vector3().subVectors(b, a);
     const m = malha(new RoundedBoxGeometry(dir.length() + larg, larg, 0.006, 2, 0.006), M.acoPolido);
@@ -404,6 +491,7 @@ export function mecanismo(M) {
     m.position.z = z;
     m.rotation.z = Math.atan2(dir.y, dir.x);
     g.add(m);
+    pontes.push(m);
   };
   ponte(principal.mesh.position, r1.mesh.position, 0.034, 0.034);
   ponte(r2.mesh.position, r3.mesh.position, 0.028, 0.036);
@@ -423,11 +511,24 @@ export function mecanismo(M) {
     g.add(p);
   });
 
-  // vista explodida: cada peça guarda a profundidade original; explodir(1) espalha as camadas em z
-  g.children.forEach((c) => (c.userData.z0 = c.position.z));
-  const explodir = (e) => {
+  // A montagem em sequência (GSAP): cada peça sai da vista explodida na sua vez — a placa, a roda
+  // principal, o trem de engrenagens, o balanço, as pontes e, por último, rubis e parafusos.
+  const ordem = new Map([[placa, 0], [principal.mesh, 1], [balanco, 6]]);
+  [[p1, r1], [p2, r2], [p3, r3], [lado, lado2, lado3]].forEach((par, i) => par.forEach((r) => ordem.set(r.mesh, 2 + i)));
+  pontes.forEach((m) => ordem.set(m, 7));
+  const tl = gsap.timeline({ paused: true, defaults: { duration: 0.5, ease: 'power3.out' } });
+  for (const c of g.children) {
+    c.userData.z0 = c.position.z;
+    c.userData.y0 = c.position.y;
+    c.userData.e = 1;
+    tl.fromTo(c.userData, { e: 1 }, { e: 0 }, (ordem.get(c) ?? 8) * 0.11);
+  }
+  // e = 1: vista explodida (camadas afastadas em z e um pouco acima); e = 0: peça no lugar
+  const montar = () => {
     for (const c of g.children) {
+      const e = c.userData.e;
       c.position.z = c === placa ? c.userData.z0 - 0.42 * e : c.userData.z0 * (1 + 16 * e) + (c === balanco ? 0.2 * e : 0);
+      c.position.y = c.userData.y0 + e * 0.16;
     }
   };
   // centraliza (o conjunto fica um pouco à esquerda e acima) e aumenta para o tamanho de vitrine
@@ -436,9 +537,11 @@ export function mecanismo(M) {
   raiz.add(g);
   raiz.scale.setScalar(2.55);
   const animar = (k, t) => {
-    for (const r of rodas) r.mesh.rotation.z = r.fase + r.w * t;
+    tl.progress(limitar(k / 0.85));
+    montar();
+    // cada roda chega girando e para no dente certo (com e = 0 a fase volta a ser a da engrenagem)
+    for (const r of rodas) r.mesh.rotation.z = r.fase + r.w * t + r.mesh.userData.e * 1.4;
     balanco.rotation.z = Math.sin(t * TAU * 1.25) * 1.9;
-    explodir(1 - suave(k / 0.7));
   };
   animar(0, 0);
   return { grupo: raiz, animar };
@@ -460,7 +563,9 @@ export function grafico(M, { alturas = [0.34, 0.46, 0.52, 0.66, 0.8, 0.98, 1.22]
     return b;
   });
   const curva = new THREE.CatmullRomCurve3(barras.map((b, i) => V3(b.position.x, 0.106 + alturas[i] + 0.1, 0.0)));
-  const linha = malha(new THREE.TubeGeometry(curva, 80, 0.009, 10, false), M.luzOuro);
+  const SEGS = 80, LADOS = 10;
+  const linha = malha(new THREE.TubeGeometry(curva, SEGS, 0.009, LADOS, false), M.luzOuro);
+  linha.userData.d = 0;
   g.add(linha);
   const ponta = malha(new THREE.SphereGeometry(0.028, 20, 14), M.luzOuro);
   ponta.position.copy(curva.getPoint(1));
@@ -469,14 +574,18 @@ export function grafico(M, { alturas = [0.34, 0.46, 0.52, 0.66, 0.8, 0.98, 1.22]
   const raiz = new THREE.Group();
   raiz.add(g);
   raiz.scale.setScalar(1.75);
+  // GSAP: as barras sobem uma a uma e, no fim, a linha se desenha por cima delas até a ponta.
+  // É um símbolo de crescimento, sem números nem escala: nenhum dado inventado.
+  const tl = gsap.timeline({ paused: true });
+  barras.forEach((b, i) => tl.fromTo(b.scale, { y: 0.001 }, { y: b.userData.h, duration: 0.45, ease: 'power3.out' }, i * 0.08));
+  tl.fromTo(linha.userData, { d: 0 }, { d: 1, duration: 0.55, ease: 'power1.inOut' }, '>-0.2')
+    .fromTo(ponta.scale, { x: 0.5, y: 0.5, z: 0.5 }, { x: 1, y: 1, z: 1, duration: 0.18, ease: 'power2.out' }, '>-0.04');
   const crescer = (k) => {
-    barras.forEach((b, i) => {
-      const t = suave((k - i * 0.07) / 0.5);
-      b.scale.y = Math.max(0.001, b.userData.h * (1 - Math.pow(1 - t, 3)));
-    });
-    const l = suave((k - 0.55) / 0.3);
-    linha.visible = ponta.visible = l > 0.01;
-    linha.material.opacity = l;
+    tl.progress(limitar(k));
+    const segs = Math.round(linha.userData.d * SEGS);
+    linha.visible = segs > 0;
+    linha.geometry.setDrawRange(0, segs * LADOS * 6);
+    ponta.visible = linha.userData.d > 0.97;
   };
   crescer(0);
   return { grupo: raiz, animar: (k) => crescer(k) };
@@ -497,13 +606,19 @@ export function canetaTinteiro(M) {
   return g;
 }
 
-export function pastaPreta(M, capaMat) {
+// A pasta preta começa com a marca só prensada no couro (relevo cego) e, no fim do passeio, ganha o
+// dourado: a folha metálica escurecida vira ouro enquanto a pasta vira para a luz (o jeito do exemplo
+// grátis "Three.js materials" do Motion — cor, brilho e metal mudando juntos —, feito com GSAP).
+export function pastaPreta(M, capaMat, douradoMat) {
   const g = new THREE.Group();
   const W = 1.5, H = 2.0, D = 0.075;
   g.add(malha(new RoundedBoxGeometry(W, H, D, 4, 0.03), M.couroPreto));
   const capa = malha(planoArredondado(W - 0.03, H - 0.03, 0.03), capaMat);
   capa.position.z = D / 2 + 0.001;
   g.add(capa);
+  const folha = malha(planoArredondado(W - 0.03, H - 0.03, 0.03), douradoMat);
+  folha.position.z = D / 2 + 0.0025;
+  g.add(folha);
   // miolo de papel aparecendo na lateral
   g.add(caixa(0.02, H - 0.1, D - 0.024, M.papel, W / 2 - 0.004, 0, 0));
   const caneta = canetaTinteiro(M);
@@ -514,9 +629,21 @@ export function pastaPreta(M, capaMat) {
   const raiz = new THREE.Group();
   raiz.add(g);
   raiz.scale.setScalar(1.12);
+  const virada = { y: 0 };
+  const escuro = new THREE.Color('#3A3226');
+  const tl = gsap.timeline({ paused: true, defaults: { duration: 1, ease: 'power2.inOut' } });
+  tl.fromTo(douradoMat, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: 'power2.out' }, 0)
+    .fromTo(douradoMat.color, { r: escuro.r, g: escuro.g, b: escuro.b }, { r: 1, g: 1, b: 1 }, 0.1)
+    .fromTo(douradoMat, { roughness: 0.75, metalness: 0.2 }, { roughness: 0.24, metalness: 0.9 }, 0.1)
+    .fromTo(virada, { y: 0.36 }, { y: 0 }, 0);
+  const dourar = (x) => {
+    tl.progress(limitar(x));
+    folha.visible = douradoMat.opacity > 0.005;
+  };
+  dourar(0);
   const animar = (k, t) => {
-    g.rotation.y = Math.sin(t * 0.45) * 0.1 - 0.12;
+    g.rotation.y = Math.sin(t * 0.45) * 0.1 - 0.12 + virada.y;
     g.rotation.x = Math.sin(t * 0.33) * 0.04;
   };
-  return { grupo: raiz, animar };
+  return { grupo: raiz, animar, dourar };
 }

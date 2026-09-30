@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import JsonLd from '../components/common/JsonLd';
 import Seo from '../components/common/Seo';
 import CinemaHero from '../components/home/CinemaHero';
-import Monograma from '../components/common/Monograma';
+import Manifesto from '../components/paginas/Manifesto';
 import Passos from '../components/paginas/Passos';
 import Convite from '../components/paginas/Convite';
 import { SERVICOS } from '../data/servicos';
@@ -53,17 +53,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* MANIFESTO */}
-      <section className="bg-marinho py-28 md:py-40">
-        <div className="mx-auto max-w-4xl px-[var(--gutter)] text-center">
-          <Monograma className="mx-auto h-auto w-12 text-latao" />
-          <p className="mt-10 font-display text-[2.2rem] italic leading-[1.18] text-marfim md:text-[3.4rem]">O que é bem feito não precisa de alarde.</p>
-          <p className="mx-auto mt-8 max-w-xl text-base leading-relaxed text-texto md:text-lg">
-            Por isso falamos pouco e cuidamos muito: prazos antes do vencimento, números conferidos e uma pessoa de verdade do outro lado.
-          </p>
-        </div>
-      </section>
-
+      <Manifesto />
       <Passos />
       <Convite />
     </>

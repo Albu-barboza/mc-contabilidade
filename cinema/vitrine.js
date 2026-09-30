@@ -100,7 +100,15 @@ export async function iniciarVitrine({ canvas, objeto, movel = false, reduzido =
     obj.grupo.rotation.y = pose.rotY + (reduzido ? 0 : Math.sin(t * 0.4) * 0.14);
     // a chave chega de cabeça para baixo e dá meia-volta até ficar em pé (etiqueta pendurada para baixo)
     if (objeto === 'chave') obj.grupo.rotation.x = (k - 1) * Math.PI;
-    if (objeto === 'monograma') obj.grupo.rotation.y = pose.rotY + (reduzido ? 0 : Math.sin(t * 0.4) * 0.3);
+    if (objeto === 'monograma') {
+      // o arame se desenha e o ouro sobe logo depois, enquanto o monograma vira de frente
+      const enchimento = reduzido ? 1 : limitar((tempo - 1.1) / 1.5);
+      const virar = enchimento * enchimento * (3 - 2 * enchimento);
+      obj.revelar(reduzido ? 1 : limitar(tempo / 1.4), enchimento);
+      obj.grupo.rotation.y = pose.rotY + (1 - virar) * -0.7 + (reduzido ? 0 : Math.sin(t * 0.4) * 0.3);
+      obj.grupo.rotation.x = (1 - virar) * 0.3;
+    }
+    if (obj.dourar) obj.dourar(k);
     if (obj.animar) obj.animar(k, t);
     if (obj.organizar) obj.organizar(k);
     const f = 1 - Math.exp(-dt * 3);

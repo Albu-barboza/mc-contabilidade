@@ -6,11 +6,12 @@ import { fontesProntas, criarRenderer, ambienteEstudio, liberar } from './base.j
 
 export { CENAS };
 
-export async function iniciarCinema({ canvas, lerProgresso, aoQuadro, movel = false, reduzido = false, cancelado }) {
+export async function iniciarCinema({ canvas, lerProgresso, aoQuadro, movel = false, reduzido = false, semIntro = false, cancelado }) {
   await fontesProntas();
   // se a página já saiu (ou o React montou de novo), não cria nada: o canvas é de outra montagem
   if (cancelado && cancelado()) return { camera: null, renderer: null, destruir() {} };
-  const q = { movel };
+  // semIntro (?direto no endereço): o arame do monograma já aparece desenhado
+  const q = { movel, reduzido, semIntro };
 
   const renderer = criarRenderer(canvas, movel);
   let dpr = renderer.getPixelRatio();
