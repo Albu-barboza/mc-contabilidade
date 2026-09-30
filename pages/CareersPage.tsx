@@ -129,7 +129,9 @@ const CareersPage: React.FC = () => {
 
     const [formState, setFormState] = useState({ nome: '', email: '', area: '', mensagem: '' });
     const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+    const [armadilha, setArmadilha] = useState(''); // campo invisível: só robô preenche
     const careersEndpoint = env.formspreeCareersUrl;
+    const destinoValido = /^https:\/\/\S+$/.test(careersEndpoint || '');
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -140,16 +142,31 @@ const CareersPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!careersEndpoint) {
+        if (armadilha) {
+            // robô caiu na armadilha: finge que deu certo e não envia nada
+            setStatus('success');
+            return;
+        }
+        if (!destinoValido) {
             setStatus('error');
             return;
         }
         setStatus('sending');
+        const controle = new AbortController();
+        const prazo = window.setTimeout(() => controle.abort(), 15000);
         try {
             const response = await fetch(careersEndpoint, {
                 method: 'POST',
                 headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formState, origem: 'careers_page' })
+                body: JSON.stringify({
+                    nome: formState.nome.trim(),
+                    email: formState.email.trim(),
+                    area: formState.area,
+                    mensagem: formState.mensagem.trim(),
+                    origem: 'careers_page',
+                    _gotcha: armadilha
+                }),
+                signal: controle.signal
             });
             if (!response.ok) throw new Error();
             setStatus('success');
@@ -158,6 +175,8 @@ const CareersPage: React.FC = () => {
         } catch {
             setStatus('error');
             setTimeout(() => setStatus('idle'), 4000);
+        } finally {
+            window.clearTimeout(prazo);
         }
     };
 
@@ -493,6 +512,8 @@ const CareersPage: React.FC = () => {
                                 <input
                                     className="w-full rounded-2xl px-4 py-3 bg-white/85 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#1F3A5F]/40 dark:focus:ring-white/30 text-slate-800 dark:text-white"
                                     name="nome"
+                                    maxLength={120}
+                                    autoComplete="name"
                                     placeholder="Nome completo *"
                                     value={formState.nome}
                                     onChange={handleChange}
@@ -502,6 +523,8 @@ const CareersPage: React.FC = () => {
                                     className="w-full rounded-2xl px-4 py-3 bg-white/85 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#1F3A5F]/40 dark:focus:ring-white/30 text-slate-800 dark:text-white"
                                     name="email"
                                     type="email"
+                                    maxLength={160}
+                                    autoComplete="email"
                                     placeholder="E-mail profissional *"
                                     value={formState.email}
                                     onChange={handleChange}
@@ -530,9 +553,15 @@ const CareersPage: React.FC = () => {
                                     name="mensagem"
                                     placeholder="LinkedIn, portfólio, vídeo ou resumo do seu momento"
                                     rows={4}
+                                    maxLength={2000}
                                     value={formState.mensagem}
                                     onChange={handleChange}
                                 />
+                                {/* armadilha para robôs: invisível para pessoas */}
+                                <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+                                    <label htmlFor="carreiras-site">Site</label>
+                                    <input id="carreiras-site" name="_gotcha" type="text" tabIndex={-1} autoComplete="off" value={armadilha} onChange={(e) => setArmadilha(e.target.value)} />
+                                </div>
                                 <button
                                     type="submit"
                                     disabled={status === 'sending'}
