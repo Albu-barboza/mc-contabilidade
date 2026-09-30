@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useContactForm } from '../../context/ContactFormContext';
-import { env, getWhatsappLink } from '../../config/env';
+import { env, getWhatsappLink, previaEnvio } from '../../config/env';
+import SeloEnviado from './SeloEnviado';
 import { AUTORIZACAO_FORMSPREE, AVISO_DADOS_SENSIVEIS, ERRO_AUTORIZACAO } from '../../config/privacidade';
 
 type Campo = 'nome' | 'email' | 'telefone' | 'servico' | 'mensagem' | 'autorizo';
@@ -54,6 +55,7 @@ const ContactModal: React.FC = () => {
   const janelaRef = useRef<HTMLDivElement>(null);
   const tituloRef = useRef<HTMLHeadingElement>(null);
   const antesRef = useRef<HTMLElement | null>(null);
+  const fecharRef = useRef<HTMLButtonElement>(null);
 
   const destino = env.formspreeContactUrl;
   const destinoValido = /^https:\/\/\S+$/.test(destino || '');
@@ -76,6 +78,10 @@ const ContactModal: React.FC = () => {
       antesRef.current?.focus?.();
     };
   }, [isFormOpen]);
+
+  useEffect(() => {
+    if (status === 'enviado') fecharRef.current?.focus();
+  }, [status]);
 
   const fechar = () => {
     closeForm();
@@ -135,6 +141,16 @@ const ContactModal: React.FC = () => {
     }
     if (armadilha) {
       setStatus('enviado');
+      return;
+    }
+    if (!destinoValido && previaEnvio) {
+      // prévia privada: finge o envio para mostrar a confirmação (nada sai do navegador)
+      setFalha('');
+      setStatus('enviando');
+      await new Promise((r) => window.setTimeout(r, 900));
+      setStatus('enviado');
+      setDados(VAZIO);
+      setErros({});
       return;
     }
     if (!destinoValido) {
@@ -217,11 +233,12 @@ const ContactModal: React.FC = () => {
         </button>
 
         <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="bg-marinho px-6 pb-8 pt-10 sm:px-10 lg:py-12">
+          <div className="modal-cascata bg-marinho px-6 pb-8 pt-10 sm:px-10 lg:py-12">
             <h2 id="contato-titulo" ref={tituloRef} tabIndex={-1} className="font-display text-4xl font-medium text-marfim focus:outline-none sm:text-5xl">
               Vamos conversar?
             </h2>
-            <p id="contato-descricao" className="mt-4 max-w-sm leading-relaxed text-texto">
+            <span aria-hidden="true" className="modal-fio mt-6 block h-px w-14 bg-latao" />
+            <p id="contato-descricao" className="mt-5 max-w-sm leading-relaxed text-texto">
               Conte o momento da sua empresa. A equipe retorna em até 24h.
             </p>
             <dl className="mt-8 space-y-5 text-sm">
@@ -260,21 +277,28 @@ const ContactModal: React.FC = () => {
           <div className="px-6 pb-10 pt-8 sm:px-10 lg:py-12">
             {status === 'enviado' ? (
               <div className="flex min-h-[320px] flex-col items-start justify-center" role="status">
-                <p className="font-display text-4xl font-medium text-marfim">Mensagem enviada.</p>
-                <p className="mt-3 max-w-sm leading-relaxed text-texto">Obrigado pelo contato. A equipe retorna em até 24h.</p>
+                <SeloEnviado className="h-16" />
+                <p className="selo-texto mt-8 font-display text-4xl font-medium text-marfim">Mensagem enviada.</p>
+                <p className="selo-texto mt-3 max-w-sm leading-relaxed text-texto">
+                  Obrigado pelo contato. A equipe retorna em até 24h.
+                  {previaEnvio && !destinoValido && <span className="mt-2 block text-sm text-latao-claro">Prévia: nada foi enviado de verdade.</span>}
+                </p>
                 <button
+                  ref={fecharRef}
                   type="button"
                   onClick={fechar}
-                  className="mt-8 rounded-full border border-marfim/40 px-6 py-3 text-sm font-bold text-marfim transition-colors duration-200 hover:border-marfim"
+                  className="selo-texto pressionar mt-8 rounded-full border border-marfim/40 px-6 py-3 text-sm font-bold text-marfim transition-colors duration-200 hover:border-marfim"
                 >
                   Fechar
                 </button>
               </div>
             ) : (
-              <form onSubmit={enviar} noValidate className="space-y-5">
+              <form onSubmit={enviar} noValidate className="modal-cascata space-y-5">
                 {!destinoValido && (
                   <p className="rounded-xl border border-latao/30 bg-latao/10 px-4 py-3 text-sm text-latao-claro">
-                    Prévia: o envio deste formulário será ligado quando o e-mail de recebimento for configurado.
+                    {previaEnvio
+                      ? 'Prévia: pode enviar para ver a confirmação. Nada sai daqui de verdade.'
+                      : 'Prévia: o envio deste formulário será ligado quando o e-mail de recebimento for configurado.'}
                   </p>
                 )}
                 {/* nome e telefone lado a lado; e-mail e assunto na largura toda (textos longos não cortam) */}

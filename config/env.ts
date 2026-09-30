@@ -42,7 +42,12 @@ export const empresa = {
     encarregado: getEnv('VITE_ENCARREGADO_NOME', ''),
 };
 
-export const getWhatsappLink = (message: string = 'Olá! Vim pelo site da MC Contabilidade e gostaria de conversar.'): string => {
+// Só na prévia privada (o script da prévia liga VITE_PREVIA_ENVIO=1): sem Formspree configurado, o
+// formulário finge o envio para mostrar a confirmação. Nada sai do navegador. O site publicado
+// (npm run build) nunca liga isso; e com o Formspree configurado o envio é sempre o de verdade.
+export const previaEnvio = import.meta.env.VITE_PREVIA_ENVIO === '1';
+
+export const getWhatsappLink =(message: string = 'Olá! Vim pelo site da MC Contabilidade e gostaria de conversar.'): string => {
     const raw = env.whatsappNumber;
     if (!raw) return '#';
 
