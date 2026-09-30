@@ -1,574 +1,289 @@
-﻿import React, { useState } from 'react';
-import { getAssetUrl } from '../utils/assets';
-import ScrollReveal from '../components/common/ScrollReveal';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import JsonLd from '../components/common/JsonLd';
 import Seo from '../components/common/Seo';
-import { env } from '../config/env';
+import CabecalhoPagina from '../components/paginas/CabecalhoPagina';
+import { env, previaEnvio } from '../config/env';
+import SeloEnviado from '../components/common/SeloEnviado';
+import { AUTORIZACAO_FORMSPREE, AVISO_DADOS_SENSIVEIS, ERRO_AUTORIZACAO, PRAZO_CANDIDATURA } from '../config/privacidade';
 
-const heroStats = [
-    { value: '70+', label: 'Colaboradores', detail: 'Times em hubs e modelo remote-first.' },
-    { value: '86', label: 'NPS interno', detail: 'Feedbacks trimestrais e planos vivos.' },
-    { value: '8', label: 'Squads', detail: 'Células consultivas por segmento.' }
+const AREAS = ['Contábil', 'Fiscal e tributário', 'Departamento pessoal', 'Atendimento ao cliente', 'Outra área'];
+
+const VALORES = [
+  'Pensamento analítico para transformar números em planos.',
+  'Comunicação clara com clientes e colegas.',
+  'Autonomia com responsabilidade.',
+  'Vontade de aprender e de ensinar.',
 ];
 
-const experienceHighlights: { title: string; description: string; icon: React.ReactNode }[] = [
-    {
-        title: 'Squads consultivos',
-        description: 'Contabilidade, fiscal e sucesso do cliente trabalham juntos para cada vertical.',
-        icon: (
-            <svg
-                className="w-6 h-6"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-                focusable="false"
-            >
-                <path d="M12 3v18M3 12h18" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="12" cy="12" r="4" />
-            </svg>
-        )
-    },
-    {
-        title: 'Playbook digital',
-        description: 'Ferramentas proprietárias, rituais semanais e acompanhamento em dashboards.',
-        icon: (
-            <svg
-                className="w-6 h-6"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-                focusable="false"
-            >
-                <rect x="3" y="4" width="18" height="16" rx="2" />
-                <path d="M7 8h10M7 12h6M7 16h4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-        )
-    },
-    {
-        title: 'Experiência humana',
-        description: 'Mentorias, bolsas de estudo e trilhas claras para crescer com autonomia.',
-        icon: (
-            <svg
-                className="w-6 h-6"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-                focusable="false"
-            >
-                <path
-                    d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-                <circle cx="10" cy="7" r="4" />
-                <path d="M20 8v6M17 11h6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-        )
-    }
-];
-
-const cultureTimeline = [
-    { year: '2009', title: 'Fundação', description: 'Começamos como uma boutique na Av. Paulista com 4 pessoas.' },
-    { year: '2015', title: 'Escala tech', description: 'Adotamos squads multidisciplinares e plataformas digitais.' },
-    { year: '2020', title: 'Remote first', description: 'Criamos hubs colaborativos e benefícios flexíveis.' },
-    { year: 'Hoje', title: 'Expansão nacional', description: 'Times em 5 estados atendendo clientes em todo o Brasil.' }
-];
-
-const perksList = [
-    { label: 'R$ 3k/ano', title: 'Formação contínua', description: 'Bolsa anual para certificações, eventos e mentorias.' },
-    { label: 'Bem-estar', title: 'Day-off + saúde', description: 'Plano médico, apoio psicológico e day-off no aniversário.' },
-    { label: 'Experience hubs', title: 'Studios MC', description: 'Ambientes assinados para encontros e labs presenciais.' }
-];
-
-const openRoles = [
-    {
-        area: 'Consultoria Fiscal e Tributária',
-        description: 'Especialistas em planejamento tributário, revisão fiscal e projetos de eficiência.',
-        tags: ['Híbrido - SP', 'Pleno/Sênior', 'Squad Indústria']
-    },
-    {
-        area: 'Contábil & Controladoria',
-        description: 'Controllers e contadores para liderar fechamentos, DRE e conteúdo consultivo.',
-        tags: ['Remoto-first', 'Pleno/Sênior', 'Squad Serviços']
-    },
-    {
-        area: 'Onboarding & Customer Success',
-        description: 'Executivos(as) de contas e CS para conduzir implantação e rituais com clientes.',
-        tags: ['Híbrido', 'Pleno', 'Tribo Growth']
-    },
-    {
-        area: 'Gente, Operações e Produto',
-        description: 'Talentos para pessoas & cultura, financeiro, comunicação e produto interno.',
-        tags: ['Remoto', 'Júnior/Pleno', 'Backoffice']
-    }
-];
-
-const processJourney = [
-    { step: '01', title: 'Aplicação + fit cultural', text: 'Conte sua trajetória e como gera valor para clientes.' },
-    { step: '02', title: 'Conversa com liderança', text: 'Bate-papo estruturado com quem lidera a squad.' },
-    { step: '03', title: 'Case guiado', text: 'Desafio rápido com buddy para entendermos seu raciocínio.' },
-    { step: '04', title: 'Proposta personalizada', text: 'Feedback transparente e plano de desenvolvimento.' }
-];
-
-const softSkills = [
-    'Pensamento analítico para transformar dados em planos acionáveis.',
-    'Colaboração e comunicação transparente com clientes e squads.',
-    'Autonomia responsável e priorização orientada a impacto.',
-    'Vontade de aprender, ensinar e evoluir continuamente.'
-];
+type Campo = 'nome' | 'email' | 'area' | 'mensagem' | 'autorizo';
+const OBRIGATORIOS: Campo[] = ['nome', 'email', 'area', 'autorizo'];
+const VAZIO: Record<Campo, string> = { nome: '', email: '', area: '', mensagem: '', autorizo: '' };
+const validar = (campo: Campo, valor: string) => {
+  if (campo === 'nome') return valor.trim().split(/\s+/).length < 2 ? 'Escreva nome e sobrenome.' : '';
+  if (campo === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor.trim()) ? '' : 'Confira o e-mail: falta algo como nome@email.com.';
+  if (campo === 'area') return valor ? '' : 'Escolha uma área.';
+  if (campo === 'autorizo') return valor ? '' : ERRO_AUTORIZACAO;
+  return '';
+};
 
 const CareersPage: React.FC = () => {
-    const description =
-        'Faça parte da MC Contabilidade. Conheça nossa cultura, squads consultivos e oportunidades para contadores, fiscais e especialistas em sucesso do cliente.';
+  const [dados, setDados] = useState<Record<Campo, string>>(VAZIO);
+  const [erros, setErros] = useState<Partial<Record<Campo, string>>>({});
+  const [status, setStatus] = useState<'parado' | 'enviando' | 'enviado'>('parado');
+  const [falha, setFalha] = useState('');
+  const [armadilha, setArmadilha] = useState(''); // campo invisível: só robô preenche
+  const formRef = useRef<HTMLFormElement>(null);
+  const recebidoRef = useRef<HTMLDivElement>(null);
+  // enviado: o formulário (e o botão que tinha o foco) some; o foco vai para a confirmação
+  useEffect(() => {
+    if (status === 'enviado') recebidoRef.current?.focus();
+  }, [status]);
+  const destino = env.formspreeCareersUrl;
+  const destinoValido = /^https:\/\/\S+$/.test(destino || '');
 
-    const [formState, setFormState] = useState({ nome: '', email: '', area: '', mensagem: '' });
-    const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-    const careersEndpoint = env.formspreeCareersUrl;
+  const mudar = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const campo = e.target.name as Campo;
+    const valor = campo === 'autorizo' ? ((e.target as HTMLInputElement).checked ? 'sim' : '') : e.target.value;
+    setDados((d) => ({ ...d, [campo]: valor }));
+    if (erros[campo]) setErros((er) => ({ ...er, [campo]: validar(campo, valor) }));
+  };
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) => {
-        const { name, value } = e.target;
-        setFormState(prev => ({ ...prev, [name]: value }));
-    };
+  const enviar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const novos: Partial<Record<Campo, string>> = {};
+    for (const c of OBRIGATORIOS) novos[c] = validar(c, dados[c]);
+    setErros(novos);
+    const primeiro = OBRIGATORIOS.find((c) => novos[c]);
+    if (primeiro) {
+      formRef.current?.querySelector<HTMLElement>(`#carreira-${primeiro}`)?.focus();
+      return;
+    }
+    if (armadilha) {
+      // robô caiu na armadilha: finge que deu certo e não envia nada
+      setStatus('enviado');
+      return;
+    }
+    if (!destinoValido && previaEnvio) {
+      // prévia privada: finge o envio para mostrar a confirmação (nada sai do navegador)
+      setFalha('');
+      setStatus('enviando');
+      await new Promise((r) => window.setTimeout(r, 900));
+      setStatus('enviado');
+      setDados(VAZIO);
+      return;
+    }
+    if (!destinoValido) {
+      setFalha('O envio pelo site ainda não está ativo.');
+      return;
+    }
+    setFalha('');
+    setStatus('enviando');
+    const controle = new AbortController();
+    const prazo = window.setTimeout(() => controle.abort(), 15000);
+    try {
+      const resposta = await fetch(destino, {
+        method: 'POST',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: dados.nome.trim(),
+          email: dados.email.trim(),
+          area: dados.area,
+          mensagem: dados.mensagem.trim(),
+          autorizacao: AUTORIZACAO_FORMSPREE,
+          origem: 'careers_page',
+          _gotcha: armadilha,
+        }),
+        signal: controle.signal,
+      });
+      if (!resposta.ok) throw new Error('resposta');
+      setStatus('enviado');
+      setDados(VAZIO);
+    } catch (erro) {
+      const tempo = erro instanceof DOMException && erro.name === 'AbortError';
+      setFalha(tempo ? 'A conexão demorou demais. Confira a internet e tente de novo.' : 'Não conseguimos enviar agora. Tente de novo em instantes.');
+      setStatus('parado');
+    } finally {
+      window.clearTimeout(prazo);
+    }
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!careersEndpoint) {
-            setStatus('error');
-            return;
-        }
-        setStatus('sending');
-        try {
-            const response = await fetch(careersEndpoint, {
-                method: 'POST',
-                headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formState, origem: 'careers_page' })
-            });
-            if (!response.ok) throw new Error();
-            setStatus('success');
-            setFormState({ nome: '', email: '', area: '', mensagem: '' });
-            setTimeout(() => setStatus('idle'), 4000);
-        } catch {
-            setStatus('error');
-            setTimeout(() => setStatus('idle'), 4000);
-        }
-    };
+  const campoClasse = (c: Campo, fundo = 'bg-white/[0.04]') =>
+    `w-full rounded-xl border ${fundo} px-4 py-3 text-base text-marfim placeholder:text-fraco transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-latao ${
+      erros[c] ? 'border-red-400/80' : 'border-[color:var(--linha)] hover:border-marfim/30'
+    }`;
+  const rotulo = 'mb-2 block text-sm font-semibold text-marfim';
+  const aria = (c: Campo) => ({ 'aria-invalid': Boolean(erros[c]) || undefined, 'aria-describedby': erros[c] ? `carreira-${c}-erro` : undefined });
+  const ajuda = (c: Campo) =>
+    erros[c] ? (
+      <p id={`carreira-${c}-erro`} className="mt-2 text-sm text-red-300">
+        {erros[c]}
+      </p>
+    ) : null;
 
-    // Mesma base visual de cards da Home
-    const neutralCardClasses =
-        'relative rounded-2xl border bg-white/60 dark:bg-slate-900/70 border-gray-200 dark:border-white/20 ' +
-        'backdrop-blur-md shadow-lg p-8 transition-all duration-300 hover:shadow-2xl hover:border-gray-300 ' +
-        'dark:hover:border-white/40 hover:-translate-y-3';
+  return (
+    <>
+      <Seo title="Trabalhe conosco" description="Quer trabalhar na MC Contabilidade? Conte a sua trajetória e a área em que você quer atuar." />
+      <JsonLd schema={{ '@context': 'https://schema.org', '@type': 'WebPage', name: 'Trabalhe conosco · MC Contabilidade' }} />
+      <CabecalhoPagina
+        titulo="Trabalhe conosco"
+        lead="Procuramos pessoas cuidadosas, curiosas e que gostam de explicar números com clareza. Conte a sua trajetória."
+      />
 
-    const blueCardClasses =
-        'relative rounded-2xl border border-transparent bg-gradient-to-br from-[#1F3A5F] to-[#2E4F7E] text-white ' +
-        'backdrop-blur-md shadow-2xl p-8 transition-all duration-300 hover:-translate-y-3';
+      <section className="bg-noite pb-24 md:pb-32">
+        <div className="mx-auto grid max-w-6xl gap-16 px-[var(--gutter)] lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-20">
+          <div>
+            <h2 className="font-display text-4xl font-medium text-marfim md:text-5xl">O que valorizamos</h2>
+            <ul className="mt-8 space-y-4 text-base leading-relaxed text-texto">
+              {VALORES.map((v) => (
+                <li key={v} className="relative pl-6 before:absolute before:left-0 before:top-[0.8em] before:h-px before:w-3.5 before:bg-latao">
+                  {v}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-10 max-w-md text-base leading-relaxed text-texto">
+              Não precisa esperar uma vaga aberta: guardamos o seu perfil por até {PRAZO_CANDIDATURA} e chamamos se surgir uma oportunidade na sua área.
+            </p>
+          </div>
 
-    const neutralLargeCardClasses =
-        'relative rounded-[32px] border bg-white/60 dark:bg-slate-900/70 border-gray-200 dark:border-white/20 ' +
-        'backdrop-blur-xl shadow-xl p-8 md:p-10';
-
-    const blueLargeCardClasses =
-        'relative rounded-[32px] border border-transparent bg-gradient-to-br from-[#1F3A5F] to-[#2E4F7E] text-white ' +
-        'backdrop-blur-xl shadow-2xl p-8 md:p-10';
-
-    return (
-        <>
-            <Seo title="Trabalhe na MC Contabilidade" description={description} />
-            <JsonLd
-                schema={{
-                    '@context': 'https://schema.org',
-                    '@type': 'WebPage',
-                    name: 'Trabalhe Conosco - MC Contabilidade',
-                    description: 'Faça parte do time consultivo da MC Contabilidade.'
-                }}
-            />
-
-            <main className="text-slate-800 dark:text-slate-100" style={{ fontVariantLigatures: "none", fontFeatureSettings: "\"liga\" 0, \"clig\" 0" }}>
-                {/* Hero Section */}
-                <section className="relative overflow-hidden pt-28 pb-16 sm:pt-32 sm:pb-24">
-                    <div className="absolute inset-0 overflow-hidden">
-                        <img src={getAssetUrl("/images/equipe.webp")} alt="Equipe MC Contabilidade" className="w-full h-full object-cover animate-kenBurns" />
-                        <div className="absolute inset-0 bg-slate-300/60 dark:bg-slate-900/75" />
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-slate-400/20" />
-                        <div className="absolute -right-12 top-10 w-56 h-56 bg-white/15 blur-3xl" />
-                        <div className="absolute -left-10 bottom-0 w-72 h-72 bg-slate-400/15 blur-3xl" />
-                    </div>
-
-                    <div className="relative z-10 container mx-auto px-4 sm:px-6">
-                        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-12 items-center">
-                            <div className="space-y-6">
-                                <p className="text-xs uppercase tracking-[0.45em] text-[#1F3A5F] dark:text-white/90">
-                                    Trabalhe conosco
-                                </p>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-gray-900 dark:text-white">
-                                    Transforme sua carreira na{' '}
-                                    <span className="text-gradient">contabilidade consultiva</span> que une dados e pessoas
-                                </h1>
-                                <p className="text-base sm:text-lg text-gray-700 dark:text-white/90">
-                                    Buscamos pessoas curiosas, colaborativas e com vontade de criar experiências financeiras estratégicas
-                                    para MEIs e empresas em expansão.
-                                </p>
-
-                                <div className="flex flex-wrap gap-3">
-                                    <span className="px-4 py-2 rounded-full bg-white/80 dark:bg-white/15 border border-gray-200 dark:border-white/20 text-sm backdrop-blur text-gray-800 dark:text-white">
-                                        Modelo remote-first
-                                    </span>
-                                    <span className="px-4 py-2 rounded-full bg-white/80 dark:bg-white/15 border border-gray-200 dark:border-white/20 text-sm backdrop-blur text-gray-800 dark:text-white">
-                                        Squads orientados a dados
-                                    </span>
-                                    <span className="px-4 py-2 rounded-full bg-white/80 dark:bg-white/15 border border-gray-200 dark:border-white/20 text-sm backdrop-blur text-gray-800 dark:text-white">
-                                        Trilhas personalizadas
-                                    </span>
-                                </div>
-
-                                <div className="flex flex-wrap gap-4 pt-6 pb-4">
-                                    <a
-                                        href="#talentos"
-                                        className="inline-flex items-center justify-center min-w-[200px] px-8 py-3 rounded-full bg-gradient-to-r from-[#1F3A5F] to-[#2E4F7E] text-white font-semibold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                                    >
-                                        Quero enviar meu perfil
-                                    </a>
-                                    <a
-                                        href="#oportunidades"
-                                        className="inline-flex items-center justify-center min-w-[200px] px-8 py-3 rounded-full border-2 border-[#1F3A5F] dark:border-white/60 text-[#1F3A5F] dark:text-white font-semibold hover:-translate-y-1 transition"
-                                    >
-                                        Conhecer oportunidades
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Como trabalhamos – cards seguindo a base de Serviços da Home */}
-                <section className="py-16 sm:py-20">
-                    <div className="container mx-auto px-4 sm:px-6">
-                        <ScrollReveal direction="up">
-                            <div className="text-center max-w-3xl mx-auto mb-12">
-                                <p className="text-xs uppercase tracking-[0.4em] text-slate-500 dark:text-white/80">Como trabalhamos</p>
-                                <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
-                                    Experiência desenhada para alto impacto
-                                </h2>
-                                <p className="text-slate-600 dark:text-slate-300 mt-3">
-                                    Processos claros, tecnologia proprietária e cultura que incentiva autonomia com responsabilidade.
-                                </p>
-                            </div>
-                        </ScrollReveal>
-
-                        <div className="grid gap-8 md:grid-cols-3">
-                            {experienceHighlights.map((highlight, index) => (
-                                <ScrollReveal key={highlight.title} delay={index * 100} direction="up" className="h-full">
-                                    <div
-                                        className={`${index === 0 ? blueCardClasses : neutralCardClasses} flex flex-col h-full`}
-                                    >
-                                        <div
-                                            className={[
-                                                'w-12 h-12 flex items-center justify-center rounded-xl mb-4',
-                                                index === 0
-                                                    ? 'bg-white/20 text-white'
-                                                    : 'bg-[#E8EDF4] dark:bg-white/10 text-[#1F3A5F] dark:text-white'
-                                            ].join(' ')}
-                                        >
-                                            {highlight.icon}
-                                        </div>
-                                        <h3
-                                            className={[
-                                                'text-xl font-semibold mb-2',
-                                                index === 0 ? 'text-white' : 'text-slate-900 dark:text-white'
-                                            ].join(' ')}
-                                        >
-                                            {highlight.title}
-                                        </h3>
-                                        <p
-                                            className={
-                                                index === 0
-                                                    ? 'text-white/90'
-                                                    : 'text-gray-600 dark:text-gray-300'
-                                            }
-                                        >
-                                            {highlight.description}
-                                        </p>
-                                    </div>
-                                </ScrollReveal>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Nossa cultura + Benefícios vivos – glass igualado */}
-                <section className="py-16 sm:py-20">
-                    <div className="container mx-auto px-4 sm:px-6 grid gap-10 lg:grid-cols-2">
-                        {/* Neutro vidro */}
-                        <ScrollReveal direction="left">
-                            <div className={neutralLargeCardClasses}>
-                                <p className="text-xs uppercase tracking-[0.35em] text-slate-500 dark:text-white/80">Nossa cultura</p>
-                                <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mt-2 mb-6">
-                                    Momentos que moldam quem somos
-                                </h2>
-                                <div className="space-y-6">
-                                    {cultureTimeline.map(moment => (
-                                        <div key={moment.year} className="flex gap-4">
-                                            <div className="text-sm font-semibold text-[#1F3A5F] dark:text-[#A9C1FF] uppercase tracking-[0.3em] mt-1">
-                                                {moment.year}
-                                            </div>
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{moment.title}</h3>
-                                                <p className="text-slate-600 dark:text-slate-300">{moment.description}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </ScrollReveal>
-
-                        {/* Azul vidro */}
-                        <ScrollReveal direction="right" delay={200}>
-                            <div className={`${blueLargeCardClasses} text-white`}>
-                                <p className="text-xs uppercase tracking-[0.35em] text-white/90">Benefícios vivos</p>
-                                <h2 className="text-2xl font-semibold mt-2 mb-6">Cuidamos de quem cuida dos clientes</h2>
-                                <div className="space-y-5">
-                                    {perksList.map(perk => (
-                                        <div
-                                            key={perk.title}
-                                            className="rounded-2xl border border-white/30 bg-white/10 backdrop-blur-xl p-5 shadow-lg"
-                                        >
-                                            <p className="text-sm uppercase tracking-[0.35em] text-white/80">{perk.label}</p>
-                                            <h3 className="text-lg font-semibold text-white">{perk.title}</h3>
-                                            <p className="text-white/90">{perk.description}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </ScrollReveal>
-                    </div>
-                </section>
-
-                {/* Oportunidades – cards neutros = ServiceCard neutro, primeiro = destaque azul */}
-                <section id="oportunidades" className="py-20">
-                    <div className="container mx-auto px-4 sm:px-6">
-                        <ScrollReveal direction="up">
-                            <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-10">
-                                <div>
-                                    <p className="text-xs uppercase tracking-[0.35em] text-slate-500 dark:text-white/80">Oportunidades</p>
-                                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Papéis em destaque</h2>
-                                    <p className="text-slate-600 dark:text-slate-300 mt-2">
-                                        Não encontrou a vaga ideal? Envie mesmo assim: adoramos conhecer histórias diferentes.
-                                    </p>
-                                </div>
-                                <a
-                                    href="#talentos"
-                                    className="px-6 py-3 rounded-2xl bg-[#1F3A5F] text-white font-semibold shadow-lg hover:-translate-y-1 transition"
-                                >
-                                    Enviar currículo
-                                </a>
-                            </div>
-                        </ScrollReveal>
-
-                        <div className="grid gap-6 md:grid-cols-2">
-                            {openRoles.map((role, index) => (
-                                <ScrollReveal key={role.area} delay={index * 100} direction="up">
-                                    <div
-                                        className={index === 0 ? blueCardClasses : neutralCardClasses}
-                                    >
-                                        <h3
-                                            className={[
-                                                'text-xl font-semibold',
-                                                index === 0 ? 'text-white' : 'text-slate-900 dark:text-slate-100'
-                                            ].join(' ')}
-                                        >
-                                            {role.area}
-                                        </h3>
-                                        <p
-                                            className={
-                                                index === 0
-                                                    ? 'mt-2 text-white/90'
-                                                    : 'mt-2 text-slate-600 dark:text-slate-300'
-                                            }
-                                        >
-                                            {role.description}
-                                        </p>
-
-                                        <div className="flex flex-wrap gap-2 mt-4">
-                                            {role.tags.map(tag => (
-                                                <span
-                                                    key={tag}
-                                                    className={[
-                                                        'px-3 py-1 rounded-full text-xs font-semibold',
-                                                        index === 0
-                                                            ? 'bg-white/18 text-white border border-white/30'
-                                                            : 'bg-[#E8EDF4] text-[#1F3A5F] dark:bg-slate-800 dark:text-slate-100'
-                                                    ].join(' ')}
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </ScrollReveal>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Processo seletivo + O que valorizamos */}
-                <section className="py-16 sm:py-20">
-                    <div className="container mx-auto px-4 sm:px-6 grid gap-10 lg:grid-cols-2">
-                        {/* Neutro vidro */}
-                        <ScrollReveal direction="left">
-                            <div className={neutralLargeCardClasses}>
-                                <p className="text-xs uppercase tracking-[0.35em] text-slate-500 dark:text-white/80">
-                                    Processo seletivo
-                                </p>
-                                <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mt-2 mb-6">
-                                    Transparente do começo ao fim
-                                </h2>
-                                <div className="space-y-5">
-                                    {processJourney.map(step => (
-                                        <div key={step.step} className="flex gap-4">
-                                            <div className="w-12 h-12 rounded-2xl bg-[#E8EDF4] dark:bg-slate-800 text-[#1F3A5F] dark:text-white font-bold flex items-center justify-center">
-                                                {step.step}
-                                            </div>
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{step.title}</h3>
-                                                <p className="text-slate-600 dark:text-slate-300">{step.text}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </ScrollReveal>
-
-                        {/* Azul vidro */}
-                        <ScrollReveal direction="right" delay={200}>
-                            <div className={`${blueLargeCardClasses} text-white`}>
-                                <p className="text-xs uppercase tracking-[0.35em] text-white/90">O que valorizamos</p>
-                                <h2 className="text-2xl font-semibold mt-2 mb-6">Soft skills que brilham por aqui</h2>
-                                <ul className="space-y-4 text-white/90">
-                                    {softSkills.map(skill => (
-                                        <li key={skill} className="flex gap-3">
-                                            <span className="mt-1 h-2 w-2 rounded-full bg-white/80" />
-                                            {skill}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </ScrollReveal>
-                    </div>
-                </section>
-
-                {/* Talentos – permanece com o vidro que você já curtiu */}
-                <section id="talentos" className="relative py-20 overflow-hidden">
-                    <div className="absolute inset-0 overflow-hidden">
-                        <img src={getAssetUrl("/images/analise.webp")} alt="Análise de dados" className="w-full h-full object-cover animate-kenBurns" />
-                        <div className="absolute inset-0 bg-slate-900/50 dark:bg-slate-950/60" />
-                    </div>
-                    <div className="absolute -right-14 top-6 w-64 h-64 bg-[#A5B4FC]/20 blur-3xl" />
-                    <div className="absolute -left-10 bottom-4 w-64 h-64 bg-[#F9A8D4]/20 blur-3xl" />
-
-                    <div className="relative container mx-auto px-4 sm:px-6">
-                        <div className="rounded-[36px] border border-white/20 dark:border-white/10 bg-[#1F3A5F]/10 dark:bg-[#2E4F7E]/10 backdrop-blur-xl shadow-2xl grid lg:grid-cols-2 gap-10 p-8 md:p-12">
-                            <div className="space-y-5">
-                                <p className="text-xs uppercase tracking-[0.35em] text-white/90">Conte sua história</p>
-                                <h2 className="text-3xl font-bold text-white">Mostre seu talento para nossos times</h2>
-                                <p className="text-white/90">
-                                    Responda com links, cases ou um pitch rápido. Respondemos todos os contatos em até 5 dias úteis.
-                                </p>
-                                <div className="rounded-2xl bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 p-5">
-                                    <p className="text-sm uppercase tracking-[0.35em] text-white/90">Dica do time</p>
-                                    <p className="text-white/90">
-                                        Inclua LinkedIn, portfólio ou um áudio/vídeo curto. Adoramos conhecer seu raciocínio.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <input
-                                    className="w-full rounded-2xl px-4 py-3 bg-white/85 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#1F3A5F]/40 dark:focus:ring-white/30 text-slate-800 dark:text-white"
-                                    name="nome"
-                                    placeholder="Nome completo *"
-                                    value={formState.nome}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <input
-                                    className="w-full rounded-2xl px-4 py-3 bg-white/85 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#1F3A5F]/40 dark:focus:ring-white/30 text-slate-800 dark:text-white"
-                                    name="email"
-                                    type="email"
-                                    placeholder="E-mail profissional *"
-                                    value={formState.email}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <label htmlFor="area" className="text-sm font-semibold text-white/90">
-                                    Área de interesse
-                                </label>
-                                <select
-                                    id="area"
-                                    className="w-full rounded-2xl px-4 py-3 bg-white/85 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#1F3A5F]/40 dark:focus:ring-white/30 text-slate-800 dark:text-white"
-                                    name="area"
-                                    value={formState.area}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Selecione uma área</option>
-                                    {openRoles.map(role => (
-                                        <option key={role.area} value={role.area}>
-                                            {role.area}
-                                        </option>
-                                    ))}
-                                </select>
-                                <textarea
-                                    className="w-full rounded-2xl px-4 py-3 bg-white/85 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#1F3A5F]/40 dark:focus:ring-white/30 text-slate-800 dark:text-white"
-                                    name="mensagem"
-                                    placeholder="LinkedIn, portfólio, vídeo ou resumo do seu momento"
-                                    rows={4}
-                                    value={formState.mensagem}
-                                    onChange={handleChange}
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={status === 'sending'}
-                                    className="w-full rounded-2xl bg-[#1F3A5F] text-white font-semibold py-3 shadow-lg hover:-translate-y-1 transition disabled:opacity-70"
-                                >
-                                    {status === 'sending'
-                                        ? 'Enviando...'
-                                        : status === 'success'
-                                            ? 'Recebido, obrigado!'
-                                            : status === 'error'
-                                                ? 'Ops, tente novamente'
-                                                : 'Enviar meu currículo'}
-                                </button>
-                                {status === 'success' && (
-                                    <p className="text-sm text-green-600 dark:text-green-400 text-center">
-                                        Recebemos seu perfil. Falaremos em breve!
-                                    </p>
-                                )}
-                                {status === 'error' && (
-                                    <p className="text-sm text-red-600 dark:text-rose-400 text-center">
-                                        Não conseguimos enviar agora. Tente novamente.
-                                    </p>
-                                )}
-                                <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
-                                    Dados protegidos. Usamos suas informações apenas para contato interno.
-                                </p>
-                            </form>
-                        </div>
-                    </div>
-                </section>
-            </main>
-        </>
-    );
+          <div className="rounded-3xl border border-[color:var(--linha)] bg-marinho p-6 sm:p-10">
+            {status === 'enviado' ? (
+              <div ref={recebidoRef} tabIndex={-1} role="status" className="flex min-h-[300px] flex-col justify-center focus:outline-none">
+                <SeloEnviado className="h-16" />
+                <p className="selo-texto mt-8 font-display text-4xl font-medium text-marfim">Perfil recebido.</p>
+                <p className="selo-texto mt-3 max-w-sm leading-relaxed text-texto">
+                  Obrigado por contar a sua trajetória. Guardamos o seu perfil por até {PRAZO_CANDIDATURA} para as próximas oportunidades.
+                  {previaEnvio && !destinoValido && <span className="mt-2 block text-sm text-latao-claro">Prévia: nada foi enviado de verdade.</span>}
+                </p>
+              </div>
+            ) : (
+              <form ref={formRef} onSubmit={enviar} noValidate className="relative space-y-5">
+                <h2 className="font-display text-3xl font-medium text-marfim">Envie o seu perfil</h2>
+                {!destinoValido && (
+                  <p className="rounded-xl border border-latao/30 bg-latao/10 px-4 py-3 text-sm text-latao-claro">
+                    {previaEnvio
+                      ? 'Prévia: pode enviar para ver a confirmação. Nada sai daqui de verdade.'
+                      : 'Prévia: o envio deste formulário será ligado quando o e-mail de recebimento for configurado.'}
+                  </p>
+                )}
+                <div>
+                  <label htmlFor="carreira-nome" className={rotulo}>
+                    Nome completo
+                  </label>
+                  <input
+                    id="carreira-nome"
+                    name="nome"
+                    type="text"
+                    autoComplete="name"
+                    maxLength={120}
+                    value={dados.nome}
+                    onChange={mudar}
+                    onBlur={() => setErros((er) => ({ ...er, nome: validar('nome', dados.nome) }))}
+                    placeholder="Maria Souza…"
+                    className={campoClasse('nome')}
+                    {...aria('nome')}
+                  />
+                  {ajuda('nome')}
+                </div>
+                <div>
+                  <label htmlFor="carreira-email" className={rotulo}>
+                    E-mail
+                  </label>
+                  <input
+                    id="carreira-email"
+                    name="email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    spellCheck={false}
+                    maxLength={160}
+                    value={dados.email}
+                    onChange={mudar}
+                    onBlur={() => setErros((er) => ({ ...er, email: validar('email', dados.email) }))}
+                    placeholder="nome@email.com…"
+                    className={campoClasse('email')}
+                    {...aria('email')}
+                  />
+                  {ajuda('email')}
+                </div>
+                <div>
+                  <label htmlFor="carreira-area" className={rotulo}>
+                    Área de interesse
+                  </label>
+                  <select id="carreira-area" name="area" value={dados.area} onChange={mudar} className={campoClasse('area', 'bg-noite')} {...aria('area')}>
+                    <option value="">Escolha uma área</option>
+                    {AREAS.map((a) => (
+                      <option key={a} value={a}>
+                        {a}
+                      </option>
+                    ))}
+                  </select>
+                  {ajuda('area')}
+                </div>
+                <div>
+                  <label htmlFor="carreira-mensagem" className={rotulo}>
+                    Sobre você <span className="font-normal text-fraco">(opcional)</span>
+                  </label>
+                  <textarea
+                    id="carreira-mensagem"
+                    name="mensagem"
+                    rows={4}
+                    maxLength={2000}
+                    value={dados.mensagem}
+                    onChange={mudar}
+                    placeholder="LinkedIn, experiência, o que você procura…"
+                    aria-describedby="carreira-mensagem-dica"
+                    className={`${campoClasse('mensagem')} resize-none`}
+                  />
+                  <p id="carreira-mensagem-dica" className="mt-2 text-xs leading-relaxed text-fraco">
+                    {AVISO_DADOS_SENSIVEIS}
+                  </p>
+                </div>
+                <div>
+                  <label htmlFor="carreira-autorizo" className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-texto">
+                    <input
+                      id="carreira-autorizo"
+                      name="autorizo"
+                      type="checkbox"
+                      checked={dados.autorizo === 'sim'}
+                      onChange={mudar}
+                      className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[#C9A45E]"
+                      {...aria('autorizo')}
+                    />
+                    <span>{AUTORIZACAO_FORMSPREE}</span>
+                  </label>
+                  {ajuda('autorizo')}
+                </div>
+                {/* armadilha para robôs: invisível para pessoas */}
+                <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+                  <label htmlFor="carreira-site">Site</label>
+                  <input id="carreira-site" name="_gotcha" type="text" tabIndex={-1} autoComplete="off" value={armadilha} onChange={(e) => setArmadilha(e.target.value)} />
+                </div>
+                <div aria-live="polite">
+                  {falha && <p className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">{falha}</p>}
+                </div>
+                <button
+                  type="submit"
+                  disabled={status === 'enviando'}
+                  className="pressionar flex w-full items-center justify-center gap-3 rounded-full bg-latao py-4 text-base font-bold text-noite hover:bg-latao-claro disabled:opacity-70"
+                >
+                  {status === 'enviando' && <span className="h-4 w-4 animate-spin rounded-full border-2 border-noite/30 border-t-noite" aria-hidden="true" />}
+                  {status === 'enviando' ? 'Enviando…' : 'Enviar meu perfil'}
+                </button>
+                <p className="text-center text-xs leading-relaxed text-fraco">
+                  Usamos seus dados só para avaliar a sua candidatura. Veja a{' '}
+                  <Link to="/politica-de-privacidade" className="text-marfim underline-offset-4 hover:underline">
+                    política de privacidade
+                  </Link>
+                  .
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+    </>
+  );
 };
 
 export default CareersPage;
-
-
-

@@ -1,12 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
-  content: [
-    './index.html',
-    './App.tsx',
-    './components/**/*.{ts,tsx}',
-    './pages/**/*.{ts,tsx}'
-  ],
+  content: {
+    relative: true,
+    files: [
+      './index.html',
+      './App.tsx',
+      './components/**/*.{ts,tsx}',
+      './pages/**/*.{ts,tsx}'
+    ],
+  },
   theme: {
     extend: {
       colors: {
@@ -23,11 +26,22 @@ export default {
         accent: {
           DEFAULT: '#E8EDF4',
           dark: '#1F2937', // slate-800 equivalent for dark mode backgrounds
-        }
+        },
+        // paleta da marca (vitrine escura)
+        noite: '#0A1120',
+        marinho: '#121C30',
+        marfim: '#EFE8DB',
+        texto: '#C5CBD7',
+        fraco: '#9AA3B5',
+        latao: {
+          DEFAULT: '#C9A45E',
+          claro: '#E2C68D',
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        heading: ['Poppins', 'sans-serif'],
+        sans: ['Manrope', 'Segoe UI', 'system-ui', 'sans-serif'],
+        heading: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
       }
     }
   },

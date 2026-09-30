@@ -6,9 +6,14 @@ interface ImportMetaEnv {
   readonly VITE_FORMSPREE_NEWSLETTER_URL: string;
   readonly VITE_WHATSAPP_NUMBER_FOOTER: string;
   readonly VITE_CONTACT_EMAIL: string;
+  readonly VITE_COMPANY_RAZAO_SOCIAL: string;
   readonly VITE_COMPANY_CNPJ: string;
   readonly VITE_COMPANY_CRC: string;
+  readonly VITE_COMPANY_ENDERECO: string;
+  readonly VITE_ENCARREGADO_NOME: string;
   readonly VITE_FORMSPREE_CONTACT_URL: string;
+  readonly VITE_FORMSPREE_CAREERS_URL: string;
+  readonly VITE_PREVIA_ENVIO: string;
 }
 
 interface ImportMeta {

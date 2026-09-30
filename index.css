@@ -2,26 +2,88 @@
 @tailwind components;
 @tailwind utilities;
 
+/* MC Contabilidade — vitrine escura azul-marinho, objetos de latão, uma voz serifada.
+   Layout: um objeto-símbolo por vez preso na tela enquanto a pessoa rola; depois, seções
+   alinhadas à esquerda com muito respiro. Conceito (simbolismo): o valor aparece nos
+   materiais e no silêncio, nunca em preço, selo ou número de efeito.
+   Tipos: Cormorant Garamond (a voz: títulos e palavras grandes) + Manrope (o uso: texto,
+   menu, botões). Tudo em caixa normal de frase; nada de rótulo em caixa-alta espaçada. */
+:root {
+  --noite: #0A1120;        /* fundo: azul-marinho profundo da marca */
+  --marinho: #121C30;      /* superfícies elevadas */
+  --linha: rgba(239, 232, 219, 0.12);
+  --marfim: #EFE8DB;       /* títulos */
+  --texto: #C5CBD7;        /* corpo */
+  --fraco: #9AA3B5;        /* legendas */
+  --latao: #C9A45E;        /* acento: o latão dos objetos */
+  --latao-claro: #E2C68D;
+  --f-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --f-texto: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --gutter: clamp(16px, 5vw, 64px);
+  /* movimento: saída rápida e chegada macia (nada de ease-in em interface) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* porta pesada: sai do lugar com calma, embala no meio e desliza até parar (sem tranco) */
+  --ease-porta: cubic-bezier(0.65, 0, 0.35, 1);
+  color-scheme: dark;
+  /* barra de rolagem na cor da casa, não a cinza padrão do Windows */
+  scrollbar-color: #2B3752 var(--noite);
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 88px; /* o topo fixo não cobre âncoras nem o foco do teclado */
+    background: var(--noite);
+  }
+  a, button, select, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
   }
   body {
-    font-family: 'Inter', sans-serif;
-    @apply bg-white dark:bg-slate-950 text-gray-700 dark:text-gray-100;
+    font-family: var(--f-texto);
+    background: var(--noite);
+    color: var(--texto);
+    -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--f-display);
+    text-wrap: balance;
   }
+  ::selection {
+    background: rgba(201, 164, 94, 0.35);
+    color: var(--marfim);
+  }
+  :focus-visible {
+    outline: 2px solid var(--latao-claro);
+    outline-offset: 3px;
+  }
+  /* as partes que o navegador desenha também vestem a marca */
+  input, textarea, select { caret-color: var(--latao-claro); }
+  a { text-underline-offset: 0.22em; text-decoration-thickness: 1px; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--noite); }
+  ::-webkit-scrollbar-thumb { background: #2B3752; border: 2px solid var(--noite); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3A4868; }
 }
 
 @layer utilities {
-  .text-gradient {
-    @apply bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent;
+  /* nada de texto em degradê: a ênfase vem do peso e do tamanho (as páginas antigas usavam isso numa palavra só) */
+  .text-gradient { color: inherit; }
+  .text-gradient-light { color: inherit; }
+
+  /* botão que afunda um pouco ao ser apertado: a interface mostra que ouviu */
+  .pressionar {
+    transition-property: transform, background-color, border-color, color;
+    transition-duration: 160ms, 200ms, 200ms, 200ms;
+    transition-timing-function: var(--ease-out);
   }
-  
-  .text-gradient-light {
-    @apply bg-gradient-to-br from-white to-gray-300 bg-clip-text text-transparent;
+  .pressionar:active { transform: scale(0.97); }
+  @media (prefers-reduced-motion: reduce) {
+    .pressionar:active { transform: none; }
   }
 }
 
@@ -50,6 +112,95 @@
 
   @keyframes pulse-whatsapp { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); } }
   .animate-pulse-whatsapp { animation: pulse-whatsapp 2s infinite; }
+
+  /* texto corrido das páginas (serviços, privacidade, termos): serifa nos títulos, fio de latão nas listas */
+  .texto-corrido { color: var(--texto); font-size: 1.0625rem; line-height: 1.75; max-width: 68ch; }
+  .texto-corrido > * + * { margin-top: 1.1em; }
+  .texto-corrido h2 {
+    font-family: var(--f-display); font-weight: 500; font-size: clamp(1.9rem, 3.2vw, 2.6rem); line-height: 1.08;
+    letter-spacing: -0.01em; color: var(--marfim); margin-top: 2.2em; text-wrap: balance;
+  }
+  .texto-corrido h2:first-child { margin-top: 0; }
+  .texto-corrido h2 + * { margin-top: 0.9em; }
+  .texto-corrido h3 { font-family: var(--f-texto); font-weight: 700; font-size: 1.05rem; color: var(--marfim); margin-top: 1.8em; }
+  .texto-corrido strong { color: var(--marfim); font-weight: 700; }
+  .texto-corrido ul, .texto-corrido ol { list-style: none; padding: 0; }
+  .texto-corrido li { position: relative; padding-left: 1.7em; }
+  .texto-corrido li + li { margin-top: 0.8em; }
+  .texto-corrido ul > li::before {
+    content: ""; position: absolute; left: 0.15em; top: 0.85em; width: 0.7em; height: 1px; background: var(--latao);
+  }
+  .texto-corrido ol { counter-reset: passo; }
+  .texto-corrido ol > li { counter-increment: passo; padding-left: 2.4em; }
+  .texto-corrido ol > li::before {
+    content: counter(passo); position: absolute; left: 0; top: -0.12em;
+    font-family: var(--f-display); font-size: 1.45em; font-weight: 500; color: var(--latao);
+  }
+  .texto-corrido a { color: var(--marfim); text-decoration: underline; text-decoration-color: rgba(201, 164, 94, 0.6); }
+
+  /* janela de contato (AberturaM.tsx): o fundo escurece; duas portas azul-marinho cobrem o formulário
+     com o M dourado dividido entre elas. O M surge, as portas deslizam para os lados levando cada metade
+     (portas e metades andam juntas: mesma duração, mesma curva, mesma distância) e o formulário fica.
+     Tudo em transform/opacity, feito pela placa de vídeo. Sai sem animação. */
+  .modal-fundo { animation: modal-fundo 200ms var(--ease-out); }
+  @keyframes modal-fundo { from { opacity: 0; } }
+  @keyframes modal-painel { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
+  .porta { background: linear-gradient(180deg, #16223A 0%, #0D1627 100%); will-change: transform; }
+  /* o fio de latão na beirada do meio de cada porta: aparece quando elas se separam */
+  .porta::after { content: ''; position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(226, 198, 141, 0.6); opacity: 0; }
+  .porta-esq::after { right: 0; }
+  .porta-dir::after { left: 0; }
+  .metade { will-change: transform; }
+  .abertura-parte { animation: abertura-chegar 240ms var(--ease-out) both; }
+  .porta-esq { animation: porta-esq 560ms var(--ease-porta) 170ms both; }
+  .porta-dir { animation: porta-dir 560ms var(--ease-porta) 170ms both; }
+  /* as metades andam com as portas e se dissolvem antes de chegar à borda (nada some de repente) */
+  .metade-esq { animation: metade-esq 560ms var(--ease-porta) 170ms both, metade-sumir 560ms linear 170ms both; }
+  .metade-dir { animation: metade-dir 560ms var(--ease-porta) 170ms both, metade-sumir 560ms linear 170ms both; }
+  @keyframes metade-sumir { 42% { opacity: 1; } 82%, 100% { opacity: 0; } }
+  .porta::after { animation: fio-porta 560ms linear 170ms both; }
+  .abertura-brilho { animation: brilho-chegar 240ms var(--ease-out) both, brilho-abrir 420ms ease-out 170ms forwards; }
+  .modal-abertura { animation: abertura-sumir 1ms linear 740ms both; }
+  @keyframes abertura-chegar { from { opacity: 0; transform: scale(0.92); } }
+  @keyframes porta-esq { to { transform: translateX(-100%); } }
+  @keyframes porta-dir { to { transform: translateX(100%); } }
+  @keyframes metade-esq { to { transform: translateX(-50%); } }
+  @keyframes metade-dir { to { transform: translateX(50%); } }
+  @keyframes fio-porta { 15%, 100% { opacity: 1; } }
+  @keyframes brilho-chegar { from { opacity: 0; } }
+  @keyframes brilho-abrir { to { opacity: 0; } }
+  @keyframes abertura-sumir { to { visibility: hidden; } }
+
+  /* o fio de latão sob o título se desenha quando as portas já abriram (o mesmo fio da vitrine) */
+  .modal-fio { transform-origin: left center; animation: modal-fio 520ms var(--ease-out) 520ms both; }
+  @keyframes modal-fio { from { transform: scaleX(0); } }
+  @media (prefers-reduced-motion: reduce) {
+    .modal-painel { animation: modal-fundo 200ms ease-out; }
+    .modal-abertura { display: none; }
+  }
+
+  /* selo de envio (SeloEnviado.tsx): o fio desenha o MC, o ouro sobe de baixo para cima,
+     o fio se recolhe e o texto se resolve do desfoque, como as legendas da vitrine */
+  .selo-fio { stroke-dasharray: 1; stroke-dashoffset: 1; animation: selo-desenhar 650ms var(--ease-in-out) forwards, selo-recolher 300ms ease-out 1250ms forwards; }
+  .selo-ouro { clip-path: inset(100% 0 0 0); animation: selo-encher 700ms var(--ease-in-out) 480ms forwards; }
+  .selo-texto { animation: selo-texto 460ms var(--ease-out) 1000ms both; }
+  @keyframes selo-desenhar { to { stroke-dashoffset: 0; } }
+  @keyframes selo-recolher { to { opacity: 0; } }
+  @keyframes selo-encher { to { clip-path: inset(0 0 0 0); } }
+  @keyframes selo-texto { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .modal-fio { animation: none; }
+    .selo-fio { display: none; }
+    .selo-ouro { clip-path: none; animation: none; }
+    .selo-texto { animation: modal-fundo 200ms ease-out both; }
+  }
+
+  /* aviso de cookies: sobe devagar depois que a página já apareceu */
+  .aviso-cookies { animation: modal-painel 420ms var(--ease-out) 600ms both; }
+  @media (prefers-reduced-motion: reduce) {
+    .aviso-cookies { animation: modal-fundo 200ms ease-out both; }
+  }
 
   /* Intersection Observer Animation Classes */
   [data-animate] { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }

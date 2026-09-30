@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
+// Botão de voltar ao topo: some durante o passeio 3D e aparece depois dele (ou após rolar nas outras páginas).
 const ScrollToTopButton: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const toggleVisibility = () => setIsVisible(window.pageYOffset > 300);
-    window.addEventListener('scroll', toggleVisibility);
+    const toggleVisibility = () => {
+      const cinema = document.getElementById('inicio');
+      const limite = cinema ? cinema.offsetTop + cinema.offsetHeight : 600;
+      setIsVisible(window.scrollY > limite);
+    };
+    toggleVisibility();
+    window.addEventListener('scroll', toggleVisibility, { passive: true });
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
@@ -15,13 +21,13 @@ const ScrollToTopButton: React.FC = () => {
     <button
       type="button"
       onClick={scrollToTop}
-      className={`hidden sm:flex fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-br from-[#1F3A5F] to-[#2E4F7E] text-white rounded-full items-center justify-center shadow-xl transition-all duration-300 z-50 ${
-        isVisible ? 'opacity-100 visible transform scale-100' : 'opacity-0 invisible transform scale-75'
-      } hover:scale-110 hover:-translate-y-1`}
+      className={`fixed bottom-8 right-8 z-40 hidden h-12 w-12 items-center justify-center rounded-full border border-latao/60 bg-noite/70 text-latao-claro backdrop-blur-md transition-[opacity,background-color,border-color,color] duration-300 hover:border-latao-claro hover:bg-latao hover:text-noite sm:flex ${
+        isVisible ? 'visible opacity-100' : 'invisible opacity-0'
+      }`}
       aria-label="Voltar ao topo da página"
     >
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
-        <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+        <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </button>
   );
