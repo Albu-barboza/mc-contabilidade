@@ -4,7 +4,6 @@ import Footer from './Footer';
 import WhatsappFloat from '../common/WhatsappFloat';
 import ScrollToTopButton from '../common/ScrollToTopButton';
 import ContactModal from '../common/ContactModal';
-import InteractiveBackground from '../common/InteractiveBackground';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -12,10 +11,19 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className="text-gray-700 font-sans dark:text-gray-100 relative min-h-screen">
-      <InteractiveBackground />
+    <div className="relative min-h-screen bg-noite font-sans text-texto">
+      <a
+        href="#conteudo"
+        onClick={(e) => {
+          e.preventDefault();
+          document.getElementById('conteudo')?.focus();
+        }}
+        className="fixed left-4 top-[-80px] z-[60] rounded-full bg-latao px-5 py-3 text-sm font-bold text-noite focus:top-4"
+      >
+        Pular para o conteúdo
+      </a>
       <Header />
-      <main className="relative z-10">
+      <main id="conteudo" tabIndex={-1} className="relative z-10 focus:outline-none">
         {children}
       </main>
       <Footer />

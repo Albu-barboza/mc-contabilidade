@@ -1,399 +1,397 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useContactForm } from '../../context/ContactFormContext';
-import InteractiveBackground from './InteractiveBackground';
-import { env } from '../../config/env';
+import { env, getWhatsappLink } from '../../config/env';
 
-type ContactField = 'nome' | 'email' | 'telefone' | 'servico' | 'mensagem';
+type Campo = 'nome' | 'email' | 'telefone' | 'servico' | 'mensagem';
+type Formulario = Record<Campo, string>;
 
-interface ContactFormState {
-    nome: string;
-    email: string;
-    telefone: string;
-    servico: string;
-    mensagem: string;
-}
+const VAZIO: Formulario = { nome: '', email: '', telefone: '', servico: '', mensagem: '' };
+const OBRIGATORIOS: Campo[] = ['nome', 'email', 'telefone', 'servico'];
 
-const initialFormState: ContactFormState = {
-    nome: '',
-    email: '',
-    telefone: '',
-    servico: '',
-    mensagem: ''
-};
-
-const contactItems = [
-    {
-        icon: (
-            <svg className="w-5 h-5 text-[#6B7A8F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-        ),
-        label: 'Endereco',
-        value: 'Ibicui/BA (em atualizacao)'
-    },
-    {
-        icon: (
-            <svg className="w-5 h-5 text-[#6B7A8F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-        ),
-        label: 'E-mail',
-        value: env.contactEmail ? `${env.contactEmail} (em atualizacao)` : 'E-mail: em atualizacao',
-        href: env.contactEmail ? `mailto:${env.contactEmail}` : undefined
-    },
-    {
-        icon: (
-            <svg className="w-5 h-5 text-[#6B7A8F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 0 0118 0z" />
-            </svg>
-        ),
-        label: 'Atendimento',
-        value: 'Atendimento 100% online'
-    }
+const ASSUNTOS = [
+  { valor: 'Abertura de empresa', texto: 'Quero abrir minha empresa' },
+  { valor: 'Troca de contador', texto: 'Quero trocar de contador' },
+  { valor: 'MEI', texto: 'Sou MEI e preciso de ajuda' },
+  { valor: 'Consultoria tributária', texto: 'Preciso de consultoria tributária' },
+  { valor: 'Regularização', texto: 'Quero regularizar minha empresa' },
+  { valor: 'Outros', texto: 'Outro assunto' },
 ];
 
-const SuccessIcon = () => (
-    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-        <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-        </svg>
-    </div>
-);
+const validar = (campo: Campo, valor: string) => {
+  switch (campo) {
+    case 'nome':
+      return valor.trim().split(/\s+/).length < 2 ? 'Escreva nome e sobrenome.' : '';
+    case 'email':
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor.trim()) ? '' : 'Confira o e-mail: falta algo como nome@empresa.com.br.';
+    case 'telefone':
+      return valor.replace(/\D/g, '').length >= 10 ? '' : 'Informe o telefone com DDD.';
+    case 'servico':
+      return valor ? '' : 'Escolha um assunto.';
+    default:
+      return '';
+  }
+};
 
-const ErrorIcon = () => (
-    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-        <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-    </div>
-);
+const mascaraTelefone = (v: string) =>
+  v
+    .replace(/\D/g, '')
+    .slice(0, 11)
+    .replace(/(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .replace(/(-\d{4})\d+?$/, '$1');
 
+// Janela de contato. Envia para o endereço do Formspree configurado em VITE_FORMSPREE_CONTACT_URL.
 const ContactModal: React.FC = () => {
-    const { isFormOpen, closeForm } = useContactForm();
-    const [formState, setFormState] = useState<ContactFormState>(initialFormState);
-    const [errors, setErrors] = useState<Record<ContactField, string>>({
-        nome: '',
-        email: '',
-        telefone: '',
-        servico: '',
-        mensagem: ''
+  const { isFormOpen, closeForm } = useContactForm();
+  const [dados, setDados] = useState<Formulario>(VAZIO);
+  const [erros, setErros] = useState<Partial<Record<Campo, string>>>({});
+  const [status, setStatus] = useState<'parado' | 'enviando' | 'enviado'>('parado');
+  const [falha, setFalha] = useState('');
+  const [armadilha, setArmadilha] = useState(''); // campo invisível: só robô preenche
+  const janelaRef = useRef<HTMLDivElement>(null);
+  const tituloRef = useRef<HTMLHeadingElement>(null);
+  const antesRef = useRef<HTMLElement | null>(null);
+
+  const destino = env.formspreeContactUrl;
+  const destinoValido = /^https:\/\/\S+$/.test(destino || '');
+  const temWhatsapp = Boolean(env.whatsappNumber);
+  const email = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
+
+  // abrir: guarda onde estava o foco, trava a rolagem da página e põe o foco na janela
+  useEffect(() => {
+    if (!isFormOpen) return;
+    antesRef.current = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const telaGrande = window.matchMedia('(pointer: fine) and (min-width: 1024px)').matches;
+    requestAnimationFrame(() => {
+      if (telaGrande) janelaRef.current?.querySelector<HTMLInputElement>('#contato-nome')?.focus();
+      else tituloRef.current?.focus();
     });
-    const [touched, setTouched] = useState<Record<ContactField, boolean>>({
-        nome: false,
-        email: false,
-        telefone: false,
-        servico: false,
-        mensagem: false
-    });
-    const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success'>('idle');
-    const [submitError, setSubmitError] = useState('');
-    const contactSectionRef = useRef<HTMLDivElement>(null);
-    const contactEndpoint = env.formspreeContactUrl;
-
-    useEffect(() => {
-        if (isFormOpen && contactSectionRef.current) {
-            setTimeout(() => {
-                contactSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-        }
-    }, [isFormOpen]);
-
-    const validateField = (name: ContactField, value: string) => {
-        switch (name) {
-            case 'nome':
-                return value.trim().split(' ').length < 2 ? 'Informe nome e sobrenome.' : '';
-            case 'email':
-                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Informe um e-mail valido.';
-            case 'telefone':
-                return value.replace(/\D/g, '').length >= 10 ? '' : 'Telefone invalido.';
-            case 'servico':
-                return value ? '' : 'Selecione um assunto.';
-            default:
-                return '';
-        }
+    return () => {
+      document.body.style.overflow = overflow;
+      antesRef.current?.focus?.();
     };
+  }, [isFormOpen]);
 
-    const handleBlur = (field: ContactField) => {
-        setTouched((prev) => ({ ...prev, [field]: true }));
-        setErrors((prev) => ({ ...prev, [field]: validateField(field, formState[field]) }));
-    };
+  const fechar = () => {
+    closeForm();
+    if (status === 'enviado') {
+      setStatus('parado');
+      setDados(VAZIO);
+    }
+    setFalha('');
+  };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target as { name: ContactField; value: string };
-        let finalValue = value;
+  // Esc fecha; Tab fica preso dentro da janela
+  const aoTeclar = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      fechar();
+      return;
+    }
+    if (e.key !== 'Tab' || !janelaRef.current) return;
+    const focaveis = Array.from(
+      janelaRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([type="hidden"]):not([tabindex="-1"]), select, textarea, [tabindex="0"]')
+    ).filter((el) => el.offsetParent !== null);
+    if (!focaveis.length) return;
+    const primeiro = focaveis[0], ultimo = focaveis[focaveis.length - 1];
+    if (e.shiftKey && document.activeElement === primeiro) {
+      e.preventDefault();
+      ultimo.focus();
+    } else if (!e.shiftKey && document.activeElement === ultimo) {
+      e.preventDefault();
+      primeiro.focus();
+    }
+  };
 
-        if (name === 'telefone') {
-            finalValue = value
-                .replace(/\D/g, '')
-                .slice(0, 11)
-                .replace(/(\d{2})(\d)/, '($1) $2')
-                .replace(/(\d{5})(\d)/, '$1-$2')
-                .replace(/(-\d{4})\d+?$/, '$1');
-        }
+  const mudar = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const campo = e.target.name as Campo;
+    const valor = campo === 'telefone' ? mascaraTelefone(e.target.value) : e.target.value;
+    setDados((d) => ({ ...d, [campo]: valor }));
+    if (erros[campo]) setErros((er) => ({ ...er, [campo]: validar(campo, valor) }));
+  };
 
-        setFormState((prev) => ({ ...prev, [name]: finalValue }));
+  const sair = (campo: Campo) => setErros((er) => ({ ...er, [campo]: validar(campo, dados[campo]) }));
 
-        if (touched[name]) {
-            setErrors((prev) => ({ ...prev, [name]: validateField(name, finalValue) }));
-        }
-    };
+  const enviar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const novos: Partial<Record<Campo, string>> = {};
+    for (const c of OBRIGATORIOS) novos[c] = validar(c, dados[c]);
+    setErros(novos);
+    const primeiroErro = OBRIGATORIOS.find((c) => novos[c]);
+    if (primeiroErro) {
+      setFalha('');
+      janelaRef.current?.querySelector<HTMLElement>(`#contato-${primeiroErro}`)?.focus();
+      return;
+    }
+    if (armadilha) {
+      setStatus('enviado');
+      return;
+    }
+    if (!destinoValido) {
+      setFalha(email || temWhatsapp ? 'O envio pelo site ainda não está ativo. Enquanto isso, fale com a equipe pelos contatos ao lado.' : 'O envio pelo site ainda não está ativo.');
+      return;
+    }
+    setFalha('');
+    setStatus('enviando');
+    const controle = new AbortController();
+    const prazo = window.setTimeout(() => controle.abort(), 15000);
+    try {
+      const resposta = await fetch(destino, {
+        method: 'POST',
+        body: JSON.stringify({ ...dados, _gotcha: armadilha }),
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        signal: controle.signal,
+      });
+      if (!resposta.ok) throw new Error('resposta');
+      window.gtag?.('event', 'generate_lead', { event_category: 'contact', event_label: 'Formulario de Contato Principal', value: 1 });
+      setStatus('enviado');
+      setDados(VAZIO);
+      setErros({});
+    } catch (erro) {
+      const tempo = erro instanceof DOMException && erro.name === 'AbortError';
+      setFalha(tempo ? 'A conexão demorou demais. Confira a internet e tente de novo.' : 'Não conseguimos enviar agora. Tente de novo em instantes.');
+      setStatus('parado');
+    } finally {
+      window.clearTimeout(prazo);
+    }
+  };
 
-    const handleFormSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const requiredFields: ContactField[] = ['nome', 'email', 'telefone', 'servico'];
+  if (!isFormOpen) return null;
 
-        const newErrors = requiredFields.reduce(
-            (acc, field) => ({
-                ...acc,
-                [field]: validateField(field, formState[field])
-            }),
-            {} as Record<ContactField, string>
-        );
+  const campoClasse = (c: Campo, fundo = 'bg-white/[0.04]') =>
+    `w-full rounded-xl border ${fundo} px-4 py-3 text-base text-marfim placeholder:text-fraco/70 transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-latao ${
+      erros[c] ? 'border-red-400/80' : 'border-[color:var(--linha)] hover:border-marfim/30'
+    }`;
+  const rotulo = 'mb-2 block text-sm font-semibold text-marfim';
+  const ajuda = (c: Campo) =>
+    erros[c] ? (
+      <p id={`contato-${c}-erro`} className="mt-2 text-sm text-red-300">
+        {erros[c]}
+      </p>
+    ) : null;
+  const aria = (c: Campo) => ({ 'aria-invalid': Boolean(erros[c]) || undefined, 'aria-describedby': erros[c] ? `contato-${c}-erro` : undefined });
 
-        setErrors((prev) => ({ ...prev, ...newErrors }));
-        setTouched((prev) => ({ ...prev, ...requiredFields.reduce((acc, field) => ({ ...acc, [field]: true }), {}) }));
-
-        const isValid = Object.values(newErrors).every((error) => error === '');
-
-        if (!isValid) {
-            setSubmitError('Revise os campos destacados para continuar.');
-            return;
-        }
-
-        if (!contactEndpoint) {
-            setSubmitError('Endpoint de contato nao configurado.');
-            return;
-        }
-
-        setSubmitError('');
-        setFormStatus('sending');
-
-        try {
-            const response = await fetch(contactEndpoint, {
-                method: 'POST',
-                body: JSON.stringify(formState),
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                const data = await response.json().catch(() => null);
-                throw new Error(data?.errors?.map((err: { message: string }) => err.message).join(', ') || 'Erro no envio.');
-            }
-
-            if (window.gtag) {
-                window.gtag('event', 'generate_lead', {
-                    event_category: 'contact',
-                    event_label: 'Formulario de Contato Principal',
-                    value: 1
-                });
-            }
-
-            setFormStatus('success');
-            setFormState(initialFormState);
-            setTouched({
-                nome: false,
-                email: false,
-                telefone: false,
-                servico: false,
-                mensagem: false
-            });
-            setErrors({
-                nome: '',
-                email: '',
-                telefone: '',
-                servico: '',
-                mensagem: ''
-            });
-            setTimeout(() => setFormStatus('idle'), 5000);
-        } catch (error: unknown) {
-            setSubmitError(error instanceof Error ? error.message : 'Ocorreu um erro. Tente novamente.');
-            setFormStatus('idle');
-        }
-    };
-
-    if (!isFormOpen) return null;
-
-    return (
-        <section
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
-            aria-modal="true"
-            role="dialog"
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) fechar();
+      }}
+    >
+      <div
+        ref={janelaRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contato-titulo"
+        aria-describedby="contato-descricao"
+        onKeyDown={aoTeclar}
+        className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-t-3xl border border-[color:var(--linha)] bg-noite sm:rounded-3xl"
+      >
+        <button
+          type="button"
+          onClick={fechar}
+          className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full text-fraco transition-colors duration-200 hover:bg-white/5 hover:text-marfim"
+          aria-label="Fechar"
         >
-            <div ref={contactSectionRef} className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative animate-scaleIn">
-                <button
-                    onClick={closeForm}
-                    className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-                    aria-label="Fechar formulario"
-                >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <div className="grid lg:grid-cols-2">
-                    <div className="p-8 lg:p-12 bg-[#1F3A5F] text-white">
-                        <h3 className="text-3xl font-bold mb-6">Vamos conversar?</h3>
-                        <p className="text-blue-100 mb-8">Preencha o formulario e entraremos em contato o mais breve possivel. Se preferir, use nossos outros canais.</p>
-                        <div className="space-y-6">
-                            {contactItems.map((item) => (
-                                <div key={item.label} className="flex items-start gap-4">
-                                    <div className="p-2 bg-white/10 rounded-lg">{item.icon}</div>
-                                    <div>
-                                        <p className="text-sm font-semibold text-blue-200 uppercase tracking-wider mb-1">{item.label}</p>
-                                        {item.href ? (
-                                            <a href={item.href} className="text-lg font-medium hover:text-white transition-colors">
-                                                {item.value}
-                                            </a>
-                                        ) : (
-                                            <p className="text-lg font-medium">{item.value}</p>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="mt-12 pt-8 border-top border-white/10">
-                            <p className="text-sm text-blue-200 mb-4">Nos acompanhe nas redes sociais</p>
-                            <div className="flex gap-4">
-                                <a href="#" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors" aria-label="Instagram">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                                    </svg>
-                                </a>
-                                <a href="#" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors" aria-label="LinkedIn">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="p-8 lg:p-12">
-                        <form onSubmit={handleFormSubmit} className="space-y-6">
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <label htmlFor="nome" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Nome completo</label>
-                                    <div className="relative">
-                                        <input
-                                            id="nome"
-                                            name="nome"
-                                            type="text"
-                                            value={formState.nome}
-                                            onChange={handleInputChange}
-                                            onBlur={() => handleBlur('nome')}
-                                            className={`w-full px-4 py-3 rounded-xl border ${touched.nome && errors.nome ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F3A5F] transition-all`}
-                                            placeholder="Seu nome"
-                                        />
-                                        {touched.nome && (errors.nome ? <ErrorIcon /> : <SuccessIcon />)}
-                                    </div>
-                                    {touched.nome && errors.nome && <p className="mt-1 text-xs text-red-500">{errors.nome}</p>}
-                                </div>
-                                <div>
-                                    <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">E-mail</label>
-                                    <div className="relative">
-                                        <input
-                                            id="email"
-                                            name="email"
-                                            type="email"
-                                            value={formState.email}
-                                            onChange={handleInputChange}
-                                            onBlur={() => handleBlur('email')}
-                                            className={`w-full px-4 py-3 rounded-xl border ${touched.email && errors.email ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F3A5F] transition-all`}
-                                            placeholder="seu@email.com"
-                                        />
-                                        {touched.email && (errors.email ? <ErrorIcon /> : <SuccessIcon />)}
-                                    </div>
-                                    {touched.email && errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
-                                </div>
-                            </div>
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <label htmlFor="telefone" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Telefone / WhatsApp</label>
-                                    <div className="relative">
-                                        <input
-                                            id="telefone"
-                                            name="telefone"
-                                            type="tel"
-                                            value={formState.telefone}
-                                            onChange={handleInputChange}
-                                            onBlur={() => handleBlur('telefone')}
-                                            className={`w-full px-4 py-3 rounded-xl border ${touched.telefone && errors.telefone ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F3A5F] transition-all`}
-                                            placeholder="(00) 00000-0000"
-                                        />
-                                        {touched.telefone && (errors.telefone ? <ErrorIcon /> : <SuccessIcon />)}
-                                    </div>
-                                    {touched.telefone && errors.telefone && <p className="mt-1 text-xs text-red-500">{errors.telefone}</p>}
-                                </div>
-                                <div>
-                                    <label htmlFor="servico" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Assunto</label>
-                                    <select
-                                        id="servico"
-                                        name="servico"
-                                        value={formState.servico}
-                                        onChange={handleInputChange}
-                                        onBlur={() => handleBlur('servico')}
-                                        className={`w-full px-4 py-3 rounded-xl border ${touched.servico && errors.servico ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'} dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F3A5F] transition-all`}
-                                    >
-                                        <option value="">Selecione um assunto</option>
-                                        <option value="Abertura de Empresa">Quero abrir minha empresa</option>
-                                        <option value="Troca de Contador">Quero trocar de contador</option>
-                                        <option value="Consultoria Tributaria">Preciso de consultoria tributaria</option>
-                                        <option value="Regularizacao">Regularizacao de empresa</option>
-                                        <option value="Outros">Outros assuntos</option>
-                                    </select>
-                                    {touched.servico && errors.servico && <p className="mt-1 text-xs text-red-500">{errors.servico}</p>}
-                                </div>
-                            </div>
-                            <div>
-                                <label htmlFor="mensagem" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Mensagem (opcional)</label>
-                                <textarea
-                                    id="mensagem"
-                                    name="mensagem"
-                                    rows={3}
-                                    value={formState.mensagem}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F3A5F] transition-all resize-none"
-                                    placeholder="Conte um pouco mais sobre sua necessidade..."
-                                />
-                            </div>
-                            {submitError && (
-                                <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm flex items-center gap-2">
-                                    <ErrorIcon />
-                                    <span>{submitError}</span>
-                                </div>
-                            )}
-                            <button
-                                type="submit"
-                                disabled={formStatus === 'sending'}
-                                className="w-full py-4 bg-[#1F3A5F] text-white font-bold rounded-xl hover:bg-[#2E4F7E] transition-all duration-300 disabled:opacity-70 flex items-center justify-center gap-2"
-                            >
-                                {formStatus === 'sending' ? (
-                                    <>
-                                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Enviando...
-                                    </>
-                                ) : formStatus === 'success' ? (
-                                    <>
-                                        <SuccessIcon />
-                                        Mensagem Enviada!
-                                    </>
-                                ) : (
-                                    'Enviar Solicitacao'
-                                )}
-                            </button>
-                            <p className="text-xs text-gray-500 dark:text-gray-300 text-center">Usamos seus dados apenas para retornar o contato. Sem spam.</p>
-                        </form>
-                    </div>
+          <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        </button>
+
+        <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="bg-marinho px-6 pb-8 pt-10 sm:px-10 lg:py-12">
+            <h2 id="contato-titulo" ref={tituloRef} tabIndex={-1} className="font-display text-4xl font-medium text-marfim focus:outline-none sm:text-5xl">
+              Vamos conversar?
+            </h2>
+            <p id="contato-descricao" className="mt-4 max-w-sm leading-relaxed text-texto">
+              Conte o momento da sua empresa. A equipe retorna em até 24h.
+            </p>
+            <dl className="mt-8 space-y-5 text-sm">
+              <div>
+                <dt className="font-semibold text-latao-claro">Atendimento</dt>
+                <dd className="mt-1 text-marfim">100% online</dd>
+              </div>
+              {email && (
+                <div>
+                  <dt className="font-semibold text-latao-claro">E-mail</dt>
+                  <dd className="mt-1">
+                    <a href={`mailto:${email}`} className="text-marfim underline-offset-4 hover:underline">
+                      {email}
+                    </a>
+                  </dd>
                 </div>
-            </div>
-            <InteractiveBackground />
-        </section>
-    );
+              )}
+              {temWhatsapp && (
+                <div>
+                  <dt className="font-semibold text-latao-claro">WhatsApp</dt>
+                  <dd className="mt-1">
+                    <a
+                      href={getWhatsappLink('Olá! Vim pelo site da MC Contabilidade e gostaria de conversar.')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-marfim underline-offset-4 hover:underline"
+                    >
+                      Conversar no WhatsApp
+                    </a>
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </div>
+
+          <div className="px-6 pb-10 pt-8 sm:px-10 lg:py-12">
+            {status === 'enviado' ? (
+              <div className="flex min-h-[320px] flex-col items-start justify-center" role="status">
+                <p className="font-display text-4xl font-medium text-marfim">Mensagem enviada.</p>
+                <p className="mt-3 max-w-sm leading-relaxed text-texto">Obrigado pelo contato. A equipe retorna em até 24h.</p>
+                <button
+                  type="button"
+                  onClick={fechar}
+                  className="mt-8 rounded-full border border-marfim/40 px-6 py-3 text-sm font-bold text-marfim transition-colors duration-200 hover:border-marfim"
+                >
+                  Fechar
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={enviar} noValidate className="space-y-5">
+                {!destinoValido && (
+                  <p className="rounded-xl border border-latao/30 bg-latao/10 px-4 py-3 text-sm text-latao-claro">
+                    Prévia: o envio deste formulário será ligado quando o e-mail de recebimento for configurado.
+                  </p>
+                )}
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="contato-nome" className={rotulo}>
+                      Nome completo
+                    </label>
+                    <input
+                      id="contato-nome"
+                      name="nome"
+                      type="text"
+                      autoComplete="name"
+                      maxLength={120}
+                      value={dados.nome}
+                      onChange={mudar}
+                      onBlur={() => sair('nome')}
+                      placeholder="Maria Souza…"
+                      className={campoClasse('nome')}
+                      {...aria('nome')}
+                    />
+                    {ajuda('nome')}
+                  </div>
+                  <div>
+                    <label htmlFor="contato-email" className={rotulo}>
+                      E-mail
+                    </label>
+                    <input
+                      id="contato-email"
+                      name="email"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      spellCheck={false}
+                      maxLength={160}
+                      value={dados.email}
+                      onChange={mudar}
+                      onBlur={() => sair('email')}
+                      placeholder="nome@empresa.com.br…"
+                      className={campoClasse('email')}
+                      {...aria('email')}
+                    />
+                    {ajuda('email')}
+                  </div>
+                </div>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="contato-telefone" className={rotulo}>
+                      Telefone ou WhatsApp
+                    </label>
+                    <input
+                      id="contato-telefone"
+                      name="telefone"
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel-national"
+                      maxLength={16}
+                      value={dados.telefone}
+                      onChange={mudar}
+                      onBlur={() => sair('telefone')}
+                      placeholder="(00) 00000-0000…"
+                      className={campoClasse('telefone')}
+                      {...aria('telefone')}
+                    />
+                    {ajuda('telefone')}
+                  </div>
+                  <div>
+                    <label htmlFor="contato-servico" className={rotulo}>
+                      Assunto
+                    </label>
+                    <select
+                      id="contato-servico"
+                      name="servico"
+                      value={dados.servico}
+                      onChange={mudar}
+                      onBlur={() => sair('servico')}
+                      className={campoClasse('servico', 'bg-noite')}
+                      {...aria('servico')}
+                    >
+                      <option value="">Escolha um assunto</option>
+                      {ASSUNTOS.map((a) => (
+                        <option key={a.valor} value={a.valor}>
+                          {a.texto}
+                        </option>
+                      ))}
+                    </select>
+                    {ajuda('servico')}
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="contato-mensagem" className={rotulo}>
+                    Mensagem <span className="font-normal text-fraco">(opcional)</span>
+                  </label>
+                  <textarea
+                    id="contato-mensagem"
+                    name="mensagem"
+                    rows={3}
+                    maxLength={2000}
+                    value={dados.mensagem}
+                    onChange={mudar}
+                    placeholder="Ex.: tenho um MEI e quero virar ME no ano que vem…"
+                    className={`${campoClasse('mensagem')} resize-none`}
+                  />
+                </div>
+                {/* armadilha para robôs: invisível para pessoas */}
+                <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+                  <label htmlFor="contato-site">Site</label>
+                  <input id="contato-site" name="_gotcha" type="text" tabIndex={-1} autoComplete="off" value={armadilha} onChange={(e) => setArmadilha(e.target.value)} />
+                </div>
+                <div aria-live="polite">
+                  {falha && <p className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">{falha}</p>}
+                </div>
+                <button
+                  type="submit"
+                  disabled={status === 'enviando'}
+                  className="flex w-full items-center justify-center gap-3 rounded-full bg-latao py-4 text-base font-bold text-noite transition-colors duration-200 hover:bg-latao-claro disabled:opacity-70"
+                >
+                  {status === 'enviando' && <span className="h-4 w-4 animate-spin rounded-full border-2 border-noite/30 border-t-noite" aria-hidden="true" />}
+                  {status === 'enviando' ? 'Enviando…' : 'Enviar mensagem'}
+                </button>
+                <p className="text-center text-xs leading-relaxed text-fraco">
+                  Usamos seus dados só para responder este contato. Veja a{' '}
+                  <a href="#/politica-de-privacidade" onClick={fechar} className="text-marfim underline-offset-4 hover:underline">
+                    política de privacidade
+                  </a>
+                  .
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ContactModal;

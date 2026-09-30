@@ -8,9 +8,10 @@ interface WhatsappFloatProps {
 const WhatsappFloat: React.FC<WhatsappFloatProps> = ({ isMobileNavOpen = false, isContactOverlayOpen = false }) => {
   const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER_FLOAT;
   const whatsappMessage = encodeURIComponent('Ola! Vim do site e gostaria de falar com a equipe (em atualizacao)');
-  const whatsappLink = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${whatsappMessage}` : '#';
+  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 
-  if (isMobileNavOpen || isContactOverlayOpen) {
+  // sem número configurado, o botão não aparece (um link que não abre nada passa descuido)
+  if (!whatsappNumber || isMobileNavOpen || isContactOverlayOpen) {
     return null;
   }
 

@@ -2,22 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+/* MC Contabilidade — vitrine escura azul-marinho, objetos de latão, uma voz serifada.
+   Layout: um objeto-símbolo por vez preso na tela enquanto a pessoa rola; depois, seções
+   alinhadas à esquerda com muito respiro. Conceito (simbolismo): o valor aparece nos
+   materiais e no silêncio, nunca em preço, selo ou número de efeito.
+   Tipos: Cormorant Garamond (a voz: títulos e palavras grandes) + Manrope (o uso: texto,
+   menu, botões). Tudo em caixa normal de frase; nada de rótulo em caixa-alta espaçada. */
+:root {
+  --noite: #0A1120;        /* fundo: azul-marinho profundo da marca */
+  --marinho: #121C30;      /* superfícies elevadas */
+  --linha: rgba(239, 232, 219, 0.12);
+  --marfim: #EFE8DB;       /* títulos */
+  --texto: #C5CBD7;        /* corpo */
+  --fraco: #9AA3B5;        /* legendas */
+  --latao: #C9A45E;        /* acento: o latão dos objetos */
+  --latao-claro: #E2C68D;
+  --f-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --f-texto: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --gutter: clamp(16px, 5vw, 64px);
+  color-scheme: dark;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 88px; /* o topo fixo não cobre âncoras nem o foco do teclado */
+    background: var(--noite);
+  }
+  a, button, select, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
   }
   body {
-    font-family: 'Inter', sans-serif;
-    @apply bg-white dark:bg-slate-950 text-gray-700 dark:text-gray-100;
+    font-family: var(--f-texto);
+    background: var(--noite);
+    color: var(--texto);
+    -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--f-display);
+    text-wrap: balance;
+  }
+  ::selection {
+    background: rgba(201, 164, 94, 0.35);
+    color: var(--marfim);
+  }
+  :focus-visible {
+    outline: 2px solid var(--latao-claro);
+    outline-offset: 3px;
   }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent;
+    @apply bg-gradient-to-br from-latao-claro to-latao bg-clip-text text-transparent;
   }
   
   .text-gradient-light {

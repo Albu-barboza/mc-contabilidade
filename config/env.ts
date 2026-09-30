@@ -14,7 +14,8 @@ interface EnvConfig {
 const getEnv = (key: string, fallback?: string): string => {
     const value = import.meta.env[key];
     if (!value && fallback === undefined) {
-        console.warn(`Missing environment variable: ${key}`);
+        // só avisa enquanto o site está sendo montado; o visitante não precisa ver isso no console
+        if (import.meta.env.DEV) console.warn(`Missing environment variable: ${key}`);
         return '';
     }
     return value || fallback || '';

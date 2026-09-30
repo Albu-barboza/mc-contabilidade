@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import JsonLd from '../../components/common/JsonLd';
+import Seo from '../../components/common/Seo';
 import { useContactForm } from '../../context/ContactFormContext';
 
 
@@ -8,6 +9,8 @@ interface ServicePageLayoutProps {
   schema: object;
   title: React.ReactNode;
   subtitle: string;
+  // título e descrição da aba do navegador e do Google (antes era passado e ignorado)
+  seo?: { title: string; description: string };
   children: React.ReactNode;
 }
 
@@ -22,10 +25,11 @@ const whatsappLink = whatsappNumber
   ? `https://wa.me/${whatsappNumber}?text=Ol%C3%A1!%20Vim%20do%20site%20da%20MC%20Contabilidade.`
   : undefined;
 
-const ServicePageLayout: React.FC<ServicePageLayoutProps> = ({ schema, title, subtitle, children }) => {
+const ServicePageLayout: React.FC<ServicePageLayoutProps> = ({ schema, title, subtitle, seo, children }) => {
   const { openForm } = useContactForm();
   return (
     <>
+      {seo && <Seo title={seo.title} description={seo.description} />}
       <JsonLd schema={schema} />
       <div className="">
         <section className="pt-32 pb-20">

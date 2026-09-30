@@ -1,287 +1,131 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { getAssetUrl } from '../../utils/assets';
-import ThemeToggle from '../common/ThemeToggle';
 import { useContactForm } from '../../context/ContactFormContext';
-import Button from '../common/Button';
+import Monograma from '../common/Monograma';
 
-const Header: React.FC<{ onMobileMenuToggle?: (isOpen: boolean) => void }> = ({ onMobileMenuToggle }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const scrollPositionRef = useRef(0);
+const ITENS = [
+  { path: '/servicos', nome: 'Serviços' },
+  { path: '/sobre', nome: 'Sobre' },
+  { path: '/faq', nome: 'Dúvidas' },
+];
+
+// Topo discreto: transparente sobre o passeio 3D da página inicial e sólido no resto do site.
+const Header: React.FC = () => {
+  const [aberto, setAberto] = useState(false);
+  const [solido, setSolido] = useState(false);
   const { openForm } = useContactForm();
-  const location = useLocation();
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-
-  // Detect if we're on the Careers page
-  const isCareersPage = location.pathname.startsWith('/trabalhe-conosco');
+  const { pathname } = useLocation();
+  const naHome = pathname === '/';
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    onMobileMenuToggle?.(isMenuOpen);
-  }, [isMenuOpen, onMobileMenuToggle]);
-
-  useEffect(() => {
-    const html = document.documentElement;
-
-    if (isMenuOpen) {
-      scrollPositionRef.current = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollPositionRef.current}px`;
-      document.body.style.left = '0';
-      document.body.style.right = '0';
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
-      html.style.overscrollBehavior = 'contain';
-
-      // Focus management for accessibility
-      setTimeout(() => {
-        const firstFocusable = mobileMenuRef.current?.querySelector('a, button') as HTMLElement;
-        firstFocusable?.focus();
-      }, 100);
-    } else {
-      const scrollY = scrollPositionRef.current;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
-      html.style.overscrollBehavior = '';
-      window.scrollTo(0, scrollY);
-
-      // Return focus to menu button when closing
-      if (document.activeElement === mobileMenuRef.current || mobileMenuRef.current?.contains(document.activeElement)) {
-        menuButtonRef.current?.focus();
-      }
-    }
-  }, [isMenuOpen]);
-
-  useEffect(() => {
+    const aoRolar = () => {
+      const cinema = document.getElementById('inicio');
+      const limite = naHome && cinema ? cinema.offsetTop + cinema.offsetHeight - 90 : 24;
+      setSolido(window.scrollY > limite);
+    };
+    aoRolar();
+    window.addEventListener('scroll', aoRolar, { passive: true });
+    window.addEventListener('resize', aoRolar);
     return () => {
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
-      document.documentElement.style.overscrollBehavior = '';
+      window.removeEventListener('scroll', aoRolar);
+      window.removeEventListener('resize', aoRolar);
     };
-  }, []);
+  }, [naHome]);
 
-  // Close menu on escape key
+  useEffect(() => setAberto(false), [pathname]);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (isMenuOpen && e.key === 'Escape') {
-        setIsMenuOpen(false);
-      }
+    if (!aberto) return;
+    document.body.style.overflow = 'hidden';
+    const aoTeclar = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setAberto(false);
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isMenuOpen]);
+    document.addEventListener('keydown', aoTeclar);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', aoTeclar);
+    };
+  }, [aberto]);
 
-  type NavItem = { path: string; name: string };
-
-  const navItems: NavItem[] = [
-    { path: '/', name: 'Início' },
-    { path: '/sobre', name: 'Sobre Nós' },
-    { path: '/servicos', name: 'Serviços' },
-    { path: '/depoimentos', name: 'Depoimentos' },
-    { path: '/faq', name: 'FAQ' }
-  ];
-  const mobileMenuId = 'mobile-menu';
-  const mobileMenuToggleLabel = isMenuOpen ? 'Fechar menu de navegação' : 'Abrir menu de navegação';
-
-  // Dynamic nav colors based on page and scroll state
-  const navLinkClasses = isCareersPage && !isScrolled
-    ? 'text-sm font-medium relative py-2 transition-colors text-white/90 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-white after:w-0 hover:text-white hover:after:w-full'
-    : 'text-sm font-medium relative py-2 transition-colors after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-primary after:w-0 hover:text-primary dark:hover:text-[#C6D7FF] hover:after:w-full';
-
-  const activeLinkClasses = isCareersPage && !isScrolled
-    ? 'text-white after:w-full'
-    : 'text-primary dark:text-[#C6D7FF] after:w-full';
-
-  const closeMenu = () => setIsMenuOpen(false);
+  const transparente = naHome && !solido && !aberto;
+  const linkMenu = ({ isActive }: { isActive: boolean }) =>
+    `text-[.95rem] font-medium transition-colors duration-300 ${isActive ? 'text-latao-claro' : 'text-marfim/75 hover:text-marfim'}`;
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled
-        ? 'h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-lg'
-        : 'h-24 bg-transparent shadow-none'
-        }`}
+      className={`fixed inset-x-0 top-0 z-40 transition-colors duration-500 ${
+        transparente ? 'border-b border-transparent bg-transparent' : 'border-b border-[color:var(--linha)] bg-noite/90 backdrop-blur-md'
+      }`}
+      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
-      <nav className="container mx-auto px-4 sm:px-6 h-full flex justify-between items-center" aria-label="Navegação principal">
-        <Link to="/" className={`flex items-center gap-1 text-xl font-bold transition-colors ${isCareersPage && !isScrolled
-          ? 'text-white'
-          : 'text-gray-800 dark:text-white'
-          }`}>
-          <img
-            src={isCareersPage && !isScrolled ? getAssetUrl("/images/logo 1 (2).png") : getAssetUrl("/images/logo.png")}
-            alt="MC Contabilidade Logo"
-            className="h-16 w-auto dark:hidden"
-          />
-          <img
-            src={getAssetUrl("/images/logo 1 (2).png")}
-            alt="MC Contabilidade Logo"
-            className="h-16 w-auto hidden dark:inline-block"
-          />
-          <span className="ml-1">MC Contabilidade</span>
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center gap-6 px-[var(--gutter)]">
+        <Link to="/" className="flex items-center gap-3 text-marfim" aria-label="MC Contabilidade, página inicial">
+          <Monograma className="h-7 w-auto text-latao-claro" />
+          <span translate="no" className="whitespace-nowrap font-display text-[1.3rem] font-semibold leading-none sm:text-[1.45rem]">MC Contabilidade</span>
         </Link>
 
-        {/* DESKTOP NAV */}
-        <ul className="hidden lg:flex items-center gap-6">
-          {navItems.map((item) => (
-            <li key={item.path}>
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  `${navLinkClasses} ${isActive ? activeLinkClasses : 'text-gray-700 dark:text-[#C6D7FF]'}`
-                }
-                end={item.path === '/'}
-              >
-                {item.name}
-              </NavLink>
-            </li>
+        <nav className="ml-auto hidden items-center gap-9 md:flex" aria-label="Principal">
+          {ITENS.map((i) => (
+            <NavLink key={i.path} to={i.path} className={linkMenu}>
+              {i.nome}
+            </NavLink>
           ))}
-          <li>
-            <Button
-              onClick={openForm}
-              variant="primary"
-              size="md"
-              className="shadow-md shadow-primary/25 hover:shadow-lg"
-            >
-              Fale Conosco
-            </Button>
-          </li>
-          <li>
-            <ThemeToggle />
-          </li>
-        </ul>
+          <button
+            type="button"
+            onClick={openForm}
+            className="rounded-full border border-latao/70 px-5 py-2.5 text-[.9rem] font-semibold text-latao-claro transition-colors duration-300 hover:bg-latao hover:text-noite"
+          >
+            Agendar conversa
+          </button>
+        </nav>
 
-        {/* BOTÃO HAMBÚRGUER – MOBILE */}
         <button
-          ref={menuButtonRef}
           type="button"
-          className={`
-            lg:hidden group relative z-[65] inline-flex items-center justify-center
-            w-11 h-11 rounded-2xl
-            bg-white/90 dark:bg-slate-900/85
-            border border-slate-200/80 dark:border-white/15
-            shadow-md shadow-slate-900/10
-            backdrop-blur-md
-            transition-all duration-300
-            hover:-translate-y-0.5 hover:shadow-xl
-            focus-visible:outline-none
-            focus-visible:ring-2 focus-visible:ring-primary
-            focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900
-          `}
-          aria-label={mobileMenuToggleLabel}
-          aria-expanded={isMenuOpen}
-          aria-haspopup="menu"
-          aria-controls={mobileMenuId}
-          onClick={() => setIsMenuOpen((prev) => !prev)}
+          className="ml-auto inline-flex h-11 w-11 items-center justify-center text-marfim md:hidden"
+          aria-expanded={aberto}
+          aria-controls="menu-celular"
+          onClick={() => setAberto((v) => !v)}
         >
-          <span className="sr-only">{mobileMenuToggleLabel}</span>
-          <span className="relative flex w-6 h-6 items-center justify-center">
-            <span
-              className={`
-                absolute w-full h-[2px] rounded-full
-                bg-slate-900 dark:bg-slate-100
-                transition-all duration-300 ease-out
-                ${isMenuOpen ? 'top-1/2 -translate-y-1/2 rotate-45' : 'top-[7px]'}
-              `}
-            />
-            <span
-              className={`
-                absolute w-full h-[2px] rounded-full
-                bg-slate-900 dark:bg-slate-100
-                transition-all duration-300 ease-out
-                ${isMenuOpen ? 'opacity-0' : 'top-1/2 -translate-y-1/2'}
-              `}
-            />
-            <span
-              className={`
-                absolute w-full h-[2px] rounded-full
-                bg-slate-900 dark:bg-slate-100
-                transition-all duration-300 ease-out
-                ${isMenuOpen ? 'top-1/2 -translate-y-1/2 -rotate-45' : 'bottom-[7px]'}
-              `}
-            />
-          </span>
+          <span className="sr-only">{aberto ? 'Fechar menu' : 'Abrir menu'}</span>
+          <svg className="h-6 w-6" viewBox="0 0 24 24" aria-hidden="true">
+            {aberto ? (
+              <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            ) : (
+              <path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            )}
+          </svg>
         </button>
-      </nav>
+      </div>
 
-      {isMenuOpen && (
+      {aberto && (
         <div
-          ref={mobileMenuRef}
-          id={mobileMenuId}
-          className="lg:hidden fixed inset-0 z-[70] bg-slate-950/95 text-white flex flex-col animate-fadeIn"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="mobile-menu-title"
+          id="menu-celular"
+          className="fixed inset-x-0 bottom-0 top-[calc(72px+env(safe-area-inset-top,0px))] overflow-y-auto overscroll-contain bg-noite px-[var(--gutter)] pb-10 pt-8 md:hidden"
         >
-          <div className="flex items-center justify-between px-6 pt-8 pb-6 border-b border-white/10">
-            <Link to="/" className="flex items-center gap-2 text-xl font-semibold" onClick={closeMenu}>
-              <img src={getAssetUrl("/images/logo.png")} alt="MC Contabilidade Logo" className="h-12" />
-              <span>MC Contabilidade</span>
-            </Link>
-            <button
-              type="button"
-              aria-label="Fechar menu móvel"
-              className="w-11 h-11 rounded-full border border-white/30 flex items-center justify-center text-2xl transition hover:bg-white/10"
-              onClick={closeMenu}
-            >
-              ×
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col items-stretch text-center gap-8 overscroll-contain">
-            <div className="space-y-2">
-              <p id="mobile-menu-title" className="text-xs uppercase tracking-[0.4em] text-white/60">Navegue</p>
-              <nav aria-label="Navegação principal">
-                <ul className="space-y-3 text-lg font-semibold">
-                  {navItems.map((item) => (
-                    <li key={item.path}>
-                      <NavLink
-                        to={item.path}
-                        className={({ isActive }) =>
-                          `${isActive
-                            ? 'text-white bg-white/5'
-                            : 'text-white/75 hover:text-white hover:bg-white/5'
-                          } block rounded-2xl py-3 text-base tracking-wide transition-colors`
-                        }
-                        onClick={closeMenu}
-                        end={item.path === '/'}
-                      >
-                        {item.name}
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            </div>
-
-            <Button
-              onClick={() => {
-                openForm();
-                closeMenu();
-              }}
-              variant="primary"
-              className="w-full shadow-lg shadow-primary/30 hover:shadow-xl"
-            >
-              Fale Conosco
-            </Button>
-
-            <div className="pt-4 flex justify-center">
-              <ThemeToggle />
-            </div>
-          </div>
+          <nav className="flex flex-col" aria-label="Menu">
+            {[{ path: '/', nome: 'Início' }, ...ITENS, { path: '/trabalhe-conosco', nome: 'Trabalhe conosco' }].map((i) => (
+              <NavLink
+                key={i.path}
+                to={i.path}
+                end={i.path === '/'}
+                className={({ isActive }) =>
+                  `border-b border-[color:var(--linha)] py-5 font-display text-3xl font-medium ${isActive ? 'text-latao-claro' : 'text-marfim'}`
+                }
+              >
+                {i.nome}
+              </NavLink>
+            ))}
+          </nav>
+          <button
+            type="button"
+            onClick={() => {
+              setAberto(false);
+              openForm();
+            }}
+            className="mt-10 w-full rounded-full bg-latao py-4 text-base font-bold text-noite"
+          >
+            Agendar uma conversa
+          </button>
         </div>
       )}
     </header>
