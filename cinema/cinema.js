@@ -1,41 +1,23 @@
 // O motor do passeio: um canvas transparente sobre o fundo da página, com a câmera parada
 // (como numa vitrine) e os objetos animados pela rolagem (ver estudio.js).
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { montarEstudio, CENAS } from './estudio.js';
+import { fontesProntas, criarRenderer, ambienteEstudio, liberar } from './base.js';
 
 export { CENAS };
 
-async function fontesProntas() {
-  if (!document.fonts || !document.fonts.load) return;
-  const pedidos = [
-    '500 64px "Cormorant Garamond"', '600 64px "Cormorant Garamond"',
-    '500 64px "Manrope"', '600 64px "Manrope"', '700 64px "Manrope"', '800 64px "Manrope"',
-    'italic 500 64px "Cormorant Garamond"',
-  ].map((f) => document.fonts.load(f).catch(() => null));
-  await Promise.race([Promise.all(pedidos), new Promise((r) => setTimeout(r, 3500))]);
-}
-
-export async function iniciarCinema({ canvas, lerProgresso, aoQuadro, movel = false, reduzido = false }) {
+export async function iniciarCinema({ canvas, lerProgresso, aoQuadro, movel = false, reduzido = false, cancelado }) {
   await fontesProntas();
+  // se a página já saiu (ou o React montou de novo), não cria nada: o canvas é de outra montagem
+  if (cancelado && cancelado()) return { camera: null, renderer: null, destruir() {} };
   const q = { movel };
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-  renderer.setClearColor(0x000000, 0);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
-  let dpr = Math.min(window.devicePixelRatio || 1, movel ? 1.75 : 2);
-  renderer.setPixelRatio(dpr);
+  const renderer = criarRenderer(canvas, movel);
+  let dpr = renderer.getPixelRatio();
 
   const estudio = montarEstudio(renderer, q);
   const { cena, atualizar, mouse, enquadrar, poeira } = estudio;
-
-  // reflexos neutros de estúdio: o latão brilha como latão
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  cena.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  cena.environmentIntensity = 0.9;
-  pmrem.dispose();
+  ambienteEstudio(renderer, cena);
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 60);
   camera.position.set(0, 0, 6.4);
@@ -119,7 +101,7 @@ export async function iniciarCinema({ canvas, lerProgresso, aoQuadro, movel = fa
       io.disconnect();
       document.removeEventListener('visibilitychange', aoVisibilidade);
       window.removeEventListener('pointermove', aoMover);
-      renderer.dispose();
+      liberar(renderer);
     },
   };
 }

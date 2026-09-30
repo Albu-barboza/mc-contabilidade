@@ -12,7 +12,7 @@ interface EnvConfig {
 }
 
 const getEnv = (key: string, fallback?: string): string => {
-    const value = import.meta.env[key];
+    const value = (import.meta.env[key] || '').trim();
     if (!value && fallback === undefined) {
         // só avisa enquanto o site está sendo montado; o visitante não precisa ver isso no console
         if (import.meta.env.DEV) console.warn(`Missing environment variable: ${key}`);
@@ -22,14 +22,27 @@ const getEnv = (key: string, fallback?: string): string => {
 };
 
 export const env: EnvConfig = {
-    contactEmail: getEnv('VITE_CONTACT_EMAIL', 'contato@empresa.com'),
+    // sem e-mail configurado, fica vazio: um endereço de exemplo no ar pareceria verdadeiro
+    contactEmail: getEnv('VITE_CONTACT_EMAIL'),
     whatsappNumber: getEnv('VITE_WHATSAPP_NUMBER_FLOAT'),
     formspreeContactUrl: getEnv('VITE_FORMSPREE_CONTACT_URL'),
     formspreeCareersUrl: getEnv('VITE_FORMSPREE_CAREERS_URL'),
     gaMeasurementId: getEnv('VITE_GA_MEASUREMENT_ID'),
 };
 
-export const getWhatsappLink = (message: string = 'Ola! Gostaria de falar com a equipe (em atualizacao).'): string => {
+// Dados legais do escritório. Aparecem no rodapé, na política de privacidade e nos termos
+// quando preenchidos; vazios, o texto se ajusta e não mostra nada inventado.
+export const empresa = {
+    razaoSocial: getEnv('VITE_COMPANY_RAZAO_SOCIAL'),
+    cnpj: getEnv('VITE_COMPANY_CNPJ'),
+    crc: getEnv('VITE_COMPANY_CRC'),
+    endereco: getEnv('VITE_COMPANY_ENDERECO'),
+    email: env.contactEmail,
+    // encarregado de dados (LGPD). Escritório de pequeno porte pode dispensar, mantendo o e-mail como canal.
+    encarregado: getEnv('VITE_ENCARREGADO_NOME', ''),
+};
+
+export const getWhatsappLink = (message: string = 'Olá! Vim pelo site da MC Contabilidade e gostaria de conversar.'): string => {
     const raw = env.whatsappNumber;
     if (!raw) return '#';
 

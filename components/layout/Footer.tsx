@@ -1,14 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Monograma from '../common/Monograma';
+import { SERVICOS as LISTA } from '../../data/servicos';
+import { empresa } from '../../config/env';
 
-const SERVICOS = [
-  { to: '/servicos/abertura-empresa', nome: 'Abertura de empresa' },
-  { to: '/servicos/mei', nome: 'MEI' },
-  { to: '/servicos/pme', nome: 'Pequenas e médias empresas' },
-  { to: '/servicos/consultoria-tributaria', nome: 'Consultoria tributária' },
-  { to: '/servicos/planejamento-financeiro', nome: 'Planejamento financeiro' },
-];
+const SERVICOS = LISTA.map((s) => ({ to: s.rota, nome: s.nome }));
 
 const ESCRITORIO = [
   { to: '/sobre', nome: 'Sobre' },
@@ -19,9 +15,8 @@ const ESCRITORIO = [
 // Rodapé enxuto: marca, os caminhos do site e os dados legais (quando configurados).
 const Footer: React.FC = () => {
   const ano = new Date().getFullYear();
-  const email = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
-  const cnpj = import.meta.env.VITE_COMPANY_CNPJ as string | undefined;
-  const crc = import.meta.env.VITE_COMPANY_CRC as string | undefined;
+  // dados legais: só aparecem quando configurados (VITE_COMPANY_* e VITE_CONTACT_EMAIL)
+  const { razaoSocial, cnpj, crc, endereco, email } = empresa;
 
   const titulo = 'text-sm font-semibold text-latao-claro';
   const link = 'text-sm text-texto transition-colors duration-300 hover:text-marfim';
@@ -40,6 +35,7 @@ const Footer: React.FC = () => {
               {email}
             </a>
           )}
+          {endereco && <p className="mt-3 max-w-xs text-sm leading-relaxed text-fraco">{endereco}</p>}
         </div>
         <nav aria-label="Serviços">
           <p className={titulo}>Serviços</p>
@@ -69,7 +65,7 @@ const Footer: React.FC = () => {
       <div className="border-t border-[color:var(--linha)]">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-[var(--gutter)] py-6 text-xs text-fraco md:flex-row md:items-center md:justify-between">
           <p>
-            © {ano} MC Contabilidade
+            © {ano} {razaoSocial || 'MC Contabilidade'}
             {cnpj ? ` · CNPJ ${cnpj}` : ''}
             {crc ? ` · ${crc}` : ''}
           </p>

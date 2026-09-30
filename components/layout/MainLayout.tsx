@@ -4,6 +4,7 @@ import Footer from './Footer';
 import WhatsappFloat from '../common/WhatsappFloat';
 import ScrollToTopButton from '../common/ScrollToTopButton';
 import ContactModal from '../common/ContactModal';
+import AvisoCookies from '../analytics/AvisoCookies';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -22,6 +23,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       >
         Pular para o conteúdo
       </a>
+      <AvisoCookies />
       <Header />
       <main id="conteudo" tabIndex={-1} className="relative z-10 focus:outline-none">
         {children}

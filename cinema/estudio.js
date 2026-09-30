@@ -24,7 +24,7 @@ export const CENAS = [
   { id: 'pasta', a: 0.85, b: 0.92, c: 2, d: 3 },
 ];
 
-function criarMateriais(renderer, q) {
+export function criarMateriais(renderer, q) {
   const aniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
   const deCanvas = (c) => {
     const t = new THREE.CanvasTexture(c);
@@ -70,8 +70,30 @@ function criarMateriais(renderer, q) {
   };
 }
 
+// Os objetos-símbolo, um por serviço (a mesma peça aparece na página do serviço).
+export const FABRICAS = {
+  monograma: (M) => O.monograma(M),
+  chave: (M) => O.chave(M, M.etiqueta),
+  celular: (M) => O.celular(M, M.telaCelular),
+  pastas: (M) => O.pastas(M),
+  mecanismo: (M) => O.mecanismo(M),
+  grafico: (M) => O.grafico(M),
+  pasta: (M) => O.pastaPreta(M, M.capa),
+};
+
+// luz de vitrine: principal quente do alto à esquerda, contraluz fria do outro lado
+export function adicionarLuzes(cena) {
+  const principal = new THREE.DirectionalLight('#FFE6C2', 2.4);
+  principal.position.set(-4, 5, 6);
+  const contra = new THREE.DirectionalLight('#9FB8FF', 1.6);
+  contra.position.set(5, 2, -5);
+  const baixo = new THREE.DirectionalLight('#FFC98A', 0.6);
+  baixo.position.set(2, -4, 3);
+  cena.add(principal, contra, baixo, new THREE.HemisphereLight('#DDE6FF', '#1A1410', 0.35));
+}
+
 // Poeira dourada flutuando no ar (sobe devagar e acompanha a rolagem).
-function criarPoeira(M, q) {
+export function criarPoeira(M, q) {
   const n = q.movel ? 150 : 300;
   const r = T.rng(5);
   const pos = new Float32Array(n * 3), tam = new Float32Array(n), fase = new Float32Array(n);
@@ -118,27 +140,11 @@ function criarPoeira(M, q) {
 export function montarEstudio(renderer, q) {
   const M = criarMateriais(renderer, q);
   const cena = new THREE.Scene();
-
-  // luz de vitrine: principal quente do alto à esquerda, contraluz fria do outro lado
-  const principal = new THREE.DirectionalLight('#FFE6C2', 2.4);
-  principal.position.set(-4, 5, 6);
-  const contra = new THREE.DirectionalLight('#9FB8FF', 1.6);
-  contra.position.set(5, 2, -5);
-  const baixo = new THREE.DirectionalLight('#FFC98A', 0.6);
-  baixo.position.set(2, -4, 3);
-  cena.add(principal, contra, baixo, new THREE.HemisphereLight('#DDE6FF', '#1A1410', 0.35));
+  adicionarLuzes(cena);
 
   const palco = new THREE.Group();
   cena.add(palco);
-  const objetos = {
-    monograma: O.monograma(M),
-    chave: O.chave(M, M.etiqueta),
-    celular: O.celular(M, M.telaCelular),
-    pastas: O.pastas(M),
-    mecanismo: O.mecanismo(M),
-    grafico: O.grafico(M),
-    pasta: O.pastaPreta(M, M.capa),
-  };
+  const objetos = Object.fromEntries(Object.entries(FABRICAS).map(([id, fazer]) => [id, fazer(M)]));
   const suportes = {};
   for (const c of CENAS) {
     const s = new THREE.Group();

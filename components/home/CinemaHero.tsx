@@ -181,6 +181,7 @@ const CinemaHero: React.FC = () => {
             aoQuadro: () => sec.classList.add('pronto'),
             movel,
             reduzido,
+            cancelado: () => destruido,
           })
         )
         .then((c) => {

@@ -1,37 +1,23 @@
 import React from 'react';
+import { env, getWhatsappLink } from '../../config/env';
 
-interface WhatsappFloatProps {
-  isMobileNavOpen?: boolean;
-  isContactOverlayOpen?: boolean;
-}
-
-const WhatsappFloat: React.FC<WhatsappFloatProps> = ({ isMobileNavOpen = false, isContactOverlayOpen = false }) => {
-  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER_FLOAT;
-  const whatsappMessage = encodeURIComponent('Ola! Vim do site e gostaria de falar com a equipe (em atualizacao)');
-  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
-
-  // sem número configurado, o botão não aparece (um link que não abre nada passa descuido)
-  if (!whatsappNumber || isMobileNavOpen || isContactOverlayOpen) {
-    return null;
-  }
+// Atalho discreto para o WhatsApp nas telas grandes, no mesmo desenho do botão de voltar ao topo.
+// Sem número configurado, não aparece (um link que não abre nada passa descuido).
+const WhatsappFloat: React.FC = () => {
+  if (!env.whatsappNumber) return null;
 
   return (
     <a
-      href={whatsappLink}
-      className="group fixed bottom-8 left-8 z-50 hidden lg:flex items-center"
+      href={getWhatsappLink()}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Abrir conversa no WhatsApp (em atualizacao)"
+      aria-label="Conversar no WhatsApp (abre em nova aba)"
+      className="pressionar fixed bottom-8 left-8 z-40 hidden h-12 w-12 items-center justify-center rounded-full border border-latao/60 bg-noite/70 text-latao-claro backdrop-blur-md transition-[background-color,border-color,color] duration-300 hover:border-latao-claro hover:bg-latao hover:text-noite lg:flex"
     >
-      <div className="w-16 h-16 bg-gradient-to-br from-[#25D366] to-[#128C7E] text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform group-hover:scale-110 animate-pulse">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
-          <path d="M12.051 0C5.494 0 .16 5.333.157 11.887c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.557 0 11.893-5.335 11.896-11.893A11.825 11.825 0 0020.464 3.48 11.815 11.815 0 0012.051 0z" />
-        </svg>
-      </div>
-      <div className="absolute left-full ml-4 bg-white text-[#128C7E] px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-x-2 group-hover:translate-x-0">
-        Fale Conosco
-      </div>
+      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+        <path d="M12.051 0C5.494 0 .16 5.333.157 11.887c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.557 0 11.893-5.335 11.896-11.893A11.825 11.825 0 0020.464 3.48 11.815 11.815 0 0012.051 0zm0 21.785h-.004a9.867 9.867 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.002-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z" />
+      </svg>
     </a>
   );
 };

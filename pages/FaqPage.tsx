@@ -1,118 +1,107 @@
-
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import JsonLd from '../components/common/JsonLd';
 import Seo from '../components/common/Seo';
-import ScrollReveal from '../components/common/ScrollReveal';
-import Section from '../components/common/Section';
+import CabecalhoPagina from '../components/paginas/CabecalhoPagina';
+import Convite from '../components/paginas/Convite';
 
-const faqs = {
-    "Geral": [
-        { q: "Quais serviços a MC Contabilidade oferece?", a: "Oferecemos uma gama completa de serviços, incluindo Abertura de Empresa, Contabilidade para MEI e PME, Consultoria Tributária, Planejamento Financeiro, e gestão de Folha de Pagamento." },
-        { q: "Qual o diferencial de vocês?", a: "Nosso diferencial é o atendimento próximo e consultivo. Não somos apenas 'lançadores de impostos', mas parceiros estratégicos que ajudam na tomada de decisões para o crescimento da sua empresa." },
+const GRUPOS = [
+  {
+    nome: 'Geral',
+    perguntas: [
+      {
+        q: 'Quais serviços a MC Contabilidade oferece?',
+        a: 'Abertura de empresa, contabilidade para MEI e para pequenas e médias empresas, consultoria tributária, planejamento financeiro e folha de pagamento.',
+      },
+      {
+        q: 'Qual é o diferencial de vocês?',
+        a: 'O atendimento próximo e consultivo. Mais do que calcular impostos, ajudamos a tomar as decisões que fazem a empresa crescer.',
+      },
     ],
-    "Abertura de Empresa": [
-        { q: "Quanto tempo leva para abrir minha empresa?", a: "O prazo varia conforme a cidade e tipo de empresa, mas em média, o processo leva de 7 a 15 dias úteis após a entrega de toda a documentação." },
-        { q: "Posso abrir uma empresa com nome sujo?", a: "Sim, é possível. Restrições no CPF não impedem a abertura de um CNPJ, mas podem dificultar a obtenção de crédito para a empresa no futuro." },
+  },
+  {
+    nome: 'Abertura de empresa',
+    perguntas: [
+      {
+        q: 'Quanto tempo leva para abrir minha empresa?',
+        a: 'Depende da cidade, do tipo de empresa e de a documentação estar completa. Na primeira conversa estimamos o prazo para o seu caso.',
+      },
+      {
+        q: 'Posso abrir uma empresa com o nome sujo?',
+        a: 'Sim. Restrições no CPF não impedem a abertura de um CNPJ, mas podem dificultar o crédito para a empresa no futuro.',
+      },
     ],
-    "Contabilidade MEI": [
-        { q: "MEI precisa de contador?", a: "Embora não seja obrigatório por lei, ter um contador é altamente recomendado para garantir que todas as obrigações, como a Declaração Anual (DASN-SIMEI), sejam cumpridas corretamente e para ajudar na transição para Microempresa (ME) quando necessário." },
-        { q: "O que está incluso no plano de contabilidade para MEI?", a: "Nosso plano inclui a emissão mensal da guia DAS, a elaboração e entrega da Declaração Anual, suporte para emissão de notas fiscais e orientação sobre o limite de faturamento." },
+  },
+  {
+    nome: 'MEI',
+    perguntas: [
+      {
+        q: 'MEI precisa de contador?',
+        a: 'Não é obrigatório por lei, mas é recomendado: garante que obrigações como a declaração anual (DASN-SIMEI) sejam cumpridas do jeito certo e ajuda na mudança para microempresa quando chegar a hora.',
+      },
+      {
+        q: 'O que está incluído no serviço para MEI?',
+        a: 'A emissão mensal da guia DAS, a elaboração e entrega da declaração anual, o apoio na emissão de notas fiscais e a orientação sobre o limite de faturamento.',
+      },
     ],
-    "Impostos e Tributação": [
-        { q: "Como saber se minha empresa está no regime tributário correto?", a: "Nossa equipe realiza um estudo detalhado (planejamento tributário) que analisa seu faturamento, despesas e atividade para determinar se o Simples Nacional, Lucro Presumido ou Lucro Real é a opção mais vantajosa para você." },
-        { q: "É possível recuperar impostos pagos a mais?", a: "Sim. Realizamos uma análise retroativa dos últimos 5 anos para identificar pagamentos indevidos ou a maior de impostos, e cuidamos de todo o processo de recuperação ou compensação desses valores." },
+  },
+  {
+    nome: 'Impostos',
+    perguntas: [
+      {
+        q: 'Como saber se minha empresa está no regime tributário certo?',
+        a: 'Com um planejamento tributário: analisamos faturamento, despesas e atividade para ver se o Simples Nacional, o Lucro Presumido ou o Lucro Real é o mais vantajoso para você.',
+      },
+      {
+        q: 'É possível recuperar impostos pagos a mais?',
+        a: 'Sim. Analisamos os pagamentos dos últimos cinco anos em busca de valores indevidos ou pagos a maior e cuidamos do pedido de restituição ou compensação.',
+      },
     ],
-};
-
-const FaqItem = ({ q, a }: { q: string; a: string }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const answerId = `faq-${q.toLowerCase().replace(/[^a-z0-9]+/gi, '-')}`;
-    const buttonRef = useRef<HTMLButtonElement>(null);
-
-    useEffect(() => {
-        buttonRef.current?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    }, [isOpen]);
-
-    return (
-        <div className="border-b border-gray-200 dark:border-white/10 py-6">
-            <button
-                ref={buttonRef}
-                onClick={() => setIsOpen((prev) => !prev)}
-                className="w-full flex justify-between items-center text-left"
-                aria-controls={answerId}
-            >
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{q}</h3>
-                <svg
-                    className={`w-6 h-6 text-secondary dark:text-[#C6D7FF] transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    focusable="false"
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-            </button>
-            <div
-                id={answerId}
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 mt-4' : 'max-h-0'}`}
-            >
-                <p className="text-gray-700 dark:text-gray-300 pr-0 sm:pr-8">{a}</p>
-            </div>
-        </div>
-    );
-};
-
+  },
+];
 
 const FaqPage: React.FC = () => {
-    const faqPageSchema = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": Object.values(faqs).flat().map(faq => ({
-            "@type": "Question",
-            "name": faq.q,
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": faq.a
-            }
-        }))
-    };
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: GRUPOS.flatMap((g) => g.perguntas).map((p) => ({
+      '@type': 'Question',
+      name: p.q,
+      acceptedAnswer: { '@type': 'Answer', text: p.a },
+    })),
+  };
 
-    const description =
-        'Tire suas dúvidas sobre abertura de empresa, contabilidade MEI, impostos e serviços da MC Contabilidade em um só lugar.';
+  return (
+    <>
+      <Seo title="Dúvidas frequentes" description="Respostas sobre abertura de empresa, MEI, impostos e os serviços da MC Contabilidade." />
+      <JsonLd schema={schema} />
+      <CabecalhoPagina titulo="Dúvidas frequentes" lead="As perguntas que mais ouvimos sobre abertura de empresa, MEI e impostos." />
 
-    return (
-        <>
-            <Seo title="Perguntas frequentes MC Contabilidade" description={description} />
-            <JsonLd schema={faqPageSchema} />
-            <div className="">
-                <section className="pt-28 pb-16 sm:pt-32 sm:pb-20">
-                    <ScrollReveal className="container mx-auto px-4 sm:px-6 text-center space-y-4">
-                        <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100">Perguntas Frequentes</h1>
-                        <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                            Tire suas principais dúvidas sobre nossos serviços e o universo da contabilidade para empreendedores.
-                        </p>
-                    </ScrollReveal>
-                </section>
-
-                <Section
-                    title="Perguntas frequentes"
-                    sectionClassName="!py-16 sm:!py-24"
-                    containerClassName="!px-4 sm:!px-6 max-w-4xl"
-                    headerWrapper={() => null}
-                >
-                    {Object.entries(faqs).map(([category, questions], index) => (
-                        <ScrollReveal key={category} delay={index * 100} className="mb-12">
-                            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 pb-2 border-b-2 border-secondary dark:border-[#C6D7FF]">{category}</h2>
-                            {questions.map((faq, idx) => (
-                                <FaqItem key={idx} q={faq.q} a={faq.a} />
-                            ))}
-                        </ScrollReveal>
-                    ))}
-                </Section>
+      <section className="bg-noite pb-24 md:pb-32">
+        <div className="mx-auto max-w-4xl px-[var(--gutter)]">
+          {GRUPOS.map((g) => (
+            <div key={g.nome} className="mt-16 first:mt-0">
+              <h2 className="font-display text-3xl font-medium text-marfim md:text-4xl">{g.nome}</h2>
+              <div className="mt-6 border-t border-[color:var(--linha)]">
+                {g.perguntas.map((p) => (
+                  <details key={p.q} className="group border-b border-[color:var(--linha)]">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-6 rounded-sm py-6 text-left text-lg font-semibold text-marfim transition-colors duration-200 hover:text-latao-claro [&::-webkit-details-marker]:hidden">
+                      {p.q}
+                      <svg className="h-5 w-5 shrink-0 text-latao transition-transform duration-200 group-open:rotate-45" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                      </svg>
+                    </summary>
+                    <p className="max-w-[65ch] pb-7 pr-10 leading-relaxed text-texto">{p.a}</p>
+                  </details>
+                ))}
+              </div>
             </div>
-        </>
-    );
+          ))}
+        </div>
+      </section>
+
+      <Convite titulo="Ficou alguma dúvida?" texto="Pergunte direto para a equipe. A resposta chega em até 24h." />
+    </>
+  );
 };
 
 export default FaqPage;

@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useContactForm } from '../../context/ContactFormContext';
 import { env, getWhatsappLink } from '../../config/env';
+import { AUTORIZACAO_FORMSPREE, AVISO_DADOS_SENSIVEIS, ERRO_AUTORIZACAO } from '../../config/privacidade';
 
-type Campo = 'nome' | 'email' | 'telefone' | 'servico' | 'mensagem';
+type Campo = 'nome' | 'email' | 'telefone' | 'servico' | 'mensagem' | 'autorizo';
 type Formulario = Record<Campo, string>;
 
-const VAZIO: Formulario = { nome: '', email: '', telefone: '', servico: '', mensagem: '' };
-const OBRIGATORIOS: Campo[] = ['nome', 'email', 'telefone', 'servico'];
+const VAZIO: Formulario = { nome: '', email: '', telefone: '', servico: '', mensagem: '', autorizo: '' };
+const OBRIGATORIOS: Campo[] = ['nome', 'telefone', 'email', 'servico', 'autorizo']; // na ordem da tela
 
 const ASSUNTOS = [
   { valor: 'Abertura de empresa', texto: 'Quero abrir minha empresa' },
@@ -27,6 +28,8 @@ const validar = (campo: Campo, valor: string) => {
       return valor.replace(/\D/g, '').length >= 10 ? '' : 'Informe o telefone com DDD.';
     case 'servico':
       return valor ? '' : 'Escolha um assunto.';
+    case 'autorizo':
+      return valor ? '' : ERRO_AUTORIZACAO;
     default:
       return '';
   }
@@ -107,7 +110,12 @@ const ContactModal: React.FC = () => {
 
   const mudar = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const campo = e.target.name as Campo;
-    const valor = campo === 'telefone' ? mascaraTelefone(e.target.value) : e.target.value;
+    const valor =
+      campo === 'telefone'
+        ? mascaraTelefone(e.target.value)
+        : campo === 'autorizo'
+          ? ((e.target as HTMLInputElement).checked ? 'sim' : '')
+          : e.target.value;
     setDados((d) => ({ ...d, [campo]: valor }));
     if (erros[campo]) setErros((er) => ({ ...er, [campo]: validar(campo, valor) }));
   };
@@ -140,7 +148,15 @@ const ContactModal: React.FC = () => {
     try {
       const resposta = await fetch(destino, {
         method: 'POST',
-        body: JSON.stringify({ ...dados, _gotcha: armadilha }),
+        body: JSON.stringify({
+          nome: dados.nome.trim(),
+          email: dados.email.trim(),
+          telefone: dados.telefone,
+          servico: dados.servico,
+          mensagem: dados.mensagem.trim(),
+          autorizacao: AUTORIZACAO_FORMSPREE,
+          _gotcha: armadilha,
+        }),
         headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
         signal: controle.signal,
       });
@@ -261,6 +277,7 @@ const ContactModal: React.FC = () => {
                     Prévia: o envio deste formulário será ligado quando o e-mail de recebimento for configurado.
                   </p>
                 )}
+                {/* nome e telefone lado a lado; e-mail e assunto na largura toda (textos longos não cortam) */}
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
                     <label htmlFor="contato-nome" className={rotulo}>
@@ -282,29 +299,6 @@ const ContactModal: React.FC = () => {
                     {ajuda('nome')}
                   </div>
                   <div>
-                    <label htmlFor="contato-email" className={rotulo}>
-                      E-mail
-                    </label>
-                    <input
-                      id="contato-email"
-                      name="email"
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      spellCheck={false}
-                      maxLength={160}
-                      value={dados.email}
-                      onChange={mudar}
-                      onBlur={() => sair('email')}
-                      placeholder="nome@empresa.com.br…"
-                      className={campoClasse('email')}
-                      {...aria('email')}
-                    />
-                    {ajuda('email')}
-                  </div>
-                </div>
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
                     <label htmlFor="contato-telefone" className={rotulo}>
                       Telefone ou WhatsApp
                     </label>
@@ -324,28 +318,49 @@ const ContactModal: React.FC = () => {
                     />
                     {ajuda('telefone')}
                   </div>
-                  <div>
-                    <label htmlFor="contato-servico" className={rotulo}>
-                      Assunto
-                    </label>
-                    <select
-                      id="contato-servico"
-                      name="servico"
-                      value={dados.servico}
-                      onChange={mudar}
-                      onBlur={() => sair('servico')}
-                      className={campoClasse('servico', 'bg-noite')}
-                      {...aria('servico')}
-                    >
-                      <option value="">Escolha um assunto</option>
-                      {ASSUNTOS.map((a) => (
-                        <option key={a.valor} value={a.valor}>
-                          {a.texto}
-                        </option>
-                      ))}
-                    </select>
-                    {ajuda('servico')}
-                  </div>
+                </div>
+                <div>
+                  <label htmlFor="contato-email" className={rotulo}>
+                    E-mail
+                  </label>
+                  <input
+                    id="contato-email"
+                    name="email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    spellCheck={false}
+                    maxLength={160}
+                    value={dados.email}
+                    onChange={mudar}
+                    onBlur={() => sair('email')}
+                    placeholder="nome@empresa.com.br…"
+                    className={campoClasse('email')}
+                    {...aria('email')}
+                  />
+                  {ajuda('email')}
+                </div>
+                <div>
+                  <label htmlFor="contato-servico" className={rotulo}>
+                    Assunto
+                  </label>
+                  <select
+                    id="contato-servico"
+                    name="servico"
+                    value={dados.servico}
+                    onChange={mudar}
+                    onBlur={() => sair('servico')}
+                    className={campoClasse('servico', 'bg-noite')}
+                    {...aria('servico')}
+                  >
+                    <option value="">Escolha um assunto</option>
+                    {ASSUNTOS.map((a) => (
+                      <option key={a.valor} value={a.valor}>
+                        {a.texto}
+                      </option>
+                    ))}
+                  </select>
+                  {ajuda('servico')}
                 </div>
                 <div>
                   <label htmlFor="contato-mensagem" className={rotulo}>
@@ -359,8 +374,27 @@ const ContactModal: React.FC = () => {
                     value={dados.mensagem}
                     onChange={mudar}
                     placeholder="Ex.: tenho um MEI e quero virar ME no ano que vem…"
+                    aria-describedby="contato-mensagem-dica"
                     className={`${campoClasse('mensagem')} resize-none`}
                   />
+                  <p id="contato-mensagem-dica" className="mt-2 text-xs leading-relaxed text-fraco">
+                    {AVISO_DADOS_SENSIVEIS}
+                  </p>
+                </div>
+                <div>
+                  <label htmlFor="contato-autorizo" className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-texto">
+                    <input
+                      id="contato-autorizo"
+                      name="autorizo"
+                      type="checkbox"
+                      checked={dados.autorizo === 'sim'}
+                      onChange={mudar}
+                      className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[#C9A45E]"
+                      {...aria('autorizo')}
+                    />
+                    <span>{AUTORIZACAO_FORMSPREE}</span>
+                  </label>
+                  {ajuda('autorizo')}
                 </div>
                 {/* armadilha para robôs: invisível para pessoas */}
                 <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">

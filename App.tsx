@@ -1,28 +1,26 @@
 import React, { useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import FaqPage from './pages/FaqPage';
-import MeiPage from './pages/services/MeiPage';
-import PmePage from './pages/services/PmePage';
-import AberturaPage from './pages/services/AberturaPage';
-import ConsultoriaPage from './pages/services/ConsultoriaPage';
-import PlanejamentoPage from './pages/services/PlanejamentoPage';
+import ServicoPage from './pages/ServicoPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import ServicesListPage from './pages/ServicesListPage';
-import TestimonialsPage from './pages/TestimonialsPage';
 import CareersPage from './pages/CareersPage';
+import NotFoundPage from './pages/NotFoundPage';
 import GoogleAnalytics from './components/analytics/GoogleAnalytics';
 import { ContactFormProvider } from './context/ContactFormContext';
 import MainLayout from './components/layout/MainLayout';
+import { SERVICOS } from './data/servicos';
 
+// Ao trocar de página, começa do topo sem rolar a página inteira na frente da pessoa.
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
     if (!hash) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [pathname, hash]);
 
@@ -40,16 +38,17 @@ const App: React.FC = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/sobre" element={<AboutPage />} />
             <Route path="/servicos" element={<ServicesListPage />} />
-            <Route path="/depoimentos" element={<TestimonialsPage />} />
+            {SERVICOS.map((s) => (
+              // a key faz cada serviço montar a página do zero (canvas 3D novo), em vez de reaproveitar a do anterior
+              <Route key={s.slug} path={s.rota} element={<ServicoPage key={s.slug} slug={s.slug} />} />
+            ))}
             <Route path="/faq" element={<FaqPage />} />
-            <Route path="/servicos/mei" element={<MeiPage />} />
-            <Route path="/servicos/pme" element={<PmePage />} />
-            <Route path="/servicos/abertura-empresa" element={<AberturaPage />} />
-            <Route path="/servicos/consultoria-tributaria" element={<ConsultoriaPage />} />
-            <Route path="/servicos/planejamento-financeiro" element={<PlanejamentoPage />} />
             <Route path="/trabalhe-conosco" element={<CareersPage />} />
             <Route path="/termos-de-uso" element={<TermsPage />} />
             <Route path="/politica-de-privacidade" element={<PrivacyPolicyPage />} />
+            {/* os depoimentos eram de exemplo (fictícios): o endereço antigo leva para o início */}
+            <Route path="/depoimentos" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </MainLayout>
       </Router>
