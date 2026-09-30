@@ -111,7 +111,7 @@ const HomePage: React.FC = () => {
             <button
               type="button"
               onClick={openForm}
-              className="inline-flex items-center gap-2 rounded-full bg-latao px-7 py-4 text-sm font-bold text-noite transition-colors duration-300 hover:bg-latao-claro"
+              className="pressionar inline-flex items-center gap-2 rounded-full bg-latao px-7 py-4 text-sm font-bold text-noite hover:bg-latao-claro"
             >
               Agendar uma conversa
             </button>
@@ -120,7 +120,7 @@ const HomePage: React.FC = () => {
                 href={getWhatsappLink('Olá! Vim pelo site da MC Contabilidade e gostaria de conversar.')}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-marfim/40 px-7 py-4 text-sm font-bold text-marfim transition-colors duration-300 hover:border-marfim"
+                className="pressionar inline-flex items-center gap-2 rounded-full border border-marfim/40 px-7 py-4 text-sm font-bold text-marfim hover:border-marfim"
               >
                 Conversar no WhatsApp
               </a>

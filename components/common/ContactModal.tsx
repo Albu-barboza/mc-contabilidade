@@ -161,7 +161,7 @@ const ContactModal: React.FC = () => {
   if (!isFormOpen) return null;
 
   const campoClasse = (c: Campo, fundo = 'bg-white/[0.04]') =>
-    `w-full rounded-xl border ${fundo} px-4 py-3 text-base text-marfim placeholder:text-fraco/70 transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-latao ${
+    `w-full rounded-xl border ${fundo} px-4 py-3 text-base text-marfim placeholder:text-fraco transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-latao ${
       erros[c] ? 'border-red-400/80' : 'border-[color:var(--linha)] hover:border-marfim/30'
     }`;
   const rotulo = 'mb-2 block text-sm font-semibold text-marfim';
@@ -175,7 +175,7 @@ const ContactModal: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      className="modal-fundo fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) fechar();
       }}
@@ -187,7 +187,7 @@ const ContactModal: React.FC = () => {
         aria-labelledby="contato-titulo"
         aria-describedby="contato-descricao"
         onKeyDown={aoTeclar}
-        className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-t-3xl border border-[color:var(--linha)] bg-noite sm:rounded-3xl"
+        className="modal-painel relative max-h-[92vh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-t-3xl border border-[color:var(--linha)] bg-noite sm:rounded-3xl"
       >
         <button
           type="button"
@@ -373,7 +373,7 @@ const ContactModal: React.FC = () => {
                 <button
                   type="submit"
                   disabled={status === 'enviando'}
-                  className="flex w-full items-center justify-center gap-3 rounded-full bg-latao py-4 text-base font-bold text-noite transition-colors duration-200 hover:bg-latao-claro disabled:opacity-70"
+                  className="pressionar flex w-full items-center justify-center gap-3 rounded-full bg-latao py-4 text-base font-bold text-noite hover:bg-latao-claro disabled:opacity-70"
                 >
                   {status === 'enviando' && <span className="h-4 w-4 animate-spin rounded-full border-2 border-noite/30 border-t-noite" aria-hidden="true" />}
                   {status === 'enviando' ? 'Enviando…' : 'Enviar mensagem'}

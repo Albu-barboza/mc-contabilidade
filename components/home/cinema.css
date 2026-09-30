@@ -28,7 +28,7 @@
   color: rgba(239, 232, 219, 0.07);
 }
 
-.cinema-tela { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
+.cinema-tela { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1s var(--ease-out); }
 .cinema.pronto .cinema-tela { opacity: 1; }
 .cinema-veu {
   position: absolute; inset: 0; z-index: 3; pointer-events: none;
@@ -55,10 +55,9 @@
 
 /* abertura: o monograma em 3D no centro; o nome e a frase embaixo dele */
 .cena-titulo {
-  opacity: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center;
+  opacity: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; text-align: center;
   padding: calc(env(safe-area-inset-top, 0px) + 108px) 16px calc(28px + (100lvh - 100svh) + env(safe-area-inset-bottom, 0px));
 }
-.olho { margin: 0; font-family: var(--f-texto); font-weight: 500; font-size: 1rem; color: var(--latao-claro); }
 .titulo-base { display: grid; justify-items: center; gap: 10px; }
 .titulo-nome {
   margin: 0; font-family: var(--f-display); font-weight: 500; font-size: clamp(2.6rem, 6.4vw, 5.2rem); line-height: 1; letter-spacing: -0.01em;
@@ -77,20 +76,20 @@
   position: absolute; left: clamp(18px, 6vw, 96px); right: 56px;
   bottom: calc(clamp(32px, 11vh, 128px) + (100lvh - 100svh) + env(safe-area-inset-bottom, 0px)); max-width: 34rem;
 }
-.cap-num { margin: 0 0 10px; font-family: var(--f-texto); font-weight: 600; font-size: 1rem; color: var(--latao-claro); }
 .cap h2 {
   margin: 0; font-family: var(--f-display); font-weight: 500; font-size: clamp(2.5rem, 5.4vw, 4.6rem); line-height: 1; letter-spacing: -0.015em;
   text-wrap: balance; text-shadow: 0 2px 28px rgba(0, 0, 0, 0.5);
 }
-.cap-linha { display: block; width: 56px; height: 1px; background: var(--latao); margin: 22px 0 16px; }
+.cap-linha { display: block; width: 56px; height: 1px; background: var(--latao); margin: 22px 0 16px; transform-origin: left center; }
 .cap p { margin: 0; max-width: 36ch; font-size: clamp(1rem, 1.3vw, 1.1rem); line-height: 1.65; color: #E4DDD0; text-shadow: 0 1px 14px rgba(0, 0, 0, 0.6); }
 
 .cena-acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
 .btn {
   display: inline-flex; align-items: center; gap: 10px; padding: 15px 24px; border-radius: 999px; border: 1px solid transparent;
   font-family: var(--f-texto); font-weight: 700; font-size: 0.95rem; line-height: 1.1; text-decoration: none; cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: transform 160ms var(--ease-out), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
+.btn:active { transform: scale(0.97); }
 .btn-latao { background: var(--latao); color: #0B1220; }
 .btn-latao:hover { background: var(--latao-claro); }
 .btn-contorno { background: rgba(10, 17, 32, 0.35); color: var(--marfim); border-color: rgba(239, 232, 219, 0.45); backdrop-filter: blur(6px); }
@@ -129,7 +128,8 @@
 .cinema.sem-3d .cinema-palco { position: relative; height: auto; min-height: 100svh; padding: 130px 0 80px; }
 .cinema.sem-3d .cinema-tela, .cinema.sem-3d .trilho, .cinema.sem-3d .indice, .cinema.sem-3d .palavras,
 .cinema.sem-3d .cinema-carregando, .cinema.sem-3d .dica-rolar, .cinema.sem-3d .cinema-grao { display: none; }
-.cinema.sem-3d .cena { position: relative; inset: auto; opacity: 1 !important; transform: none !important; }
+.cinema.sem-3d .cena { position: relative; inset: auto; opacity: 1 !important; transform: none !important; filter: none !important; visibility: visible !important; }
+.cinema.sem-3d .cap-linha { transform: none !important; }
 .cinema.sem-3d .cena-titulo { min-height: 50svh; justify-content: center; gap: 24px; }
 .cinema.sem-3d .cap { position: relative; left: auto; right: auto; bottom: auto; margin: 64px var(--gutter) 0; }
 .cinema.sem-3d .cena-acoes { pointer-events: auto; }
@@ -142,4 +142,5 @@
 @media (prefers-reduced-motion: reduce) {
   .cinema-grao, .dica-rolar .ico, .carregando-ponto { animation: none; }
   .btn, .cinema-tela { transition: none; }
+  .btn:active { transform: none; }
 }

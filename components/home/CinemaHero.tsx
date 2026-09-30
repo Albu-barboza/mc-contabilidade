@@ -109,7 +109,13 @@ const CinemaHero: React.FC = () => {
         }
         c.el.style.opacity = a.toFixed(3);
         c.el.style.visibility = a > 0.02 ? 'visible' : 'hidden'; // o que não aparece não recebe foco
-        if (!c.fixa) c.el.style.transform = `translate3d(0, ${((1 - a) * 18).toFixed(1)}px, 0)`;
+        if (!c.fixa) {
+          // o texto chega desfocado e se resolve; o fio de latão se desenha logo depois do título
+          c.el.style.filter = a < 0.995 ? `blur(${((1 - a) * 6).toFixed(2)}px)` : 'none';
+          c.el.style.transform = `translate3d(0, ${((1 - a) * 14).toFixed(1)}px, 0)`;
+          const linha = c.el.querySelector<HTMLElement>('.cap-linha');
+          if (linha) linha.style.transform = `scaleX(${Math.max(0, (a - 0.35) / 0.65).toFixed(3)})`;
+        }
         c.el.classList.toggle('ativa', a > 0.6);
       }
       if (miolo) miolo.style.transform = `translate3d(0, ${(-suave(0, 0.12, pp) * 40).toFixed(1)}px, 0)`;
@@ -212,7 +218,6 @@ const CinemaHero: React.FC = () => {
         <div className="cinema-grao" aria-hidden="true" />
 
         <div className="cena cena-titulo" data-de="-1" data-ate="0.11">
-          <p className="olho">Contabilidade consultiva</p>
           <div className="titulo-base">
             <h1 className="titulo-nome" translate="no">MC&nbsp;Contabilidade</h1>
             <p className="subtitulo">Seu negócio em boas mãos.</p>
@@ -225,46 +230,41 @@ const CinemaHero: React.FC = () => {
 
         <div className="cena" data-de="0.17" data-ate="0.29">
           <div className="cap">
-            <p className="cap-num">Abertura de empresa</p>
             <h2>A chave do seu negócio.</h2>
             <span className="cap-linha" aria-hidden="true" />
-            <p>Do enquadramento ao CNPJ, cada passo orientado e acompanhado de perto.</p>
+            <p>Abrimos sua empresa do enquadramento ao CNPJ, com cada passo orientado e acompanhado de perto.</p>
           </div>
         </div>
 
         <div className="cena" data-de="0.33" data-ate="0.44">
           <div className="cap">
-            <p className="cap-num">MEI</p>
             <h2>Em dia, sem pensar nisso.</h2>
             <span className="cap-linha" aria-hidden="true" />
-            <p>Guias, declaração anual e alguém para responder quando surgir a dúvida.</p>
+            <p>Para o MEI: guias, declaração anual e alguém para responder quando surgir a dúvida.</p>
           </div>
         </div>
 
         <div className="cena" data-de="0.48" data-ate="0.59">
           <div className="cap">
-            <p className="cap-num">Pequenas e médias empresas</p>
             <h2>Cada documento no seu lugar.</h2>
             <span className="cap-linha" aria-hidden="true" />
-            <p>Escrituração contábil e fiscal, folha e eSocial com rotina e prazo.</p>
+            <p>Para pequenas e médias empresas: escrituração contábil e fiscal, folha e eSocial com rotina e prazo.</p>
           </div>
         </div>
 
         <div className="cena" data-de="0.63" data-ate="0.74">
           <div className="cap">
-            <p className="cap-num">Consultoria tributária</p>
             <h2>Precisão em cada engrenagem.</h2>
             <span className="cap-linha" aria-hidden="true" />
-            <p>Análise do regime tributário para pagar o que é justo, dentro da lei.</p>
+            <p>Consultoria tributária para pagar o que é justo, dentro da lei.</p>
           </div>
         </div>
 
         <div className="cena" data-de="0.78" data-ate="0.87">
           <div className="cap">
-            <p className="cap-num">Planejamento financeiro</p>
             <h2>Decisões com clareza.</h2>
             <span className="cap-linha" aria-hidden="true" />
-            <p>Fluxo de caixa, DRE e projeções para crescer com segurança.</p>
+            <p>Planejamento financeiro com fluxo de caixa, DRE e projeções para crescer com segurança.</p>
           </div>
         </div>
 
@@ -273,17 +273,17 @@ const CinemaHero: React.FC = () => {
             <h2>Seu negócio em boas mãos.</h2>
             <span className="cap-linha" aria-hidden="true" />
             <div className="cena-acoes">
-              <button type="button" className="btn btn-latao" onClick={openForm}>
+              <button type="button" className="btn btn-latao pressionar" onClick={openForm}>
                 <IcoConversa />
                 Agendar uma conversa
               </button>
               {temWhatsapp ? (
-                <a className="btn btn-contorno" href={getWhatsappLink('Olá! Vim pelo site da MC Contabilidade e gostaria de conversar.')} target="_blank" rel="noopener noreferrer">
+                <a className="btn btn-contorno pressionar" href={getWhatsappLink('Olá! Vim pelo site da MC Contabilidade e gostaria de conversar.')} target="_blank" rel="noopener noreferrer">
                   <IcoWhatsapp />
                   WhatsApp
                 </a>
               ) : (
-                <button type="button" className="btn btn-contorno" onClick={irParaServicos}>
+                <button type="button" className="btn btn-contorno pressionar" onClick={irParaServicos}>
                   Conhecer os serviços
                 </button>
               )}

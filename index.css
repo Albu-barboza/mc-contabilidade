@@ -20,7 +20,12 @@
   --f-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --f-texto: "Manrope", "Segoe UI", system-ui, sans-serif;
   --gutter: clamp(16px, 5vw, 64px);
+  /* movimento: saída rápida e chegada macia (nada de ease-in em interface) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   color-scheme: dark;
+  /* barra de rolagem na cor da casa, não a cinza padrão do Windows */
+  scrollbar-color: #2B3752 var(--noite);
 }
 
 @layer base {
@@ -54,15 +59,29 @@
     outline: 2px solid var(--latao-claro);
     outline-offset: 3px;
   }
+  /* as partes que o navegador desenha também vestem a marca */
+  input, textarea, select { caret-color: var(--latao-claro); }
+  a { text-underline-offset: 0.22em; text-decoration-thickness: 1px; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--noite); }
+  ::-webkit-scrollbar-thumb { background: #2B3752; border: 2px solid var(--noite); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3A4868; }
 }
 
 @layer utilities {
-  .text-gradient {
-    @apply bg-gradient-to-br from-latao-claro to-latao bg-clip-text text-transparent;
+  /* nada de texto em degradê: a ênfase vem do peso e do tamanho (as páginas antigas usavam isso numa palavra só) */
+  .text-gradient { color: inherit; }
+  .text-gradient-light { color: inherit; }
+
+  /* botão que afunda um pouco ao ser apertado: a interface mostra que ouviu */
+  .pressionar {
+    transition-property: transform, background-color, border-color, color;
+    transition-duration: 160ms, 200ms, 200ms, 200ms;
+    transition-timing-function: var(--ease-out);
   }
-  
-  .text-gradient-light {
-    @apply bg-gradient-to-br from-white to-gray-300 bg-clip-text text-transparent;
+  .pressionar:active { transform: scale(0.97); }
+  @media (prefers-reduced-motion: reduce) {
+    .pressionar:active { transform: none; }
   }
 }
 
@@ -91,6 +110,15 @@
 
   @keyframes pulse-whatsapp { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); } }
   .animate-pulse-whatsapp { animation: pulse-whatsapp 2s infinite; }
+
+  /* janela de contato: o fundo escurece e o painel chega de perto, rápido (sai sem animação) */
+  .modal-fundo { animation: modal-fundo 200ms var(--ease-out); }
+  .modal-painel { animation: modal-painel 280ms var(--ease-out); }
+  @keyframes modal-fundo { from { opacity: 0; } }
+  @keyframes modal-painel { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
+  @media (prefers-reduced-motion: reduce) {
+    .modal-painel { animation: modal-fundo 200ms ease-out; }
+  }
 
   /* Intersection Observer Animation Classes */
   [data-animate] { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }

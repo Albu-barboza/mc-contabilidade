@@ -73,7 +73,7 @@ const Header: React.FC = () => {
           <button
             type="button"
             onClick={openForm}
-            className="rounded-full border border-latao/70 px-5 py-2.5 text-[.9rem] font-semibold text-latao-claro transition-colors duration-300 hover:bg-latao hover:text-noite"
+            className="pressionar rounded-full border border-latao/70 px-5 py-2.5 text-[.9rem] font-semibold text-latao-claro hover:bg-latao hover:text-noite"
           >
             Agendar conversa
           </button>
@@ -122,7 +122,7 @@ const Header: React.FC = () => {
               setAberto(false);
               openForm();
             }}
-            className="mt-10 w-full rounded-full bg-latao py-4 text-base font-bold text-noite"
+            className="pressionar mt-10 w-full rounded-full bg-latao py-4 text-base font-bold text-noite"
           >
             Agendar uma conversa
           </button>
