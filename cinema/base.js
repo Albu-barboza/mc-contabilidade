@@ -21,6 +21,8 @@ export function criarRenderer(canvas, movel) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, movel ? 1.75 : 2));
+  // o monograma se enche de ouro por um plano de corte (só vale para materiais que pedem)
+  renderer.localClippingEnabled = true;
   return renderer;
 }
 

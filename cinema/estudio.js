@@ -38,6 +38,7 @@ export function criarMateriais(renderer, q) {
     brilho: deCanvas(brilho),
     etiqueta: deCanvas(T.desenharEtiquetaChave(q.movel ? { W: 256, H: 448 } : {})),
     capa: deCanvas(T.desenharCapaPasta(q.movel ? { W: 640, H: 854 } : {})),
+    dourado: deCanvas(T.desenharDouradoPasta(q.movel ? { W: 640, H: 854 } : {})),
     celular: deCanvas(T.desenharTelaCelular(q.movel ? { W: 540, H: 1110 } : {})),
     lombadas: deCanvas(T.desenharLombadas(q.movel ? { W: 512, H: 256 } : {})),
   };
@@ -66,7 +67,9 @@ export function criarMateriais(renderer, q) {
     luzOuro: new THREE.MeshBasicMaterial({ color: '#FFE3AA', transparent: true }),
     telaCelular: new THREE.MeshBasicMaterial({ map: tex.celular, toneMapped: false }),
     etiqueta: std({ map: tex.etiqueta, roughness: 0.6 }),
-    capa: std({ map: tex.capa, roughness: 0.45, metalness: 0.25 }),
+    capa: std({ map: tex.capa, roughness: 0.55, metalness: 0.08 }),
+    // a folha dourada da capa: começa apagada e escura; a linha do tempo da pasta a transforma em ouro
+    capaDourado: std({ map: tex.dourado, transparent: true, depthWrite: false, opacity: 0, metalness: 0.2, roughness: 0.75 }),
   };
 }
 
@@ -78,7 +81,7 @@ export const FABRICAS = {
   pastas: (M) => O.pastas(M),
   mecanismo: (M) => O.mecanismo(M),
   grafico: (M) => O.grafico(M),
-  pasta: (M) => O.pastaPreta(M, M.capa),
+  pasta: (M) => O.pastaPreta(M, M.capa, M.capaDourado),
 };
 
 // luz de vitrine: principal quente do alto à esquerda, contraluz fria do outro lado
@@ -169,6 +172,9 @@ export function montarEstudio(renderer, q) {
     escalaRetrato = 1 - 0.3 * retrato;
   };
 
+  // Quem pede menos movimento vê cada peça já pronta (sem montagem, sem arame, pasta já dourada):
+  // os objetos continuam trocando com a rolagem, que é o próprio conteúdo da página.
+  const calmo = Boolean(q.reduzido);
   const atualizar = (p, t, dt) => {
     for (const c of CENAS) {
       const s = suportes[c.id];
@@ -182,13 +188,21 @@ export function montarEstudio(renderer, q) {
       s.position.set(deslocX * centro, deslocY * centro + (1 - ent) * -3.4 + sai * 3.6, -sai * 1.6 - (1 - ent) * 0.8);
       s.rotation.set((1 - ent) * 0.35 - sai * 0.25, (1 - ent) * -1.5 + sai * 1.2, 0);
       s.scale.setScalar((0.8 + 0.2 * ent - 0.12 * sai) * (LARGOS.has(c.id) ? escalaRetrato : 1));
-      const k = limitar((p - c.a - (c.b - c.a) * 0.5) / (c.c - c.a - (c.b - c.a) * 0.5));
+      const k = calmo ? 1 : limitar((p - c.a - (c.b - c.a) * 0.5) / (c.c - c.a - (c.b - c.a) * 0.5));
       const obj = objetos[c.id];
       if (obj.animar) obj.animar(k, t);
-      if (obj.organizar) obj.organizar(limitar((p - c.a) / (c.c - c.a) * 1.25));
+      if (obj.organizar) obj.organizar(calmo ? 1 : limitar(((p - c.a) / (c.c - c.a)) * 1.25));
     }
-    // o monograma respira devagar; a chave gira como se abrisse a porta
-    objetos.monograma.grupo.rotation.y = Math.sin(t * 0.4) * 0.32 + p * 4;
+    // abertura: o arame do MC se desenha sozinho logo que a vitrine aparece (ou assim que a pessoa
+    // começa a rolar) e a rolagem enche o monograma de ouro enquanto ele vira de frente
+    const desenho = calmo || q.semIntro ? 1 : Math.max(suave(0.35, 2.1, t), suave(0, 0.02, p));
+    const enchimento = calmo ? 1 : suave(0.012, 0.08, p);
+    objetos.monograma.revelar(desenho, enchimento);
+    objetos.monograma.grupo.rotation.y = (1 - enchimento) * -0.62 + Math.sin(t * 0.4) * 0.22 + p * 2.2;
+    objetos.monograma.grupo.rotation.x = (1 - enchimento) * 0.3;
+    // final: a pasta preta ganha o dourado pouco antes do convite para conversar
+    objetos.pasta.dourar(calmo ? 1 : suave(0.905, 0.97, p));
+    // a chave gira como se abrisse a porta
     objetos.chave.grupo.rotation.x = suave(0.17, 0.3, p) * Math.PI;
     objetos.chave.grupo.rotation.y = Math.sin(t * 0.35) * 0.18;
     // um pouco de interação: o palco acompanha o mouse

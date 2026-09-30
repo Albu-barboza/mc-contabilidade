@@ -23,6 +23,8 @@
   /* movimento: saída rápida e chegada macia (nada de ease-in em interface) */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* porta pesada: sai do lugar com calma, embala no meio e desliza até parar (sem tranco) */
+  --ease-porta: cubic-bezier(0.65, 0, 0.35, 1);
   color-scheme: dark;
   /* barra de rolagem na cor da casa, não a cinza padrão do Windows */
   scrollbar-color: #2B3752 var(--noite);
@@ -136,13 +138,62 @@
   }
   .texto-corrido a { color: var(--marfim); text-decoration: underline; text-decoration-color: rgba(201, 164, 94, 0.6); }
 
-  /* janela de contato: o fundo escurece e o painel chega de perto, rápido (sai sem animação) */
+  /* janela de contato (AberturaM.tsx): o fundo escurece; duas portas azul-marinho cobrem o formulário
+     com o M dourado dividido entre elas. O M surge, as portas deslizam para os lados levando cada metade
+     (portas e metades andam juntas: mesma duração, mesma curva, mesma distância) e o formulário fica.
+     Tudo em transform/opacity, feito pela placa de vídeo. Sai sem animação. */
   .modal-fundo { animation: modal-fundo 200ms var(--ease-out); }
-  .modal-painel { animation: modal-painel 280ms var(--ease-out); }
   @keyframes modal-fundo { from { opacity: 0; } }
   @keyframes modal-painel { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
+  .porta { background: linear-gradient(180deg, #16223A 0%, #0D1627 100%); will-change: transform; }
+  /* o fio de latão na beirada do meio de cada porta: aparece quando elas se separam */
+  .porta::after { content: ''; position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(226, 198, 141, 0.6); opacity: 0; }
+  .porta-esq::after { right: 0; }
+  .porta-dir::after { left: 0; }
+  .metade { will-change: transform; }
+  .abertura-parte { animation: abertura-chegar 240ms var(--ease-out) both; }
+  .porta-esq { animation: porta-esq 560ms var(--ease-porta) 170ms both; }
+  .porta-dir { animation: porta-dir 560ms var(--ease-porta) 170ms both; }
+  /* as metades andam com as portas e se dissolvem antes de chegar à borda (nada some de repente) */
+  .metade-esq { animation: metade-esq 560ms var(--ease-porta) 170ms both, metade-sumir 560ms linear 170ms both; }
+  .metade-dir { animation: metade-dir 560ms var(--ease-porta) 170ms both, metade-sumir 560ms linear 170ms both; }
+  @keyframes metade-sumir { 42% { opacity: 1; } 82%, 100% { opacity: 0; } }
+  .porta::after { animation: fio-porta 560ms linear 170ms both; }
+  .abertura-brilho { animation: brilho-chegar 240ms var(--ease-out) both, brilho-abrir 420ms ease-out 170ms forwards; }
+  .modal-abertura { animation: abertura-sumir 1ms linear 740ms both; }
+  @keyframes abertura-chegar { from { opacity: 0; transform: scale(0.92); } }
+  @keyframes porta-esq { to { transform: translateX(-100%); } }
+  @keyframes porta-dir { to { transform: translateX(100%); } }
+  @keyframes metade-esq { to { transform: translateX(-50%); } }
+  @keyframes metade-dir { to { transform: translateX(50%); } }
+  @keyframes fio-porta { 15%, 100% { opacity: 1; } }
+  @keyframes brilho-chegar { from { opacity: 0; } }
+  @keyframes brilho-abrir { to { opacity: 0; } }
+  @keyframes abertura-sumir { to { visibility: hidden; } }
+
+  /* o fio de latão sob o título se desenha quando as portas já abriram (o mesmo fio da vitrine) */
+  .modal-fio { transform-origin: left center; animation: modal-fio 520ms var(--ease-out) 520ms both; }
+  @keyframes modal-fio { from { transform: scaleX(0); } }
   @media (prefers-reduced-motion: reduce) {
     .modal-painel { animation: modal-fundo 200ms ease-out; }
+    .modal-abertura { display: none; }
+  }
+
+  /* selo de envio (SeloEnviado.tsx): o fio desenha o MC, o ouro sobe de baixo para cima,
+     o fio se recolhe e o texto se resolve do desfoque, como as legendas da vitrine */
+  .selo-fio { stroke-dasharray: 1; stroke-dashoffset: 1; animation: selo-desenhar 650ms var(--ease-in-out) forwards, selo-recolher 300ms ease-out 1250ms forwards; }
+  .selo-ouro { clip-path: inset(100% 0 0 0); animation: selo-encher 700ms var(--ease-in-out) 480ms forwards; }
+  .selo-texto { animation: selo-texto 460ms var(--ease-out) 1000ms both; }
+  @keyframes selo-desenhar { to { stroke-dashoffset: 0; } }
+  @keyframes selo-recolher { to { opacity: 0; } }
+  @keyframes selo-encher { to { clip-path: inset(0 0 0 0); } }
+  @keyframes selo-texto { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .modal-fio { animation: none; }
+    .selo-fio { display: none; }
+    .selo-ouro { clip-path: none; animation: none; }
+    .selo-texto { animation: modal-fundo 200ms ease-out both; }
   }
 
   /* aviso de cookies: sobe devagar depois que a página já apareceu */

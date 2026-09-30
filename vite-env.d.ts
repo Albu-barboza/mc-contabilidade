@@ -13,6 +13,7 @@ interface ImportMetaEnv {
   readonly VITE_ENCARREGADO_NOME: string;
   readonly VITE_FORMSPREE_CONTACT_URL: string;
   readonly VITE_FORMSPREE_CAREERS_URL: string;
+  readonly VITE_PREVIA_ENVIO: string;
 }
 
 interface ImportMeta {

@@ -144,6 +144,16 @@ export function desenharEtiquetaChave({ W = 512, H = 896 } = {}) {
 }
 
 // ---------- capa da pasta preta (a "caixa preta" da MC) ----------
+// A marca da capa (logo, nome, fio e subtítulo) é desenhada duas vezes, nas mesmas medidas:
+// prensada no couro (relevo cego) e numa folha dourada à parte, que o 3D sobrepõe no fim do passeio.
+function marcaDaCapa(ctx, W, H, k, cor, corSuave) {
+  desenharLogo(ctx, W / 2, H * 0.4, 230 * k, cor);
+  texto(ctx, 'MC Contabilidade', W / 2, H * 0.6, { size: 76 * k, peso: 600, cor, alinhar: 'center', fam: FONTE.display });
+  ctx.fillStyle = cor;
+  ctx.fillRect(W / 2 - 60 * k, H * 0.64, 120 * k, 3 * k);
+  texto(ctx, 'Proposta de serviços', W / 2, H * 0.7, { size: 50 * k, peso: 500, cor: corSuave, alinhar: 'center', fam: FONTE.serifa, italico: true });
+}
+
 export function desenharCapaPasta({ W = 1024, H = 1366 } = {}) {
   const c = tela(W, H);
   const ctx = c.getContext('2d');
@@ -151,12 +161,25 @@ export function desenharCapaPasta({ W = 1024, H = 1366 } = {}) {
   ctx.fillStyle = '#121316';
   ctx.fillRect(0, 0, W, H);
   granulado(ctx, W, H, W * 30, 0.035, 9);
-  const dourado = ouro(ctx, H * 0.2, H * 0.7);
-  desenharLogo(ctx, W / 2, H * 0.4, 230 * k, dourado);
-  texto(ctx, 'MC Contabilidade', W / 2, H * 0.6, { size: 76 * k, peso: 600, cor: dourado, alinhar: 'center', fam: FONTE.display });
-  ctx.fillStyle = dourado;
-  ctx.fillRect(W / 2 - 60 * k, H * 0.64, 120 * k, 3 * k);
-  texto(ctx, 'Proposta de serviços', W / 2, H * 0.7, { size: 50 * k, peso: 500, cor: '#CDB88F', alinhar: 'center', fam: FONTE.serifa, italico: true });
+  // relevo cego: luz na borda de baixo, sombra na de cima, miolo um pouco mais escuro que o couro
+  const passo = 1.6 * k;
+  ctx.save();
+  ctx.translate(passo, passo);
+  marcaDaCapa(ctx, W, H, k, 'rgba(255,255,255,0.07)', 'rgba(255,255,255,0.05)');
+  ctx.restore();
+  ctx.save();
+  ctx.translate(-passo, -passo);
+  marcaDaCapa(ctx, W, H, k, 'rgba(0,0,0,0.6)', 'rgba(0,0,0,0.45)');
+  ctx.restore();
+  marcaDaCapa(ctx, W, H, k, '#0D0E11', '#0F1013');
+  return c;
+}
+
+export function desenharDouradoPasta({ W = 1024, H = 1366 } = {}) {
+  const c = tela(W, H);
+  const ctx = c.getContext('2d');
+  const k = W / 1024;
+  marcaDaCapa(ctx, W, H, k, ouro(ctx, H * 0.2, H * 0.7), '#CDB88F');
   return c;
 }
 

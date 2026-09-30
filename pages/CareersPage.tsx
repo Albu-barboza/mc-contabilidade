@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import JsonLd from '../components/common/JsonLd';
 import Seo from '../components/common/Seo';
 import CabecalhoPagina from '../components/paginas/CabecalhoPagina';
-import { env } from '../config/env';
+import { env, previaEnvio } from '../config/env';
+import SeloEnviado from '../components/common/SeloEnviado';
 import { AUTORIZACAO_FORMSPREE, AVISO_DADOS_SENSIVEIS, ERRO_AUTORIZACAO, PRAZO_CANDIDATURA } from '../config/privacidade';
 
 const AREAS = ['Contábil', 'Fiscal e tributário', 'Departamento pessoal', 'Atendimento ao cliente', 'Outra área'];
@@ -33,6 +34,11 @@ const CareersPage: React.FC = () => {
   const [falha, setFalha] = useState('');
   const [armadilha, setArmadilha] = useState(''); // campo invisível: só robô preenche
   const formRef = useRef<HTMLFormElement>(null);
+  const recebidoRef = useRef<HTMLDivElement>(null);
+  // enviado: o formulário (e o botão que tinha o foco) some; o foco vai para a confirmação
+  useEffect(() => {
+    if (status === 'enviado') recebidoRef.current?.focus();
+  }, [status]);
   const destino = env.formspreeCareersUrl;
   const destinoValido = /^https:\/\/\S+$/.test(destino || '');
 
@@ -56,6 +62,15 @@ const CareersPage: React.FC = () => {
     if (armadilha) {
       // robô caiu na armadilha: finge que deu certo e não envia nada
       setStatus('enviado');
+      return;
+    }
+    if (!destinoValido && previaEnvio) {
+      // prévia privada: finge o envio para mostrar a confirmação (nada sai do navegador)
+      setFalha('');
+      setStatus('enviando');
+      await new Promise((r) => window.setTimeout(r, 900));
+      setStatus('enviado');
+      setDados(VAZIO);
       return;
     }
     if (!destinoValido) {
@@ -133,16 +148,22 @@ const CareersPage: React.FC = () => {
 
           <div className="rounded-3xl border border-[color:var(--linha)] bg-marinho p-6 sm:p-10">
             {status === 'enviado' ? (
-              <div role="status" className="flex min-h-[300px] flex-col justify-center">
-                <p className="font-display text-4xl font-medium text-marfim">Perfil recebido.</p>
-                <p className="mt-3 max-w-sm leading-relaxed text-texto">Obrigado por contar a sua trajetória. Guardamos o seu perfil por até {PRAZO_CANDIDATURA} para as próximas oportunidades.</p>
+              <div ref={recebidoRef} tabIndex={-1} role="status" className="flex min-h-[300px] flex-col justify-center focus:outline-none">
+                <SeloEnviado className="h-16" />
+                <p className="selo-texto mt-8 font-display text-4xl font-medium text-marfim">Perfil recebido.</p>
+                <p className="selo-texto mt-3 max-w-sm leading-relaxed text-texto">
+                  Obrigado por contar a sua trajetória. Guardamos o seu perfil por até {PRAZO_CANDIDATURA} para as próximas oportunidades.
+                  {previaEnvio && !destinoValido && <span className="mt-2 block text-sm text-latao-claro">Prévia: nada foi enviado de verdade.</span>}
+                </p>
               </div>
             ) : (
               <form ref={formRef} onSubmit={enviar} noValidate className="relative space-y-5">
                 <h2 className="font-display text-3xl font-medium text-marfim">Envie o seu perfil</h2>
                 {!destinoValido && (
                   <p className="rounded-xl border border-latao/30 bg-latao/10 px-4 py-3 text-sm text-latao-claro">
-                    Prévia: o envio deste formulário será ligado quando o e-mail de recebimento for configurado.
+                    {previaEnvio
+                      ? 'Prévia: pode enviar para ver a confirmação. Nada sai daqui de verdade.'
+                      : 'Prévia: o envio deste formulário será ligado quando o e-mail de recebimento for configurado.'}
                   </p>
                 )}
                 <div>
