@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Monograma from '../common/Monograma';
+import AssinaturaQuilha from '../common/AssinaturaQuilha';
 import { SERVICOS as LISTA } from '../../data/servicos';
 import { empresa } from '../../config/env';
 
@@ -69,13 +70,14 @@ const Footer: React.FC = () => {
             {cnpj ? ` · CNPJ ${cnpj}` : ''}
             {crc ? ` · ${crc}` : ''}
           </p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <Link to="/politica-de-privacidade" className="hover:text-marfim">
               Privacidade
             </Link>
             <Link to="/termos-de-uso" className="hover:text-marfim">
               Termos de uso
             </Link>
+            <AssinaturaQuilha classeSimbolo="text-latao-claro" />
           </div>
         </div>
       </div>
