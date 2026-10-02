@@ -1,33 +1,15 @@
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// Política de segurança (CSP) da versão publicada: diz ao navegador de onde a página pode carregar
-// cada coisa. Fica fora do modo de desenvolvimento, que precisa de scripts embutidos do Vite.
-const CSP = [
-  "default-src 'self'",
-  "script-src 'self' https://www.googletagmanager.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com",
-  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com",
-  "connect-src 'self' https://formspree.io https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self' https://formspree.io",
-  'upgrade-insecure-requests',
-].join('; ');
-
-const politicaDeSeguranca = (): Plugin => ({
-  name: 'politica-de-seguranca',
-  apply: 'build',
-  transformIndexHtml: (html) => html.replace(/<head>/i, `<head>\n  <meta http-equiv="Content-Security-Policy" content="${CSP}" />`),
-});
-
+// Publicado no Firebase Hosting (pasta dist/). A política de segurança (CSP com Trusted Types) e os demais
+// cabeçalhos ficam no firebase.json. A pasta docs/ só guarda o aviso de mudança de endereço do GitHub Pages.
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), politicaDeSeguranca()],
-  // Use relative base to make assets work both locally and on GitHub Pages (project or custom domain)
+  plugins: [react()],
   base: './',
   build: {
-    outDir: 'docs',
+    outDir: 'dist',
+    // fonte nunca vira data: embutido (a CSP só aceita fonte vinda do próprio site)
+    assetsInlineLimit: (arquivo) => (/\.(woff2?|ttf|otf)$/.test(arquivo) ? false : undefined),
   },
 });

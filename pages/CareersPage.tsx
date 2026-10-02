@@ -6,6 +6,7 @@ import CabecalhoPagina from '../components/paginas/CabecalhoPagina';
 import { env, previaEnvio } from '../config/env';
 import SeloEnviado from '../components/common/SeloEnviado';
 import { AUTORIZACAO_FORMSPREE, AVISO_DADOS_SENSIVEIS, ERRO_AUTORIZACAO, PRAZO_CANDIDATURA } from '../config/privacidade';
+import { marcarEnvio, rapidoDemais, segundosParaEnviarDeNovo } from '../utils/antiRobo';
 
 const AREAS = ['Contábil', 'Fiscal e tributário', 'Departamento pessoal', 'Atendimento ao cliente', 'Outra área'];
 
@@ -33,6 +34,7 @@ const CareersPage: React.FC = () => {
   const [status, setStatus] = useState<'parado' | 'enviando' | 'enviado'>('parado');
   const [falha, setFalha] = useState('');
   const [armadilha, setArmadilha] = useState(''); // campo invisível: só robô preenche
+  const abertoEm = useRef(Date.now());
   const formRef = useRef<HTMLFormElement>(null);
   const recebidoRef = useRef<HTMLDivElement>(null);
   // enviado: o formulário (e o botão que tinha o foco) some; o foco vai para a confirmação
@@ -59,9 +61,14 @@ const CareersPage: React.FC = () => {
       formRef.current?.querySelector<HTMLElement>(`#carreira-${primeiro}`)?.focus();
       return;
     }
-    if (armadilha) {
-      // robô caiu na armadilha: finge que deu certo e não envia nada
+    if (armadilha || rapidoDemais(abertoEm.current)) {
+      // robô caiu na armadilha (ou enviou rápido demais): finge que deu certo e não envia nada
       setStatus('enviado');
+      return;
+    }
+    const espera = segundosParaEnviarDeNovo();
+    if (espera) {
+      setFalha(`Você acabou de enviar uma candidatura. Aguarde ${espera} s para enviar outra.`);
       return;
     }
     if (!destinoValido && previaEnvio) {
@@ -97,6 +104,7 @@ const CareersPage: React.FC = () => {
         signal: controle.signal,
       });
       if (!resposta.ok) throw new Error('resposta');
+      marcarEnvio();
       setStatus('enviado');
       setDados(VAZIO);
     } catch (erro) {

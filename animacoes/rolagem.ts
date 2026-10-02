@@ -6,6 +6,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
+import { guardarHTMLDoSite } from '../utils/tiposConfiaveis';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -32,6 +33,7 @@ export function revelarFrase(el: HTMLElement) {
   mm.add(CONDICOES, (ctx) => {
     if (ctx.conditions?.calmo) return;
     // aria "auto": o leitor de tela lê a frase inteira; as palavras soltas ficam escondidas dele
+    guardarHTMLDoSite(el.innerHTML);
     const partes = SplitText.create(el, { type: 'words', aria: 'auto' });
     gsap.fromTo(
       partes.words,
