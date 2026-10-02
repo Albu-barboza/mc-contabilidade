@@ -1,22 +1,30 @@
-<div align="center">
-  <img width="1200" height="475" alt="Banner do projeto" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
-
 # MC Contabilidade
 
-Site institucional desenvolvido com **React + Vite** para divulgar os serviços contábeis da MC Contabilidade. A landing page traz hero animado, cards de serviços, depoimentos e formulário de contato com validação completa e envio para APIs externas.
+Site institucional da MC Contabilidade: vitrine 3D (um objeto por serviço), páginas de serviços, LGPD e
+formulários de contato e de candidatura.
 
-## Stack principal
-- React 18 + React Router 6
-- Vite 5 com suporte a TypeScript
-- Tailwind CSS + PostCSS
-- Integrações com Formspree, WhatsApp e Google Analytics
+No ar em **https://mc-contabilidade-site.web.app** (Firebase Hosting, projeto `mc-contabilidade-site`).
+O endereço antigo do GitHub Pages (`albu-barboza.github.io/mc-contabilidade`) só redireciona para o novo:
+a pasta `docs/` guarda apenas essa página de aviso.
 
-## Pré-requisitos
-- Node.js 18+ (recomendado)
-- npm 10+ (ou pnpm/yarn equivalentes)
+## Stack
+- React 18 + React Router 7 (HashRouter) + Vite 5 + TypeScript + Tailwind
+- three.js (vitrine 3D) e GSAP (ScrollTrigger + SplitText)
+- Fontes Cormorant Garamond e Manrope servidas pelo próprio site (`@fontsource`)
 
-## Como rodar localmente
+## Rodar e publicar
 ```bash
 npm install
-npm run dev
+npm run dev        # desenvolvimento
+npm run build      # gera dist/
+firebase deploy --only hosting --project mc-contabilidade-site
+```
+
+## Segurança
+- Cabeçalhos no `firebase.json`: CSP sem script de fora, com **Trusted Types** (o navegador bloqueia texto que
+  viraria HTML ou script; a política `default` em `utils/tiposConfiaveis.ts` só libera o HTML original que o
+  SplitText devolve e o JSON dos dados estruturados), X-Frame-Options, HSTS, Permissions-Policy etc.
+- Ligar um serviço de fora (Google Analytics, mapa, vídeo) exige incluir o domínio na CSP do `firebase.json`.
+  O Google Analytics também precisa liberar a URL do `gtag` na política `default` (Trusted Types).
+- Formulários: Formspree (`VITE_FORMSPREE_CONTACT_URL` e `VITE_FORMSPREE_CAREERS_URL`), com campo-armadilha
+  `_gotcha`, descarte de envio rápido demais e espera de 1 minuto entre envios (`utils/antiRobo.ts`).

@@ -4,6 +4,7 @@ import { env, getWhatsappLink, previaEnvio } from '../../config/env';
 import SeloEnviado from './SeloEnviado';
 import AberturaM from './AberturaM';
 import { AUTORIZACAO_FORMSPREE, AVISO_DADOS_SENSIVEIS, ERRO_AUTORIZACAO } from '../../config/privacidade';
+import { marcarEnvio, rapidoDemais, segundosParaEnviarDeNovo } from '../../utils/antiRobo';
 
 type Campo = 'nome' | 'email' | 'telefone' | 'servico' | 'mensagem' | 'autorizo';
 type Formulario = Record<Campo, string>;
@@ -53,6 +54,7 @@ const ContactModal: React.FC = () => {
   const [status, setStatus] = useState<'parado' | 'enviando' | 'enviado'>('parado');
   const [falha, setFalha] = useState('');
   const [armadilha, setArmadilha] = useState(''); // campo invisível: só robô preenche
+  const abertoEm = useRef(0);
   const janelaRef = useRef<HTMLDivElement>(null);
   const tituloRef = useRef<HTMLHeadingElement>(null);
   const antesRef = useRef<HTMLElement | null>(null);
@@ -66,6 +68,7 @@ const ContactModal: React.FC = () => {
   // abrir: guarda onde estava o foco, trava a rolagem da página e põe o foco na janela
   useEffect(() => {
     if (!isFormOpen) return;
+    abertoEm.current = Date.now();
     antesRef.current = document.activeElement as HTMLElement | null;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -140,8 +143,13 @@ const ContactModal: React.FC = () => {
       janelaRef.current?.querySelector<HTMLElement>(`#contato-${primeiroErro}`)?.focus();
       return;
     }
-    if (armadilha) {
+    if (armadilha || rapidoDemais(abertoEm.current)) {
       setStatus('enviado');
+      return;
+    }
+    const espera = segundosParaEnviarDeNovo();
+    if (espera) {
+      setFalha(`Você acabou de enviar uma mensagem. Aguarde ${espera} s para enviar outra.`);
       return;
     }
     if (!destinoValido && previaEnvio) {
@@ -179,6 +187,7 @@ const ContactModal: React.FC = () => {
       });
       if (!resposta.ok) throw new Error('resposta');
       window.gtag?.('event', 'generate_lead', { event_category: 'contact', event_label: 'Formulario de Contato Principal', value: 1 });
+      marcarEnvio();
       setStatus('enviado');
       setDados(VAZIO);
       setErros({});
