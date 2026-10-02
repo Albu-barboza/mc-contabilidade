@@ -64,7 +64,8 @@ const Footer: React.FC = () => {
         </nav>
       </div>
       <div className="border-t border-[color:var(--linha)]">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-[var(--gutter)] py-6 text-xs text-fraco md:flex-row md:items-center md:justify-between">
+        {/* respiro à direita: o botão flutuante "voltar ao topo" fica ali no fim da página */}
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-[var(--gutter)] py-6 text-xs text-fraco md:flex-row md:items-center md:justify-between md:pr-[calc(var(--gutter)+4rem)]">
           <p>
             © {ano} {razaoSocial || 'MC Contabilidade'}
             {cnpj ? ` · CNPJ ${cnpj}` : ''}
