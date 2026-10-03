@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Monograma from '../common/Monograma';
-import AssinaturaQuilha from '../common/AssinaturaQuilha';
+import AssinaturaGolem from '../common/AssinaturaGolem';
 import { SERVICOS as LISTA } from '../../data/servicos';
 import { empresa } from '../../config/env';
 
@@ -78,7 +78,7 @@ const Footer: React.FC = () => {
             <Link to="/termos-de-uso" className="hover:text-marfim">
               Termos de uso
             </Link>
-            <AssinaturaQuilha classeSimbolo="text-latao-claro" />
+            <AssinaturaGolem classeSimbolo="text-latao-claro" />
           </div>
         </div>
       </div>
