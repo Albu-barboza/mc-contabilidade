@@ -2,7 +2,7 @@ import React from 'react';
 
 // Assinatura de quem desenvolveu o site (Golem, estúdio digital), combinada com o cliente.
 // Tudo em currentColor: o símbolo pode receber a cor de destaque do site por classeSimbolo.
-// Sem link por enquanto: o domínio do Golem ainda não foi comprado.
+// Leva ao site do Golem (golemestudio.com.br, comprado em 09/10/2026), em outra aba e com nofollow, como no kit da marca.
 const VIEWBOX = '0 -95.7 666.81 125.4';
 const SIMBOLO = 'M0 -95.7L29.06 -95.7L62.35 -49.89L55.05 -37.26L73.61 -11.72L80.9 -24.35L120.17 29.7L91.11 29.7L44.14 -34.95L51.6 -47.36L33.18 -72.7L25.72 -60.3ZM118.12 -95.7L73.28 -18.04L59.16 -37.48L92.77 -95.7ZM6.69 29.7L28.64 29.7L28.64 -15.85L47.46 -47.18L33.45 -66.47L6.69 -21.93Z';
 const FIO = 'M161.09 -82.5h1.2V16.5h-1.2Z';
@@ -11,14 +11,14 @@ const LETRAS = 'M235.31 1L235.31 1Q225.71 1 218.21-3.20Q210.71-7.40 206.36-14.65
 const AssinaturaGolem: React.FC<{ className?: string; classeSimbolo?: string }> = ({ className = '', classeSimbolo = '' }) => (
   <span className={`inline-flex flex-wrap items-center gap-x-2 gap-y-1 ${className}`}>
     <span>Criado e desenvolvido por</span>
-    <span className="inline-flex items-center gap-2 whitespace-nowrap">
+    <a href="https://golemestudio.com.br" target="_blank" rel="noopener nofollow" className="group inline-flex items-center gap-2 whitespace-nowrap rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current">
     <svg viewBox={VIEWBOX} className="h-4 w-auto" role="img" aria-label="Golem">
         <path d={SIMBOLO} fill="currentColor" className={classeSimbolo} />
         <path d={FIO} fill="currentColor" opacity={0.5} />
         <path d={LETRAS} fill="currentColor" />
       </svg>
-      <span>· estúdio digital</span>
-    </span>
+      <span className="group-hover:underline underline-offset-4">· estúdio digital</span>
+    </a>
   </span>
 );
 
